@@ -23,7 +23,14 @@ def parse_recipe(html: str) -> dict:
     if not recipe_data:
         raise ValueError("no recipe schema found on this page D:")
     
-    return _extract_fields(recipe_data)
+    fields = _extract_fields(recipe_data)
+
+    if len(fields["ingredients"]) < 2:
+        raise ValueError("Recipe found but it's incomplete: fewer than 2 ingredients")
+    if len(fields["instructions"]) < 2:
+        raise ValueError("Recipe found but it's incomplete: fewer than 2 instructions")
+
+    return fields
 
 def _is_recipe(item: dict) -> bool:
     """Check if an item's @type is Recipe (handles string or list)."""

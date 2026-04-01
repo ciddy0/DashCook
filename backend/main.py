@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from scraper import fetch_page
 from parser import parse_recipe
 from schemas import ExtractRequest, Recipe
+from validators import validate_url
 
 app = FastAPI(
     title="DashCook",
@@ -19,19 +20,26 @@ def ping():
 
 @app.post("/url", response_model=Recipe)
 async def get_recipe(request: ExtractRequest):
-    # first lets get the page
+    url = str(request.url)
+
+    # validate url before touching the network
     try:
-        html = await fetch_page(str(request.url))
+        validate_url(url)
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+
+    # fetch the page
+    try:
+        html = await fetch_page(url)
     except ValueError as e:
         raise HTTPException(status_code=422, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=422, detail=f"failed to fetch URL D: {e}")
-    
+
     # parse the recipe
-    try: 
+    try:
         recipe_data = parse_recipe(html)
     except ValueError as e:
-        raise HTTPException(status_code = 422, detail=str(e))
+        raise HTTPException(status_code=422, detail=str(e))
 
-    recipe = Recipe(source_url=str(request.url), **recipe_data)
-    return recipe
+    return Recipe(source_url=url, **recipe_data)
