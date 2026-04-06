@@ -1,9 +1,19 @@
 from pydantic import BaseModel, HttpUrl
 
+
 class ExtractRequest(BaseModel):
     url: HttpUrl
- 
- 
+
+
+class Ingredient(BaseModel):
+    raw: str
+    name: str
+    quantity: float | None
+    quantity_max: float | None
+    unit: str | None
+    scalable: bool = True
+
+
 class Recipe(BaseModel):
     title: str
     source_url: str
@@ -12,5 +22,5 @@ class Recipe(BaseModel):
     cook_time: str | None = None
     total_time: str | None = None
     servings: str | None = None
-    ingredients: list[str]
+    ingredients: list[Ingredient]
     instructions: list[str]

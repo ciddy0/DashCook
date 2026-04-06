@@ -2,6 +2,9 @@ import json
 import re
 from bs4 import BeautifulSoup
 
+from ingredient_parser import parse_ingredients
+from schemas import Ingredient
+
 def parse_recipe(html: str) -> dict:
     """
     basically extract the recipe object from json-ld markup in the html
@@ -99,11 +102,12 @@ def _extract_servings(recipe_yield) -> str | None:
     return None
  
  
-def _extract_ingredients(ingredients: list) -> list[str]:
-    """
-    clean up ingredient strings
-    """
-    return [_clean_text(ing) for ing in ingredients if isinstance(ing, str)]
+def _extract_ingredients(ingredients: list) -> list[Ingredient]:
+    raws = [_clean_text(ing) for ing in ingredients if isinstance(ing, str)]
+    result = []
+    for r in raws:
+        result.extend(parse_ingredients(r))
+    return result
  
  
 def _extract_instructions(instructions) -> list[str]:

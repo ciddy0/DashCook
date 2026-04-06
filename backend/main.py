@@ -1,10 +1,12 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
 
 from database.pool import create_pool
 from database.cache import get_cached_recipe, cache_recipe
 from helpers import normalize_url
+from rate_limiter import check_rate_limit, get_client_ip
 from scraper import fetch_page
 from parser import parse_recipe
 from schemas import ExtractRequest, Recipe
@@ -25,6 +27,18 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+@app.middleware("http")
+async def rate_limit_middleware(request: Request, call_next):
+    if request.method == "POST" and request.url.path == "/url":
+        ip = get_client_ip(request)
+        allowed, retry_after = check_rate_limit(ip)
+        if not allowed:
+            return JSONResponse(
+                status_code=429,
+                content={"detail": "Rate limit exceeded"},
+                headers={"Retry-After": str(retry_after)},
+            )
+    return await call_next(request)
 
 @app.get("/")
 def home():
