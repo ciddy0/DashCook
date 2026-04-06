@@ -5,39 +5,34 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DATABASE_URL = os.environ["DATABASE_URL"]
-
 CREATE_TABLE_SQL = """
-CREATE TABLE IF NOT EXISTS recipe_cache (
-    url          TEXT PRIMARY KEY,
-    recipe       JSONB NOT NULL,
-    cached_at    TIMESTAMPTZ DEFAULT NOW(),
-    schema_ver   INT NOT NULL DEFAULT 1
+CREATE TABLE IF NOT EXISTS recipes (
+    url  TEXT PRIMARY KEY,
+    data JSONB NOT NULL
 )
 """
 
-# Bump this whenever the stored JSONB shape changes (e.g. ingredients schema update).
-SCHEMA_VERSION = 2
 
-MIGRATE_SQL = """
-DO $$
-BEGIN
-    -- add schema_ver column if it doesn't exist yet (first migration)
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns
-        WHERE table_name = 'recipe_cache' AND column_name = 'schema_ver'
-    ) THEN
-        ALTER TABLE recipe_cache ADD COLUMN schema_ver INT NOT NULL DEFAULT 1;
-    END IF;
-END
-$$;
-DELETE FROM recipe_cache WHERE schema_ver < {ver};
-"""
+async def create_pool():
+    supabase_url = os.getenv("SUPABASE_URL")
+    if supabase_url:
+        try:
+            pool = await asyncpg.create_pool(
+                dsn=supabase_url,
+                ssl="require",
+                min_size=1,
+                max_size=10,
+                timeout=5,
+            )
+            print("Connected to Supabase")
+            return pool
+        except Exception as e:
+            print(f"Supabase connection failed: {e}")
+            print("Falling back to local postgres...")
 
-
-async def create_pool() -> asyncpg.Pool:
-    pool = await asyncpg.create_pool(DATABASE_URL, min_size=1, max_size=5)
+    local_url = os.getenv("DATABASE_URL", "postgresql://dashcook:dashcook@localhost:5433/dashcook")
+    pool = await asyncpg.create_pool(dsn=local_url, min_size=1, max_size=5)
     async with pool.acquire() as conn:
         await conn.execute(CREATE_TABLE_SQL)
-        await conn.execute(MIGRATE_SQL.format(ver=SCHEMA_VERSION))
+    print("Connected to local postgres")
     return pool

@@ -101,14 +101,12 @@ def _extract_servings(recipe_yield) -> str | None:
         return str(recipe_yield[0])
     return None
  
- 
 def _extract_ingredients(ingredients: list) -> list[Ingredient]:
     raws = [_clean_text(ing) for ing in ingredients if isinstance(ing, str)]
     result = []
     for r in raws:
         result.extend(parse_ingredients(r))
     return result
- 
  
 def _extract_instructions(instructions) -> list[str]:
     """
@@ -154,7 +152,6 @@ def _parse_duration(duration: str | None) -> str | None:
         parts.append(f"{minutes} minute{'s' if minutes > 1 else ''}")
  
     return " ".join(parts) if parts else None
- 
  
 def _clean_text(text: str) -> str:
     """
