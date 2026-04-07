@@ -367,6 +367,43 @@ def test_asterisk_before_paren():
     assert "*" not in ing.name
 
 
+def test_and_fraction_mixed_number():
+    """'1 and 1/2 cups cold whole milk' — 'and' between integer and fraction is a mixed number."""
+    ing = parse_ingredient("1 and 1/2 cups (360ml) cold whole milk")
+    assert ing.quantity == 1.5
+    assert ing.unit == "cup"
+    assert "cold whole milk" in ing.name
+    assert "360ml" in ing.name
+    assert "and" not in ing.name.split("(")[0]
+
+
+def test_and_fraction_butter():
+    """'1 and 1/2 cups unsalted butter, softened to room temperature' — mixed number + state kept."""
+    ing = parse_ingredient("1 and 1/2 cups (340g) unsalted butter, softened to room temperature")
+    assert ing.quantity == 1.5
+    assert ing.unit == "cup"
+    assert "unsalted butter" in ing.name
+    assert "softened to room temperature" in ing.name
+    assert "340g" in ing.name
+
+
+def test_softened_to_room_temperature_kept():
+    """Prep phrase with extra context like 'to room temperature' should stay in name."""
+    ing = parse_ingredient("1/4 cup (4 Tbsp; 56g) unsalted butter, softened to room temperature")
+    assert ing.quantity == 0.25
+    assert ing.unit == "cup"
+    assert "unsalted butter" in ing.name
+    assert "softened to room temperature" in ing.name
+
+
+def test_softened_alone_stripped():
+    """Plain 'softened' after comma (no extra context) should still be stripped."""
+    ing = parse_ingredient("8 oz cream cheese, softened")
+    assert ing.quantity == 8.0
+    assert ing.unit == "ounce"
+    assert ing.name == "cream cheese"
+
+
 def test_nested_paren_no_duplication():
     """'1kg / 2lb marrow bones ((leg, knuckle), cut to reveal marrow)' — no repeated text."""
     ing = parse_ingredient("1kg / 2lb marrow bones ((leg, knuckle), cut to reveal marrow)")
@@ -375,3 +412,29 @@ def test_nested_paren_no_duplication():
     assert "marrow bones" in ing.name
     # "cut to reveal marrow" should appear at most once
     assert ing.name.count("cut to reveal marrow") <= 1
+
+
+def test_nested_paren_no_trailing_comma_in_note():
+    """Paren content with inner sub-paren should not have trailing comma in outer note."""
+    # "or natural rock salt (for salt water)" should not become "or natural rock salt ,"
+    ing = parse_ingredient(
+        "1.5 cups Korean coarse sea salt (or natural rock salt (for salt water), (285g / 10 ounces))"
+    )
+    assert ing.quantity == 1.5
+    assert ing.unit == "cup"
+    assert "Korean coarse sea salt" in ing.name
+    # no trailing comma inside parenthetical notes
+    assert " ," not in ing.name
+    assert ",)" not in ing.name
+
+
+def test_nested_paren_no_trailing_comma_cooking_salt():
+    """Cooking salt with inner sub-paren note should not produce trailing comma."""
+    ing = parse_ingredient(
+        "1/2 cup cooking salt (, medium sized crystals (for sprinkle), (97g / 3.4 ounces))"
+    )
+    assert ing.quantity == 0.5
+    assert ing.unit == "cup"
+    assert "cooking salt" in ing.name
+    assert " ," not in ing.name
+    assert ",)" not in ing.name

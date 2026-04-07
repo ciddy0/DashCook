@@ -135,6 +135,12 @@ def _parse_quantity(tokens: list[str]) -> tuple[float | None, float | None, int]
         if hi is not None:
             return first_num, hi, 3
 
+    # try "N and FRACTION": "1 and 1/2", "2 and 3/4"
+    if len(tokens) >= 3 and tokens[1].lower() == "and":
+        third_num = _parse_number(tokens[2])
+        if third_num is not None and 0 < third_num < 1:
+            return first_num + third_num, None, 3
+
     # try mixed number: integer followed by fraction token
     if len(tokens) >= 2:
         second_num = _parse_number(tokens[1])
@@ -173,10 +179,10 @@ def _extract_paren_notes(raw: str) -> list[str]:
     for group in groups:
         # Split outer content from inner parens
         inner_contents = re.findall(r"\(([^()]*)\)", group)
-        outer = re.sub(r"\([^()]*\)", "", group).lstrip(",").strip()
+        outer = re.sub(r"\([^()]*\)", "", group).strip(",").strip()
 
         for part in [outer] + inner_contents:
-            part = part.strip().lstrip(",").strip()
+            part = part.strip().strip(",").strip()
             if not part:
                 continue
             # Skip "Note N" references and "see note(s)" / "*see note" annotations
@@ -266,13 +272,18 @@ def parse_ingredient(raw: str) -> Ingredient:
     if quantity is None and not unit:
         name = stripped
 
-    # strip inline prep notes after comma only when the tail starts with a prep verb
-    # (e.g. "carrots, peeled and diced" → "carrots", but "beef stock, low sodium" stays)
+    # strip inline prep notes after comma only when the tail starts with a prep verb AND
+    # every word in the tail is a prep verb or simple connector.
+    # This preserves meaningful state descriptions like "softened to room temperature"
+    # while still stripping pure prep notes like "peeled and diced".
+    _STRIP_CONNECTORS = {"and", "or", "the", "a", "an"}
     if "," in name:
         tail = name.split(",", 1)[1].strip().lower()
         first_word = tail.split()[0].rstrip(",") if tail.split() else ""
         if first_word in _PREP_VERBS:
-            name = name.split(",")[0].strip()
+            tail_words = {w.rstrip(",") for w in tail.split()}
+            if tail_words.issubset(_PREP_VERBS | _STRIP_CONNECTORS):
+                name = name.split(",")[0].strip()
 
     # handle indefinite amounts: "a pinch of X", "dash of X" → name = X
     if quantity is None and not unit:
