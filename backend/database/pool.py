@@ -7,9 +7,19 @@ load_dotenv()
 
 CREATE_TABLE_SQL = """
 CREATE TABLE IF NOT EXISTS recipes (
-    url  TEXT PRIMARY KEY,
-    data JSONB NOT NULL
-)
+    url          TEXT PRIMARY KEY,
+    title        TEXT NOT NULL,
+    image_url    TEXT,
+    prep_time    TEXT,
+    cook_time    TEXT,
+    total_time   TEXT,
+    servings     TEXT,
+    ingredients  JSONB NOT NULL DEFAULT '[]',
+    instructions JSONB NOT NULL DEFAULT '[]',
+    created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_recipes_title ON recipes (title);
 """
 
 
