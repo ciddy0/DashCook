@@ -63,7 +63,7 @@ async def get_recipe(req: Request, body: ExtractRequest):
     cached = await get_cached_recipe(pool, url)
     if cached is not None:
         print("cache hit!")
-        return Recipe(**cached, source_url=url)
+        return Recipe(**cached)
 
     try:
         print("fetching recipe")
