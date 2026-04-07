@@ -44,11 +44,9 @@ async def rate_limit_middleware(request: Request, call_next):
 def home():
     return 'hai!'
 
-
 @app.get("/ping")
 def ping():
     return 'pong'
-
 
 @app.post("/url", response_model=Recipe)
 async def get_recipe(req: Request, body: ExtractRequest):
@@ -62,11 +60,9 @@ async def get_recipe(req: Request, body: ExtractRequest):
     pool = req.app.state.pool
     cached = await get_cached_recipe(pool, url)
     if cached is not None:
-        print("cache hit!")
         return Recipe(**cached)
 
     try:
-        print("fetching recipe")
         html = await fetch_page(url)
     except ValueError as e:
         raise HTTPException(status_code=422, detail=str(e))
