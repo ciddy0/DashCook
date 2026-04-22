@@ -43,13 +43,13 @@ type RouteFiles = {
     id: "routes/loading";
     page: "/loading";
   };
-  "routes/recipe.tsx": {
-    id: "routes/recipe";
-    page: "/recipe";
-  };
   "routes/_index.tsx": {
     id: "routes/_index";
     page: "/";
+  };
+  "routes/recipe.tsx": {
+    id: "routes/recipe";
+    page: "/recipe";
   };
   "routes/$.tsx": {
     id: "routes/$";
@@ -61,7 +61,7 @@ type RouteModules = {
   "root": typeof import("./src/root.tsx");
   "routes/savedRecipes": typeof import("./src/routes/savedRecipes.tsx");
   "routes/loading": typeof import("./src/routes/loading.tsx");
-  "routes/recipe": typeof import("./src/routes/recipe.tsx");
   "routes/_index": typeof import("./src/routes/_index.tsx");
+  "routes/recipe": typeof import("./src/routes/recipe.tsx");
   "routes/$": typeof import("./src/routes/$.tsx");
 };
