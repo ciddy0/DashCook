@@ -1,5 +1,5 @@
 import './App.css'
-import Home from './routes/home.tsx'
+import Home from './routes/_index.tsx'
 
 function App() {
 
