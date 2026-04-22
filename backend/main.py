@@ -1,6 +1,8 @@
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from database.pool import create_pool
@@ -25,6 +27,14 @@ app = FastAPI(
     description="extract clean recipes from bloated websites",
     version="1.0.0",
     lifespan=lifespan,
+)
+
+cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://localhost:3000")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[o.strip() for o in cors_origins.split(",")],
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
 )
 
 @app.middleware("http")
