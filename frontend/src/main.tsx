@@ -7,10 +7,13 @@ import Loading from './pages/loading.tsx'
 import Recipe from './pages/recipe.tsx'
 import SavedRecipes from './pages/savedRecipes.tsx'
 import Error from './pages/$.tsx'
+import Sidebar from './pages/components/sidebar.tsx'
 
 createRoot(document.getElementById('root') as HTMLElement).render(
     <StrictMode>
     <BrowserRouter>
+      <div className="h-screen w-screen flex">
+      <Sidebar />
         <Routes>
           <Route path="/" element={<App />} />
           <Route path="*" element={<Error />} />
@@ -18,6 +21,7 @@ createRoot(document.getElementById('root') as HTMLElement).render(
           <Route path="/recipe" element={<Recipe />} />
           <Route path="/savedRecipes" element={<SavedRecipes />} />
         </Routes>
+      </div>
       </BrowserRouter>
     </StrictMode>,
 );

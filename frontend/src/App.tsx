@@ -5,7 +5,7 @@ function App() {
 
   return (
     <>
-      <section id="center">
+      <section id="">
         <Home />
       </section>
     </>
