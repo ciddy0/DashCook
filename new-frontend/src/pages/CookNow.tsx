@@ -1,0 +1,269 @@
+import { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { Icon } from "../components/Icon";
+import { RECIPES } from "../data/recipes";
+import { ingredientLine, fmtTime } from "../helpers";
+
+export function CookNow() {
+  const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const recipe = RECIPES.find((r) => r.id === id);
+  const servings = Number(searchParams.get("servings")) || recipe?.servings || 4;
+
+  const [idx, setIdx] = useState(0);
+  const [timerSec, setTimerSec] = useState(0);
+  const [timerRunning, setTimerRunning] = useState(false);
+  const [timerInitial, setTimerInitial] = useState(0);
+  const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  if (!recipe) {
+    return (
+      <div className="page" style={{ textAlign: "center", paddingTop: 80 }}>
+        <h2>Recipe not found</h2>
+        <button className="btn" onClick={() => navigate("/")}>
+          Go Home
+        </button>
+      </div>
+    );
+  }
+
+  const scale = servings / recipe.servings;
+  const step = recipe.steps[idx];
+  const suggestedSec = recipe.timers[idx];
+  const lastIdx = recipe.steps.length - 1;
+  const progress = ((idx + 1) / recipe.steps.length) * 100;
+
+  const onExit = () => navigate(`/recipe/${recipe.id}`);
+
+  // arm timer when step changes
+  useEffect(() => {
+    setTimerRunning(false);
+    if (suggestedSec) {
+      setTimerSec(suggestedSec);
+      setTimerInitial(suggestedSec);
+    } else {
+      setTimerSec(0);
+      setTimerInitial(0);
+    }
+  }, [idx, suggestedSec]);
+
+  // tick
+  useEffect(() => {
+    if (timerRunning && timerSec > 0) {
+      tickRef.current = setInterval(() => {
+        setTimerSec((s) => {
+          if (s <= 1) {
+            clearInterval(tickRef.current!);
+            setTimerRunning(false);
+            return 0;
+          }
+          return s - 1;
+        });
+      }, 1000);
+      return () => {
+        if (tickRef.current) clearInterval(tickRef.current);
+      };
+    }
+  }, [timerRunning]);
+
+  // keyboard nav
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") setIdx((i) => Math.min(lastIdx, i + 1));
+      else if (e.key === "ArrowLeft") setIdx((i) => Math.max(0, i - 1));
+      else if (e.key === "Escape") onExit();
+      else if (e.key === " " && timerInitial > 0) {
+        e.preventDefault();
+        setTimerRunning((r) => !r);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lastIdx, timerInitial]);
+
+  // ingredients used in this step
+  const stepIngredients =
+    idx === 0
+      ? recipe.ingredients.slice(
+          0,
+          Math.min(4, recipe.ingredients.length)
+        )
+      : [];
+
+  return (
+    <div className="cook-overlay" role="dialog" aria-modal="true" aria-label="Cook Now">
+      {/* Header */}
+      <header className="cook-header">
+        <div className="logo-mark" style={{ width: 36, height: 36 }}>
+          <span style={{ fontSize: 15 }}>c</span>
+        </div>
+        <div className="cook-title">
+          Cooking <b>{recipe.title}</b>
+        </div>
+        <span className="stat">
+          <Icon name="users" size={14} />
+          {servings} servings
+        </span>
+        <button
+          className="icon-btn"
+          onClick={onExit}
+          aria-label="Exit cook mode"
+        >
+          <Icon name="x" size={18} />
+        </button>
+      </header>
+
+      {/* Body */}
+      <div className="cook-body">
+        <div className="cook-step-card">
+          <div className="cook-step-num">
+            <span>
+              Step {idx + 1} of {recipe.steps.length}
+            </span>
+            <div style={{ display: "flex", gap: 6 }}>
+              {recipe.steps.map((_, i) => (
+                <span
+                  key={i}
+                  className={
+                    "pip " +
+                    (i === idx ? "active" : i < idx ? "done" : "")
+                  }
+                  style={{ transition: "all 200ms" }}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="cook-step-text">{step}</div>
+
+          {stepIngredients.length > 0 && (
+            <div className="cook-ing-list">
+              <div className="lbl">You'll need</div>
+              {stepIngredients.map((ing, i) => {
+                const line = ingredientLine(ing, scale);
+                return (
+                  <div key={i} className="ing">
+                    {line.qty && (
+                      <span className="qty">{line.qty} </span>
+                    )}
+                    {line.item}
+                  </div>
+                );
+              })}
+              {recipe.ingredients.length > stepIngredients.length && (
+                <div
+                  style={{
+                    fontSize: 13,
+                    color: "var(--text-3)",
+                    fontWeight: 500,
+                    marginTop: 4,
+                  }}
+                >
+                  + {recipe.ingredients.length - stepIngredients.length}{" "}
+                  more — check the Ingredients tab anytime.
+                </div>
+              )}
+            </div>
+          )}
+
+          {timerInitial > 0 && (
+            <div
+              className="row"
+              style={{
+                gap: 14,
+                flexWrap: "wrap",
+                alignItems: "center",
+              }}
+            >
+              <div
+                className={
+                  "timer" + (timerRunning ? " running" : "")
+                }
+              >
+                <Icon name="timer" size={20} />
+                <span className="face">{fmtTime(timerSec)}</span>
+              </div>
+              <button
+                className={
+                  "btn " +
+                  (timerRunning ? "btn-danger" : "btn-warning")
+                }
+                onClick={() => {
+                  if (timerSec === 0) setTimerSec(timerInitial);
+                  setTimerRunning((r) => !r);
+                }}
+                disabled={timerInitial === 0}
+              >
+                <Icon
+                  name={timerRunning ? "pause" : "play"}
+                  size={16}
+                />
+                {timerRunning
+                  ? "Pause"
+                  : timerSec === 0
+                    ? "Restart"
+                    : "Start timer"}
+              </button>
+              <span
+                style={{
+                  color: "var(--text-3)",
+                  fontWeight: 600,
+                  fontSize: 13,
+                }}
+              >
+                Suggested &middot; {Math.round(timerInitial / 60)} min
+              </span>
+            </div>
+          )}
+
+          {idx === lastIdx && (
+            <div className="banner banner-success">
+              <span className="em">&#x1F389;</span>
+              <div>
+                <b>Last step — you've got this!</b>
+                <div style={{ fontSize: 15, fontWeight: 500 }}>
+                  Tap "Finish" when you're done plating.
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="cook-footer">
+        <button
+          className="btn btn-secondary"
+          onClick={() => setIdx((i) => Math.max(0, i - 1))}
+          disabled={idx === 0}
+        >
+          <Icon name="arrow-l" size={16} /> Back
+        </button>
+
+        <div className="progress-track" aria-label="Progress">
+          <div
+            className="progress-fill"
+            style={{
+              width: `${progress}%`,
+              background: "var(--success)",
+            }}
+          />
+        </div>
+
+        {idx < lastIdx ? (
+          <button
+            className="btn btn-success"
+            onClick={() => setIdx((i) => i + 1)}
+          >
+            Next <Icon name="arrow-r" size={16} />
+          </button>
+        ) : (
+          <button className="btn btn-success" onClick={onExit}>
+            <Icon name="check" size={16} /> Finish
+          </button>
+        )}
+      </footer>
+    </div>
+  );
+}
