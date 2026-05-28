@@ -1,8 +1,14 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Icon } from "../components/Icon";
-import { RECIPES } from "../data/recipes";
+import { getRecipe } from "../store";
 import { ingredientLine } from "../helpers";
+
+function parseServings(s: string | null): number {
+  if (!s) return 4;
+  const n = parseInt(s, 10);
+  return isNaN(n) ? 4 : n;
+}
 
 export function RecipeDetail({
   saved,
@@ -13,9 +19,10 @@ export function RecipeDetail({
 }) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const recipe = RECIPES.find((r) => r.id === id);
+  const recipe = getRecipe(id ?? "");
 
-  const [servings, setServings] = useState(recipe?.servings ?? 4);
+  const baseServings = parseServings(recipe?.servings ?? null);
+  const [servings, setServings] = useState(baseServings);
   const [checked, setChecked] = useState<Record<number, boolean>>({});
 
   if (!recipe) {
@@ -29,13 +36,22 @@ export function RecipeDetail({
     );
   }
 
-  const scale = servings / recipe.servings;
-  const adjusted = servings !== recipe.servings;
+  const scale = servings / baseServings;
+  const adjusted = servings !== baseServings;
   const toggleCheck = (i: number) =>
     setChecked((s) => ({ ...s, [i]: !s[i] }));
   const checkedCount = Object.values(checked).filter(Boolean).length;
   const allChecked = checkedCount === recipe.ingredients.length;
   const isSaved = !!saved[recipe.id];
+
+  const timeDisplay = recipe.total_time || recipe.cook_time || recipe.prep_time;
+  const sourceDomain = (() => {
+    try {
+      return new URL(recipe.source_url).hostname.replace(/^www\./, "");
+    } catch {
+      return recipe.source_url;
+    }
+  })();
 
   return (
     <div className="page">
@@ -76,19 +92,42 @@ export function RecipeDetail({
           marginBottom: 40,
         }}
       >
-        <div
-          className="recipe-thumb"
-          style={{
-            background: recipe.color,
-            borderRadius: "var(--r-xl)",
-            border: "2px solid var(--border)",
-            aspectRatio: "5/4",
-            minHeight: 280,
-          }}
-        >
-          <div className="ph">{recipe.title}</div>
-          <span className="source">{recipe.source}</span>
-        </div>
+        {recipe.image_url ? (
+          <div
+            style={{
+              borderRadius: "var(--r-xl)",
+              border: "2px solid var(--border)",
+              overflow: "hidden",
+              aspectRatio: "5/4",
+              minHeight: 280,
+            }}
+          >
+            <img
+              src={recipe.image_url}
+              alt={recipe.title}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                display: "block",
+              }}
+            />
+          </div>
+        ) : (
+          <div
+            className="recipe-thumb"
+            style={{
+              background: "var(--surface-2, #C39267)",
+              borderRadius: "var(--r-xl)",
+              border: "2px solid var(--border)",
+              aspectRatio: "5/4",
+              minHeight: 280,
+            }}
+          >
+            <div className="ph">{recipe.title}</div>
+            <span className="source">{sourceDomain}</span>
+          </div>
+        )}
         <div className="col" style={{ justifyContent: "center", gap: 16 }}>
           <span className="tag tag-soft" style={{ alignSelf: "flex-start" }}>
             <Icon name="sparkle" size={12} /> Recipe
@@ -104,33 +143,37 @@ export function RecipeDetail({
           >
             {recipe.title}
           </h1>
-          <p
-            style={{
-              color: "var(--text-2)",
-              fontSize: 17,
-              lineHeight: 1.5,
-              textWrap: "pretty",
-              maxWidth: 460,
-            }}
-          >
-            {recipe.summary}
-          </p>
           <div
             className="row"
             style={{ flexWrap: "wrap", gap: 10, marginTop: 6 }}
           >
-            <span className="stat">
-              <Icon name="clock" size={16} />
-              {recipe.timeMin} min
-            </span>
+            {timeDisplay && (
+              <span className="stat">
+                <Icon name="clock" size={16} />
+                {timeDisplay}
+              </span>
+            )}
             <span className="stat">
               <Icon name="users" size={16} />
               {servings} servings
             </span>
-            <span className="stat">
-              <Icon name="sparkle" size={16} />
-              {recipe.difficulty}
-            </span>
+          </div>
+          <div
+            style={{
+              fontSize: 13,
+              color: "var(--text-3)",
+              fontWeight: 500,
+            }}
+          >
+            From{" "}
+            <a
+              href={recipe.source_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "var(--text-2)", textDecoration: "underline" }}
+            >
+              {sourceDomain}
+            </a>
           </div>
           <div
             className="row print-hide"
@@ -201,7 +244,7 @@ export function RecipeDetail({
                 }}
               >
                 {adjusted
-                  ? `Originally ${recipe.servings}`
+                  ? `Originally ${baseServings}`
                   : "Scale up or down"}
               </div>
             </div>
@@ -292,10 +335,10 @@ export function RecipeDetail({
         <section>
           <div className="section-header">
             <h2>Steps</h2>
-            <span className="eyebrow">{recipe.steps.length} steps</span>
+            <span className="eyebrow">{recipe.instructions.length} steps</span>
           </div>
           <div className="col" style={{ gap: 14 }}>
-            {recipe.steps.map((step, i) => (
+            {recipe.instructions.map((step, i) => (
               <div
                 key={i}
                 className="card"

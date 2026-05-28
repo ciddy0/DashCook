@@ -36,13 +36,6 @@ function App() {
     }
   });
 
-  // seed defaults for demo
-  useEffect(() => {
-    if (Object.keys(saved).length === 0) {
-      setSaved({ "olive-oil-cake": true, "miso-soup": true });
-    }
-  }, []);
-
   // persist
   useEffect(() => {
     try {

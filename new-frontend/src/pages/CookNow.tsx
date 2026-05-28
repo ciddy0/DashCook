@@ -1,21 +1,24 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Icon } from "../components/Icon";
-import { RECIPES } from "../data/recipes";
-import { ingredientLine, fmtTime } from "../helpers";
+import { getRecipe } from "../store";
+import { ingredientLine } from "../helpers";
+
+function parseServings(s: string | null): number {
+  if (!s) return 4;
+  const n = parseInt(s, 10);
+  return isNaN(n) ? 4 : n;
+}
 
 export function CookNow() {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const recipe = RECIPES.find((r) => r.id === id);
-  const servings = Number(searchParams.get("servings")) || recipe?.servings || 4;
+  const recipe = getRecipe(id ?? "");
+  const baseServings = parseServings(recipe?.servings ?? null);
+  const servings = Number(searchParams.get("servings")) || baseServings;
 
   const [idx, setIdx] = useState(0);
-  const [timerSec, setTimerSec] = useState(0);
-  const [timerRunning, setTimerRunning] = useState(false);
-  const [timerInitial, setTimerInitial] = useState(0);
-  const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   if (!recipe) {
     return (
@@ -28,44 +31,12 @@ export function CookNow() {
     );
   }
 
-  const scale = servings / recipe.servings;
-  const step = recipe.steps[idx];
-  const suggestedSec = recipe.timers[idx];
-  const lastIdx = recipe.steps.length - 1;
-  const progress = ((idx + 1) / recipe.steps.length) * 100;
+  const scale = servings / baseServings;
+  const step = recipe.instructions[idx];
+  const lastIdx = recipe.instructions.length - 1;
+  const progress = ((idx + 1) / recipe.instructions.length) * 100;
 
   const onExit = () => navigate(`/recipe/${recipe.id}`);
-
-  // arm timer when step changes
-  useEffect(() => {
-    setTimerRunning(false);
-    if (suggestedSec) {
-      setTimerSec(suggestedSec);
-      setTimerInitial(suggestedSec);
-    } else {
-      setTimerSec(0);
-      setTimerInitial(0);
-    }
-  }, [idx, suggestedSec]);
-
-  // tick
-  useEffect(() => {
-    if (timerRunning && timerSec > 0) {
-      tickRef.current = setInterval(() => {
-        setTimerSec((s) => {
-          if (s <= 1) {
-            clearInterval(tickRef.current!);
-            setTimerRunning(false);
-            return 0;
-          }
-          return s - 1;
-        });
-      }, 1000);
-      return () => {
-        if (tickRef.current) clearInterval(tickRef.current);
-      };
-    }
-  }, [timerRunning]);
 
   // keyboard nav
   useEffect(() => {
@@ -73,14 +44,10 @@ export function CookNow() {
       if (e.key === "ArrowRight") setIdx((i) => Math.min(lastIdx, i + 1));
       else if (e.key === "ArrowLeft") setIdx((i) => Math.max(0, i - 1));
       else if (e.key === "Escape") onExit();
-      else if (e.key === " " && timerInitial > 0) {
-        e.preventDefault();
-        setTimerRunning((r) => !r);
-      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [lastIdx, timerInitial]);
+  }, [lastIdx]);
 
   // ingredients used in this step
   const stepIngredients =
@@ -119,10 +86,10 @@ export function CookNow() {
         <div className="cook-step-card">
           <div className="cook-step-num">
             <span>
-              Step {idx + 1} of {recipe.steps.length}
+              Step {idx + 1} of {recipe.instructions.length}
             </span>
             <div style={{ display: "flex", gap: 6 }}>
-              {recipe.steps.map((_, i) => (
+              {recipe.instructions.map((_, i) => (
                 <span
                   key={i}
                   className={
@@ -164,56 +131,6 @@ export function CookNow() {
                   more — check the Ingredients tab anytime.
                 </div>
               )}
-            </div>
-          )}
-
-          {timerInitial > 0 && (
-            <div
-              className="row"
-              style={{
-                gap: 14,
-                flexWrap: "wrap",
-                alignItems: "center",
-              }}
-            >
-              <div
-                className={
-                  "timer" + (timerRunning ? " running" : "")
-                }
-              >
-                <Icon name="timer" size={20} />
-                <span className="face">{fmtTime(timerSec)}</span>
-              </div>
-              <button
-                className={
-                  "btn " +
-                  (timerRunning ? "btn-danger" : "btn-warning")
-                }
-                onClick={() => {
-                  if (timerSec === 0) setTimerSec(timerInitial);
-                  setTimerRunning((r) => !r);
-                }}
-                disabled={timerInitial === 0}
-              >
-                <Icon
-                  name={timerRunning ? "pause" : "play"}
-                  size={16}
-                />
-                {timerRunning
-                  ? "Pause"
-                  : timerSec === 0
-                    ? "Restart"
-                    : "Start timer"}
-              </button>
-              <span
-                style={{
-                  color: "var(--text-3)",
-                  fontWeight: 600,
-                  fontSize: 13,
-                }}
-              >
-                Suggested &middot; {Math.round(timerInitial / 60)} min
-              </span>
             </div>
           )}
 

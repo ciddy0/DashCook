@@ -10,12 +10,33 @@ function RecipeThumb({
   saved: boolean;
   onToggleSave: (id: string) => void;
 }) {
+  const sourceDomain = (() => {
+    try {
+      return new URL(recipe.source_url).hostname.replace(/^www\./, "");
+    } catch {
+      return recipe.source_url;
+    }
+  })();
+
   return (
-    <div className="recipe-thumb" style={{ background: recipe.color }}>
-      <div className="ph">
-        {recipe.title.split(" ").slice(0, 3).join(" ")}
-      </div>
-      <span className="source">{recipe.source}</span>
+    <div
+      className="recipe-thumb"
+      style={
+        recipe.image_url
+          ? {
+              backgroundImage: `url(${recipe.image_url})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }
+          : { background: "var(--surface-2, #C39267)" }
+      }
+    >
+      {!recipe.image_url && (
+        <div className="ph">
+          {recipe.title.split(" ").slice(0, 3).join(" ")}
+        </div>
+      )}
+      <span className="source">{sourceDomain}</span>
       <button
         className={"save" + (saved ? " saved" : "")}
         onClick={(e) => {
@@ -42,6 +63,9 @@ export function RecipeCard({
   onToggleSave: (id: string) => void;
   onOpen: (id: string) => void;
 }) {
+  const timeDisplay = recipe.total_time || recipe.cook_time || recipe.prep_time;
+  const servings = recipe.servings ? parseInt(recipe.servings, 10) : null;
+
   return (
     <div className="recipe-card" onClick={() => onOpen(recipe.id)}>
       <RecipeThumb
@@ -52,15 +76,16 @@ export function RecipeCard({
       <div className="recipe-body">
         <div className="recipe-title">{recipe.title}</div>
         <div className="recipe-meta">
-          <span>
-            <Icon name="clock" size={14} /> {recipe.timeMin} min
-          </span>
-          <span>
-            <Icon name="users" size={14} /> Serves {recipe.servings}
-          </span>
-          <span>
-            <Icon name="sparkle" size={14} /> {recipe.difficulty}
-          </span>
+          {timeDisplay && (
+            <span>
+              <Icon name="clock" size={14} /> {timeDisplay}
+            </span>
+          )}
+          {servings && (
+            <span>
+              <Icon name="users" size={14} /> Serves {servings}
+            </span>
+          )}
         </div>
       </div>
     </div>

@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Icon } from "../components/Icon";
 import { RecipeCard } from "../components/RecipeCard";
-import { RECIPES } from "../data/recipes";
+import { extractRecipe } from "../api";
+import { getRecipes, addRecipe } from "../store";
 import type { Recipe } from "../types";
 
 export function Home({
@@ -19,7 +20,7 @@ export function Home({
 
   const onOpen = (id: string) => navigate(`/recipe/${id}`);
 
-  const submit = (e?: React.FormEvent) => {
+  const submit = async (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!url.trim()) {
       setError("Paste a recipe link first :)");
@@ -33,16 +34,22 @@ export function Home({
     }
     setError("");
     setPasting(true);
-    setTimeout(() => {
-      setPasting(false);
-      const r = RECIPES[Math.floor(Math.random() * RECIPES.length)];
-      navigate(`/recipe/${r.id}`);
+    try {
+      const recipe = await extractRecipe(url.trim());
+      addRecipe(recipe);
       setUrl("");
-    }, 1100);
+      navigate(`/recipe/${recipe.id}`);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Something went wrong. Please try again."
+      );
+    } finally {
+      setPasting(false);
+    }
   };
 
-  const recent = RECIPES.slice(0, 3);
-  const savedRecipes: Recipe[] = RECIPES.filter((r) => saved[r.id]);
+  const recent = getRecipes();
+  const savedRecipes: Recipe[] = recent.filter((r) => saved[r.id]);
 
   return (
     <div className="page">
@@ -123,23 +130,25 @@ export function Home({
       </section>
 
       {/* Recently extracted */}
-      <section style={{ marginBottom: 56 }}>
-        <div className="section-header">
-          <h2>Recently extracted</h2>
-          <span className="eyebrow">Last 7 days</span>
-        </div>
-        <div className="recipe-grid">
-          {recent.map((r) => (
-            <RecipeCard
-              key={r.id}
-              recipe={r}
-              saved={!!saved[r.id]}
-              onToggleSave={onToggleSave}
-              onOpen={onOpen}
-            />
-          ))}
-        </div>
-      </section>
+      {recent.length > 0 && (
+        <section style={{ marginBottom: 56 }}>
+          <div className="section-header">
+            <h2>Recently extracted</h2>
+            <span className="eyebrow">{recent.length} recipes</span>
+          </div>
+          <div className="recipe-grid">
+            {recent.map((r) => (
+              <RecipeCard
+                key={r.id}
+                recipe={r}
+                saved={!!saved[r.id]}
+                onToggleSave={onToggleSave}
+                onOpen={onOpen}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Saved */}
       <section>
@@ -175,12 +184,6 @@ export function Home({
               Tap the bookmark on any recipe to keep it. We'll remember the
               servings you cooked with last time.
             </p>
-            <button
-              className="btn btn-accent"
-              onClick={() => onToggleSave(RECIPES[0].id)}
-            >
-              Save one to try
-            </button>
           </div>
         ) : (
           <div className="recipe-grid">

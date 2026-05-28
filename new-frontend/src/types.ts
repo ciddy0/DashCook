@@ -1,21 +1,23 @@
 export interface Ingredient {
-  qty: number;
-  unit: string;
-  item: string;
+  raw: string;
+  name: string;
+  quantity: number | null;
+  quantity_max: number | null;
+  unit: string | null;
+  scalable: boolean;
 }
 
 export interface Recipe {
   id: string;
   title: string;
-  source: string;
-  color: string;
-  timeMin: number;
-  servings: number;
-  difficulty: string;
-  summary: string;
+  source_url: string;
+  image_url: string | null;
+  prep_time: string | null;
+  cook_time: string | null;
+  total_time: string | null;
+  servings: string | null;
   ingredients: Ingredient[];
-  steps: string[];
-  timers: Record<number, number>;
+  instructions: string[];
 }
 
 export type ThemeName = "cream" | "dark" | "calico" | "espresso";

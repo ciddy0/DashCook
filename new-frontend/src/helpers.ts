@@ -43,7 +43,7 @@ export function ingredientLine(
   ing: Ingredient,
   scale: number
 ): { qty: string; item: string } {
-  const q = ing.qty ? ing.qty * scale : 0;
-  const qtyStr = q ? fmtQty(q, ing.unit) : "";
-  return { qty: qtyStr, item: ing.item };
+  const q = ing.quantity ? ing.quantity * scale : 0;
+  const qtyStr = q ? fmtQty(q, ing.unit ?? undefined) : "";
+  return { qty: qtyStr, item: ing.name };
 }
