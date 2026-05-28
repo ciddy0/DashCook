@@ -12,13 +12,13 @@ export function TermsPage({ onClose }: PageProps) {
 
       <h3>1. Acceptance of Terms</h3>
       <p>
-        By accessing and using Catsous ("the Service"), you agree to be bound by
+        By accessing and using SousChat ("the Service"), you agree to be bound by
         these Terms of Service. If you do not agree, please do not use the Service.
       </p>
 
       <h3>2. Description of Service</h3>
       <p>
-        Catsous is a recipe aggregation tool that helps you cook recipes from
+        SousChat is a recipe aggregation tool that helps you cook recipes from
         around the web. We do not host original recipe content — we parse and
         present recipes from their original sources for personal, non-commercial
         use.
@@ -33,8 +33,8 @@ export function TermsPage({ onClose }: PageProps) {
 
       <h3>4. Intellectual Property</h3>
       <p>
-        Recipe content belongs to its original authors and publishers. Catsous
-        claims no ownership over third-party recipe content. The Catsous brand,
+        Recipe content belongs to its original authors and publishers. SousChat
+        claims no ownership over third-party recipe content. The SousChat brand,
         design, and code are proprietary.
       </p>
 
@@ -62,7 +62,7 @@ export function PrivacyPage({ onClose }: PageProps) {
 
       <h3>What We Collect</h3>
       <p>
-        Catsous collects minimal data. We store your saved recipes and preferences
+        SousChat collects minimal data. We store your saved recipes and preferences
         locally in your browser. We do not require an account or collect personal
         information.
       </p>
@@ -89,7 +89,7 @@ export function PrivacyPage({ onClose }: PageProps) {
       <h3>Your Rights</h3>
       <p>
         Since all data is stored locally in your browser, you have full control.
-        Clear your browser data at any time to remove all Catsous data.
+        Clear your browser data at any time to remove all SousChat data.
       </p>
     </FooterOverlay>
   );
@@ -103,7 +103,7 @@ export function SecurityPage({ onClose }: PageProps) {
 
       <h3>Our Approach</h3>
       <p>
-        Catsous is designed with a security-first mindset. We minimize data
+        SousChat is designed with a security-first mindset. We minimize data
         collection, avoid storing sensitive information, and keep the attack
         surface small.
       </p>
@@ -125,7 +125,7 @@ export function SecurityPage({ onClose }: PageProps) {
       <h3>Reporting Vulnerabilities</h3>
       <p>
         If you discover a security issue, please reach out responsibly. We
-        appreciate the community's help keeping Catsous safe for everyone.
+        appreciate the community's help keeping SousChat safe for everyone.
       </p>
     </FooterOverlay>
   );
@@ -173,7 +173,7 @@ export function CreditsPage({ onClose }: PageProps) {
 
       <h3>Inspiration</h3>
       <p>
-        Catsous was inspired by the desire to make cooking from the web less
+        SousChat was inspired by the desire to make cooking from the web less
         cluttered — no ads, no life stories, just the recipe. Named after a very
         opinionated cat.
       </p>
@@ -190,10 +190,10 @@ export function CreditsPage({ onClose }: PageProps) {
 export function AboutPage({ onClose }: PageProps) {
   return (
     <FooterOverlay title="About" onClose={onClose}>
-      <h2>About Catsous</h2>
+      <h2>About SousChat</h2>
 
       <p>
-        Catsous is a recipe tool that strips away the clutter. Paste a recipe URL
+        SousChat is a recipe tool that strips away the clutter. Paste a recipe URL
         and get a clean, readable version with adjustable servings and a
         distraction-free Cook Mode.
       </p>
@@ -201,13 +201,13 @@ export function AboutPage({ onClose }: PageProps) {
       <h3>Why?</h3>
       <p>
         Recipe websites are full of ads, pop-ups, and multi-paragraph backstories.
-        Catsous extracts just the recipe — ingredients, steps, times — and
+        SousChat extracts just the recipe — ingredients, steps, times — and
         presents it in a clean interface designed for actually cooking.
       </p>
 
       <h3>How It Works</h3>
       <p>
-        Paste a URL, and Catsous fetches the page, extracts structured recipe data
+        Paste a URL, and SousChat fetches the page, extracts structured recipe data
         (using schema.org markup and heuristic parsing), and renders it in a
         consistent, readable format. Everything runs locally in your browser after
         the initial parse.
@@ -215,7 +215,7 @@ export function AboutPage({ onClose }: PageProps) {
 
       <h3>Not Affiliated</h3>
       <p>
-        Catsous is an independent project and is not affiliated with any of the
+        SousChat is an independent project and is not affiliated with any of the
         recipe sites it can parse. All recipe content belongs to its original
         authors.
       </p>

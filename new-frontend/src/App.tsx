@@ -14,12 +14,12 @@ function App() {
   const isCookMode = location.pathname.startsWith("/cook/");
 
   const [theme, setTheme] = useState<ThemeName>(() => {
-    const stored = localStorage.getItem("catsous.theme");
+    const stored = localStorage.getItem("souschat.theme");
     return THEMES.includes(stored as ThemeName) ? (stored as ThemeName) : "cream";
   });
 
   useEffect(() => {
-    localStorage.setItem("catsous.theme", theme);
+    localStorage.setItem("souschat.theme", theme);
     for (const t of THEMES) {
       document.body.classList.remove(`theme-${t}`);
     }
@@ -30,7 +30,7 @@ function App() {
 
   const [saved, setSaved] = useState<Record<string, boolean>>(() => {
     try {
-      return JSON.parse(localStorage.getItem("catsous.saved") || "{}");
+      return JSON.parse(localStorage.getItem("souschat.saved") || "{}");
     } catch {
       return {};
     }
@@ -46,7 +46,7 @@ function App() {
   // persist
   useEffect(() => {
     try {
-      localStorage.setItem("catsous.saved", JSON.stringify(saved));
+      localStorage.setItem("souschat.saved", JSON.stringify(saved));
     } catch {
 
     }

@@ -52,7 +52,7 @@ export function Home({
           Paste a recipe. Get the <span className="hl">recipe</span>.
         </h1>
         <p className="sub">
-          catsous strips the ads, the life stories, and the SEO fluff — and
+          souschat strips the ads, the life stories, and the SEO fluff — and
           gives you a calm, cookable recipe you can actually use in the
           kitchen.
         </p>

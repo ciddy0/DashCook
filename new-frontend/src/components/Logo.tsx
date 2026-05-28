@@ -4,7 +4,7 @@ export function Logo({ onClick }: { onClick?: () => void }) {
       <span className="logo-mark">
         <span>c</span>
       </span>
-      <span>catsous</span>
+      <span>souschat</span>
     </div>
   );
 }
