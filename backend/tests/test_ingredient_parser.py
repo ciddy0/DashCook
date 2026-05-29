@@ -438,3 +438,57 @@ def test_nested_paren_no_trailing_comma_cooking_salt():
     assert "cooking salt" in ing.name
     assert " ," not in ing.name
     assert ",)" not in ing.name
+
+
+# --- compound quantity tests ---
+
+def test_compound_qty_spaced_plus():
+    """'1/4 cup + 1 tablespoon cocoa powder (30g)' → two ingredients sharing the name."""
+    ings = parse_ingredients("1/4 cup +1 tablespoon Dutch-process cocoa powder (30g)")
+    assert len(ings) == 2
+    assert ings[0].quantity == 0.25
+    assert ings[0].unit == "cup"
+    assert ings[1].quantity == 1.0
+    assert ings[1].unit == "tablespoon"
+    for ing in ings:
+        assert "Dutch-process cocoa powder" in ing.name
+        assert "30g" in ing.name
+
+
+def test_compound_qty_concatenated_plus():
+    """'1/4 cup+1 tablespoon black cocoa powder (30g)' → two ingredients."""
+    ings = parse_ingredients("1/4 cup+1 tablespoon black cocoa powder (30g)")
+    assert len(ings) == 2
+    assert ings[0].quantity == 0.25
+    assert ings[0].unit == "cup"
+    assert ings[1].quantity == 1.0
+    assert ings[1].unit == "tablespoon"
+    for ing in ings:
+        assert "black cocoa powder" in ing.name
+
+
+def test_compound_qty_tbsp_plus_tsp():
+    """'2 tablespoons + 1 teaspoon vanilla extract' → two ingredients."""
+    ings = parse_ingredients("2 tablespoons + 1 teaspoon vanilla extract")
+    assert len(ings) == 2
+    assert ings[0].quantity == 2.0
+    assert ings[0].unit == "tablespoon"
+    assert ings[1].quantity == 1.0
+    assert ings[1].unit == "teaspoon"
+    for ing in ings:
+        assert ing.name == "vanilla extract"
+
+
+def test_compound_qty_no_false_positive():
+    """'1 cup peanut butter + jelly swirl' — no unit after +, so no split."""
+    ings = parse_ingredients("1 cup peanut butter + jelly swirl")
+    assert len(ings) == 1
+
+
+def test_compound_qty_normal_ingredient_unchanged():
+    """'2 cups flour' — no + sign, normal single ingredient."""
+    ings = parse_ingredients("2 cups flour")
+    assert len(ings) == 1
+    assert ings[0].quantity == 2.0
+    assert ings[0].unit == "cup"
+    assert ings[0].name == "flour"

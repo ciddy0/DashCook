@@ -229,6 +229,9 @@ def parse_ingredient(raw: str) -> Ingredient:
     # split concatenated qty+unit: "150g" → "150 g", "1.5kg" → "1.5 kg"
     stripped = re.sub(r'(?<![a-zA-Z])(\d+(?:\.\d+)?)(kg|ml|mL|g|oz|lb)\b', r'\1 \2', stripped)
 
+    # normalize '+' adjacent to digits: "cup+1" → "cup + 1", "+1" → "+ 1"
+    stripped = re.sub(r'\+(\d)', r'+ \1', stripped)
+
     tokens = stripped.split()
     quantity, quantity_max, consumed = _parse_quantity(tokens)
     tokens = tokens[consumed:]
@@ -329,9 +332,49 @@ _EACH_AND_PATTERN = re.compile(
 def parse_ingredients(raw: str) -> list[Ingredient]:
     """
     Parse a raw ingredient string into one or more Ingredient objects.
-    Handles 'N unit each X and Y' by splitting into two separate ingredients.
+    Handles compound quantities like '1/4 cup + 1 tablespoon cocoa powder'
+    and 'N unit each X and Y' by splitting into separate ingredients.
     """
-    m = _EACH_AND_PATTERN.match(raw.strip())
+    stripped = raw.strip()
+
+    # --- compound quantity: "1/4 cup + 1 tablespoon cocoa powder (30g)" ---
+    if "+" in stripped:
+        # Normalize concatenated +digit so the split works: "cup+1" → "cup+ 1"
+        normalized = re.sub(r'\+(\d)', r'+ \1', stripped)
+        parts = normalized.split("+", 1)
+        if len(parts) == 2:
+            left_raw = parts[0].strip()
+            right_raw = parts[1].strip()
+            # Parse the full left side — it might be just "1/4 cup" (no name)
+            # or "1/4 cup cocoa" if there's no second unit.
+            # Parse the right side as a full ingredient — it should have qty + unit + name.
+            right_ing = parse_ingredient(right_raw)
+            if right_ing.quantity is not None and right_ing.unit is not None and right_ing.name:
+                # Try parsing left as a standalone ingredient
+                left_ing = parse_ingredient(left_raw)
+                if left_ing.quantity is not None and left_ing.unit is not None:
+                    # Left has qty+unit but likely no meaningful name (or partial name).
+                    # The real ingredient name is on the right side.
+                    left_ing = Ingredient(
+                        raw=raw,
+                        name=right_ing.name,
+                        quantity=left_ing.quantity,
+                        quantity_max=left_ing.quantity_max,
+                        unit=left_ing.unit,
+                        scalable=left_ing.scalable,
+                    )
+                    right_ing = Ingredient(
+                        raw=raw,
+                        name=right_ing.name,
+                        quantity=right_ing.quantity,
+                        quantity_max=right_ing.quantity_max,
+                        unit=right_ing.unit,
+                        scalable=right_ing.scalable,
+                    )
+                    return [left_ing, right_ing]
+
+    # --- "N unit each X and Y" ---
+    m = _EACH_AND_PATTERN.match(stripped)
     if m:
         qty_str, unit_str, x, y = m.group(1), m.group(2), m.group(3), m.group(4)
         return [
