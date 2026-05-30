@@ -1,9 +1,11 @@
 from collections import defaultdict
 from time import time
-import os
 
-RATE_LIMIT = int(os.getenv("RATE_LIMIT", 30))
-WINDOW_SECONDS = 3600 
+from config import get_settings
+
+settings = get_settings()
+RATE_LIMIT = settings.rate_limit
+WINDOW_SECONDS = 3600
 
 _request_log: dict[str, list[float]] = defaultdict(list)
 
@@ -22,7 +24,6 @@ def check_rate_limit(ip: str) -> tuple[bool, int]:
     now = time()
     cutoff = now - WINDOW_SECONDS
 
-    # get rid of old entries (lazy cleanup)
     _request_log[ip] = [t for t in _request_log[ip] if t > cutoff]
 
     if len(_request_log[ip]) >= RATE_LIMIT:

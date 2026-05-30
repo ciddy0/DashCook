@@ -1,24 +1,24 @@
 import re
 from fractions import Fraction
 
-from schemas import Ingredient
+from models.recipes import Ingredient
 
 _unicode_fractions: dict[str, float] = {
-    "½": 0.5,
-    "¼": 0.25,
-    "¾": 0.75,
-    "⅓": 1 / 3,
-    "⅔": 2 / 3,
-    "⅛": 0.125,
-    "⅜": 0.375,
-    "⅝": 0.625,
-    "⅞": 0.875,
-    "⅙": 1 / 6,
-    "⅚": 5 / 6,
-    "⅕": 0.2,
-    "⅖": 0.4,
-    "⅗": 0.6,
-    "⅘": 0.8,
+    "\u00bd": 0.5,
+    "\u00bc": 0.25,
+    "\u00be": 0.75,
+    "\u2153": 1 / 3,
+    "\u2154": 2 / 3,
+    "\u215b": 0.125,
+    "\u215c": 0.375,
+    "\u215d": 0.625,
+    "\u215e": 0.875,
+    "\u2159": 1 / 6,
+    "\u215a": 5 / 6,
+    "\u2155": 0.2,
+    "\u2156": 0.4,
+    "\u2157": 0.6,
+    "\u2158": 0.8,
 }
 
 _word_numbers: dict[str, int] = {
@@ -49,8 +49,6 @@ _NON_SCALABLE_PHRASES: set[str] = {
     "to taste", "as needed", "for garnish", "optional", "for serving", "to serve",
 }
 
-# Words that signal the comma-separated tail is a prep instruction, not a qualifier.
-# Only strip after a comma if the first word of the tail is in this set.
 _PREP_VERBS: set[str] = {
     "peeled", "chopped", "diced", "sliced", "minced", "grated", "crushed",
     "melted", "softened", "beaten", "crumbled", "shredded", "halved",
@@ -59,9 +57,6 @@ _PREP_VERBS: set[str] = {
     "whisked", "zested", "juiced", "roughly", "finely", "thinly", "coarsely",
 }
 
-# Unit-like container/count words that follow a quantity but are not real units.
-# These are stripped from the name since they carry no ingredient info
-# (e.g. "2 cloves garlic" → name="garlic", "1 can tomatoes" → name="tomatoes").
 _COUNTABLE_WORDS: set[str] = {
     "clove", "cloves",
     "can", "cans",
@@ -70,7 +65,6 @@ _COUNTABLE_WORDS: set[str] = {
     "dash", "dashes",
 }
 
-# Words used in "a <word> of X" or "<word> of X" patterns (indefinite amounts)
 _INDEFINITE_AMOUNTS: set[str] = {
     "pinch", "dash", "handful", "bit", "drop", "splash", "drizzle",
 }
@@ -155,7 +149,6 @@ def _extract_paren_notes(raw: str) -> list[str]:
     Extract meaningful content from all parenthetical groups using stack-based
     parsing to handle nesting. Filters out 'Note N' references.
     """
-    # Collect top-level paren groups
     depth = 0
     groups: list[str] = []
     current: list[str] = []
@@ -177,7 +170,6 @@ def _extract_paren_notes(raw: str) -> list[str]:
 
     notes: list[str] = []
     for group in groups:
-        # Split outer content from inner parens
         inner_contents = re.findall(r"\(([^()]*)\)", group)
         outer = re.sub(r"\([^()]*\)", "", group).strip(",").strip()
 
@@ -185,12 +177,10 @@ def _extract_paren_notes(raw: str) -> list[str]:
             part = part.strip().strip(",").strip()
             if not part:
                 continue
-            # Skip "Note N" references and "see note(s)" / "*see note" annotations
             if re.match(r"^note\s*\d*", part, re.IGNORECASE):
                 continue
             if re.match(r"^\*?see\s+notes?", part, re.IGNORECASE):
                 continue
-            # Skip bare asterisk-prefixed annotations
             if part.startswith("*"):
                 continue
             notes.append(part)
@@ -220,23 +210,18 @@ def parse_ingredient(raw: str) -> Ingredient:
 
     paren_notes = _extract_paren_notes(raw)
 
-    # strip all parentheticals for the main quantity/unit/name parse
     stripped = _strip_parens(raw)
-    stripped = re.sub(r"\s+", " ", stripped).strip()   # normalize whitespace
-    stripped = stripped.strip(",").strip()              # strip leading/trailing commas
-    stripped = stripped.replace("*", "")               # strip annotation markers
+    stripped = re.sub(r"\s+", " ", stripped).strip()
+    stripped = stripped.strip(",").strip()
+    stripped = stripped.replace("*", "")
 
-    # split concatenated qty+unit: "150g" → "150 g", "1.5kg" → "1.5 kg"
     stripped = re.sub(r'(?<![a-zA-Z])(\d+(?:\.\d+)?)(kg|ml|mL|g|oz|lb)\b', r'\1 \2', stripped)
-
-    # normalize '+' adjacent to digits: "cup+1" → "cup + 1", "+1" → "+ 1"
     stripped = re.sub(r'\+(\d)', r'+ \1', stripped)
 
     tokens = stripped.split()
     quantity, quantity_max, consumed = _parse_quantity(tokens)
     tokens = tokens[consumed:]
 
-    # check for unit
     unit: str | None = None
     if tokens:
         unit_token = tokens[0]
@@ -247,9 +232,8 @@ def parse_ingredient(raw: str) -> Ingredient:
             unit = _UNITS[unit_token.lower()]
             tokens = tokens[1:]
 
-    # skip alternative measurement: "/ 3 tbsp" or "/ 1.5 oz" after primary qty+unit
     if tokens and tokens[0] == "/" and quantity is not None:
-        tokens = tokens[1:]  # skip "/"
+        tokens = tokens[1:]
         _, _, alt_consumed = _parse_quantity(tokens)
         if alt_consumed > 0:
             tokens = tokens[alt_consumed:]
@@ -258,27 +242,19 @@ def parse_ingredient(raw: str) -> Ingredient:
                 if alt_unit in _UNITS or alt_unit.lower() in _UNITS:
                     tokens = tokens[1:]
 
-    # skip unit-like container words (e.g. "cloves", "bunch", "can") when a quantity was parsed
-    # only when there are more tokens — don't strip if it would leave the name empty
     if tokens and unit is None and quantity is not None:
         check = tokens[0].lower().rstrip(",")
         if check in _COUNTABLE_WORDS and len(tokens) > 1:
             tokens = tokens[1:]
 
-    # strip leading "of" connector (e.g. "8 tablespoons of butter" → "butter")
     if tokens and tokens[0].lower() == "of":
         tokens = tokens[1:]
 
     name = " ".join(tokens).strip()
 
-    # if nothing was parsed as quantity (e.g. "juice of 1 lemon"), use full stripped string as name
     if quantity is None and not unit:
         name = stripped
 
-    # strip inline prep notes after comma only when the tail starts with a prep verb AND
-    # every word in the tail is a prep verb or simple connector.
-    # This preserves meaningful state descriptions like "softened to room temperature"
-    # while still stripping pure prep notes like "peeled and diced".
     _STRIP_CONNECTORS = {"and", "or", "the", "a", "an"}
     if "," in name:
         tail = name.split(",", 1)[1].strip().lower()
@@ -288,13 +264,11 @@ def parse_ingredient(raw: str) -> Ingredient:
             if tail_words.issubset(_PREP_VERBS | _STRIP_CONNECTORS):
                 name = name.split(",")[0].strip()
 
-    # handle indefinite amounts: "a pinch of X", "dash of X" → name = X
     if quantity is None and not unit:
         m = re.match(r'^(?:a\s+|an\s+)?(\w+)\s+of\s+(.+)$', name, re.IGNORECASE)
         if m and m.group(1).lower() in _INDEFINITE_AMOUNTS:
             name = m.group(2)
 
-    # handle reversed format: "Thai basil, 3 - 5 sprigs" → name="Thai basil", qty=3, qty_max=5, unit="sprig"
     if quantity is None and not unit:
         rev = re.search(r',?\s+(\d+(?:[./]\d+)?)\s*(?:-\s*(\d+(?:[./]\d+)?)\s+)?(\w+)$', name)
         if rev:
@@ -305,7 +279,6 @@ def parse_ingredient(raw: str) -> Ingredient:
                 quantity_max = float(rev.group(2)) if rev.group(2) else None
                 unit = _UNITS.get(unit_candidate) or _UNITS.get(unit_candidate.lower())
 
-    # re-append cleaned parenthetical content as "(note)"
     if paren_notes:
         name = name + " " + " ".join(f"({n})" for n in paren_notes)
 
@@ -319,7 +292,6 @@ def parse_ingredient(raw: str) -> Ingredient:
     )
 
 
-# Matches "1.5 tsp each salt and pepper" → splits into two ingredients
 _EACH_AND_PATTERN = re.compile(
     r"^([\d./½¼¾⅓⅔⅛⅜⅝⅞⅙⅚⅕⅖⅗⅘]+(?:\s+[\d./½¼¾⅓⅔⅛⅜⅝⅞⅙⅚⅕⅖⅗⅘]+)?)"
     r"\s+(\w+)"
@@ -337,24 +309,16 @@ def parse_ingredients(raw: str) -> list[Ingredient]:
     """
     stripped = raw.strip()
 
-    # --- compound quantity: "1/4 cup + 1 tablespoon cocoa powder (30g)" ---
     if "+" in stripped:
-        # Normalize concatenated +digit so the split works: "cup+1" → "cup+ 1"
         normalized = re.sub(r'\+(\d)', r'+ \1', stripped)
         parts = normalized.split("+", 1)
         if len(parts) == 2:
             left_raw = parts[0].strip()
             right_raw = parts[1].strip()
-            # Parse the full left side — it might be just "1/4 cup" (no name)
-            # or "1/4 cup cocoa" if there's no second unit.
-            # Parse the right side as a full ingredient — it should have qty + unit + name.
             right_ing = parse_ingredient(right_raw)
             if right_ing.quantity is not None and right_ing.unit is not None and right_ing.name:
-                # Try parsing left as a standalone ingredient
                 left_ing = parse_ingredient(left_raw)
                 if left_ing.quantity is not None and left_ing.unit is not None:
-                    # Left has qty+unit but likely no meaningful name (or partial name).
-                    # The real ingredient name is on the right side.
                     left_ing = Ingredient(
                         raw=raw,
                         name=right_ing.name,
@@ -373,7 +337,6 @@ def parse_ingredients(raw: str) -> list[Ingredient]:
                     )
                     return [left_ing, right_ing]
 
-    # --- "N unit each X and Y" ---
     m = _EACH_AND_PATTERN.match(stripped)
     if m:
         qty_str, unit_str, x, y = m.group(1), m.group(2), m.group(3), m.group(4)

@@ -1,18 +1,13 @@
-import os
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from database.pool import create_pool
-from database.cache import get_cached_recipe, cache_recipe
-from helpers import normalize_url
-from rate_limiter import check_rate_limit, get_client_ip
-from scraper import fetch_page
-from parser import parse_recipe
-from schemas import ExtractRequest, Recipe
-from validators import validate_url
+from config import get_settings
+from db.pool import create_pool
+from middleware.rate_limiter import check_rate_limit, get_client_ip
+from routes import health, recipes
 
 
 @asynccontextmanager
@@ -29,13 +24,14 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://localhost:3000")
+settings = get_settings()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[o.strip() for o in cors_origins.split(",")],
+    allow_origins=[o.strip() for o in settings.cors_origins.split(",")],
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
+
 
 @app.middleware("http")
 async def rate_limit_middleware(request: Request, call_next):
@@ -50,40 +46,6 @@ async def rate_limit_middleware(request: Request, call_next):
             )
     return await call_next(request)
 
-@app.get("/")
-def home():
-    return 'hai!'
 
-@app.get("/ping")
-def ping():
-    return 'pong'
-
-@app.post("/url", response_model=Recipe)
-async def get_recipe(req: Request, body: ExtractRequest):
-    url = normalize_url(str(body.url))
-
-    try:
-        validate_url(url)
-    except ValueError as e:
-        raise HTTPException(status_code=422, detail=str(e))
-
-    pool = req.app.state.pool
-    cached = await get_cached_recipe(pool, url)
-    if cached is not None:
-        return Recipe(**cached)
-
-    try:
-        html = await fetch_page(url)
-    except ValueError as e:
-        raise HTTPException(status_code=422, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=422, detail=f"failed to fetch URL D: {e}")
-
-    try:
-        recipe_data = parse_recipe(html)
-    except ValueError as e:
-        raise HTTPException(status_code=422, detail=str(e))
-
-    await cache_recipe(pool, url, recipe_data)
-    
-    return Recipe(source_url=url, **recipe_data)
+app.include_router(health.router)
+app.include_router(recipes.router)

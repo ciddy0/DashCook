@@ -1,7 +1,7 @@
 import json
 
-import asyncpg
 from pydantic import BaseModel
+
 
 class _PydanticEncoder(json.JSONEncoder):
     def default(self, obj):

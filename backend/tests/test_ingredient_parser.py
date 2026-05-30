@@ -3,7 +3,7 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from ingredient_parser import parse_ingredient, parse_ingredients
+from services.ingredient_parser import parse_ingredient, parse_ingredients
 
 
 def test_basic_cup():

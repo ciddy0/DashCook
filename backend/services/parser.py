@@ -2,8 +2,8 @@ import json
 import re
 from bs4 import BeautifulSoup
 
-from ingredient_parser import parse_ingredients
-from schemas import Ingredient
+from services.ingredient_parser import parse_ingredients
+from models.recipes import Ingredient
 
 def parse_recipe(html: str) -> dict:
     """
@@ -19,13 +19,13 @@ def parse_recipe(html: str) -> dict:
             data = json.loads(script.string)
         except (json.JSONDecodeError, TypeError):
             continue
-        
+
         recipe_data = _find_recipe(data)
         if recipe_data:
             break
     if not recipe_data:
         raise ValueError("no recipe schema found on this page D:")
-    
+
     fields = _extract_fields(recipe_data)
 
     if len(fields["ingredients"]) < 2:
@@ -73,8 +73,8 @@ def _extract_fields(recipe: dict) -> dict:
         "ingredients": _extract_ingredients(recipe.get("recipeIngredient", [])),
         "instructions": _extract_instructions(recipe.get("recipeInstructions", [])),
     }
- 
- 
+
+
 def _extract_image(image) -> str | None:
     """
     handle image as string, list of strings, or ImageObject
@@ -100,20 +100,20 @@ def _extract_servings(recipe_yield) -> str | None:
     if isinstance(recipe_yield, list) and len(recipe_yield) > 0:
         return str(recipe_yield[0])
     return None
- 
+
 def _extract_ingredients(ingredients: list) -> list[Ingredient]:
     raws = [_clean_text(ing) for ing in ingredients if isinstance(ing, str)]
     result = []
     for r in raws:
         result.extend(parse_ingredients(r))
     return result
- 
+
 def _extract_instructions(instructions) -> list[str]:
     """
     handle both plain strings and HowToStep objects
     """
     steps = []
- 
+
     if isinstance(instructions, list):
         for step in instructions:
             if isinstance(step, str):
@@ -127,32 +127,32 @@ def _extract_instructions(instructions) -> list[str]:
                     text = step.get("text", "")
                     if text:
                         steps.append(_clean_text(text))
- 
+
     return steps
- 
- 
+
+
 def _parse_duration(duration: str | None) -> str | None:
     """
     convert ISO 8601 duration (e.g. PT1H30M) to a readable string
     """
     if not duration:
         return None
- 
+
     match = re.match(r"PT(?:(\d+)H)?(?:(\d+)M)?", duration)
     if not match:
         return None
- 
+
     hours = int(match.group(1)) if match.group(1) else 0
     minutes = int(match.group(2)) if match.group(2) else 0
- 
+
     parts = []
     if hours:
         parts.append(f"{hours} hour{'s' if hours > 1 else ''}")
     if minutes:
         parts.append(f"{minutes} minute{'s' if minutes > 1 else ''}")
- 
+
     return " ".join(parts) if parts else None
- 
+
 def _clean_text(text: str) -> str:
     """
     strip HTML tags and decode entities

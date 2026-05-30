@@ -1,7 +1,6 @@
-import os
-
 import asyncpg
-from dotenv import load_dotenv
+
+from config import get_settings
 
 CREATE_TABLE_SQL = """
 CREATE TABLE IF NOT EXISTS recipes (
@@ -22,12 +21,11 @@ CREATE INDEX IF NOT EXISTS idx_recipes_title ON recipes (title);
 
 
 async def create_pool():
-    load_dotenv()
-    supabase_url = os.getenv("SUPABASE_URL")
+    settings = get_settings()
 
-    if supabase_url:
+    if settings.supabase_url:
         pool = await asyncpg.create_pool(
-            dsn=supabase_url,
+            dsn=settings.supabase_url,
             ssl="require",
             min_size=1,
             max_size=10,
@@ -35,8 +33,7 @@ async def create_pool():
         print("Connected to Supabase (production)")
         return pool
 
-    local_url = os.getenv("DATABASE_URL", "postgresql://dashcook:dashcook@localhost:5433/dashcook")
-    pool = await asyncpg.create_pool(dsn=local_url, min_size=1, max_size=5)
+    pool = await asyncpg.create_pool(dsn=settings.database_url, min_size=1, max_size=5)
     async with pool.acquire() as conn:
         await conn.execute(CREATE_TABLE_SQL)
     print("Connected to local PostgreSQL (development)")

@@ -6,6 +6,13 @@ MAX_URL_LENGTH = 2048
 ALLOWED_SCHEMES = {"http", "https"}
 
 
+def normalize_url(url: str) -> str:
+    parsed = urllib.parse.urlparse(url)
+    if parsed.path == "/":
+        return urllib.parse.urlunparse(parsed._replace(path=""))
+    return url
+
+
 def validate_url(url: str) -> None:
     """
     validate a url before making an http request.

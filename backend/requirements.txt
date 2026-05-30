@@ -3,4 +3,4 @@ uvicorn[standard]
 httpx
 beautifulsoup4
 asyncpg
-python-dotenv
+pydantic-settings
