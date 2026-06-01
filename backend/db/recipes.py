@@ -26,12 +26,14 @@ async def get_cached_recipe(pool, url: str):
             "instructions": json.loads(row["instructions"]),
         }
 
-async def cache_recipe(pool, url: str, recipe_data: dict):
+async def cache_recipe(
+    pool, url: str, recipe_data: dict, embedding: list[float] | None = None
+):
     async with pool.acquire() as conn:
         await conn.execute(
             """
-            INSERT INTO recipes (url, title, image_url, prep_time, cook_time, total_time, servings, ingredients, instructions)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            INSERT INTO recipes (url, title, image_url, prep_time, cook_time, total_time, servings, ingredients, instructions, embedding)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
             ON CONFLICT (url) DO UPDATE SET
                 title        = EXCLUDED.title,
                 image_url    = EXCLUDED.image_url,
@@ -40,7 +42,8 @@ async def cache_recipe(pool, url: str, recipe_data: dict):
                 total_time   = EXCLUDED.total_time,
                 servings     = EXCLUDED.servings,
                 ingredients  = EXCLUDED.ingredients,
-                instructions = EXCLUDED.instructions
+                instructions = EXCLUDED.instructions,
+                embedding    = COALESCE(EXCLUDED.embedding, recipes.embedding)
             """,
             url,
             recipe_data["title"],
@@ -51,4 +54,5 @@ async def cache_recipe(pool, url: str, recipe_data: dict):
             recipe_data.get("servings"),
             json.dumps(recipe_data["ingredients"], cls=_PydanticEncoder),
             json.dumps(recipe_data["instructions"]),
+            embedding,
         )

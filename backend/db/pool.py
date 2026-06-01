@@ -1,8 +1,11 @@
 import asyncpg
+from pgvector.asyncpg import register_vector
 
 from config import get_settings
 
 CREATE_TABLE_SQL = """
+CREATE EXTENSION IF NOT EXISTS vector;
+
 CREATE TABLE IF NOT EXISTS recipes (
     url          TEXT PRIMARY KEY,
     title        TEXT NOT NULL,
@@ -13,12 +16,17 @@ CREATE TABLE IF NOT EXISTS recipes (
     servings     TEXT,
     ingredients  JSONB NOT NULL DEFAULT '[]',
     instructions JSONB NOT NULL DEFAULT '[]',
+    embedding    vector(1024),
+    section_id   INTEGER,
     created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_recipes_title ON recipes (title);
 """
 
+
+async def _init_connection(conn):
+    await register_vector(conn)
 
 async def create_pool():
     settings = get_settings()
@@ -29,12 +37,22 @@ async def create_pool():
             ssl="require",
             min_size=1,
             max_size=10,
+            init=_init_connection,
         )
         print("Connected to Supabase (production)")
         return pool
 
-    pool = await asyncpg.create_pool(dsn=settings.database_url, min_size=1, max_size=5)
-    async with pool.acquire() as conn:
+    conn = await asyncpg.connect(dsn=settings.database_url)
+    try:
         await conn.execute(CREATE_TABLE_SQL)
+    finally:
+        await conn.close()
+
+    pool = await asyncpg.create_pool(
+        dsn=settings.database_url,
+        min_size=1,
+        max_size=5,
+        init=_init_connection,
+    )
     print("Connected to local PostgreSQL (development)")
     return pool

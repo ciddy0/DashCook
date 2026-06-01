@@ -6,7 +6,7 @@ from db.recipes import get_cached_recipe, cache_recipe
 from services.scraper import fetch_page
 from services.parser import parse_recipe
 from models.recipes import Recipe
-
+from services.embedder import generate_embedding
 
 async def extract_recipe(pool: asyncpg.Pool, raw_url: str) -> Recipe:
     url = normalize_url(raw_url)
@@ -32,6 +32,7 @@ async def extract_recipe(pool: asyncpg.Pool, raw_url: str) -> Recipe:
     except ValueError as e:
         raise HTTPException(status_code=422, detail=str(e))
 
-    await cache_recipe(pool, url, recipe_data)
+    embedding = await generate_embedding(recipe_data)
+    await cache_recipe(pool, url, recipe_data, embedding)
 
     return Recipe(source_url=url, **recipe_data)
