@@ -92,3 +92,39 @@ async def get_similar_recipes(pool, url: str, limit: int=5):
             }
             for r in rows
         ]
+    
+async def search_recipes(
+    pool,
+    query_embedding: list[float],
+    limit: int = 10,
+):
+    conditions = ["embedding IS NOT NULL"]
+    params: list = [query_embedding]  # $1
+
+    params.append(limit)
+    limit_placeholder = f"${len(params)}"
+    where = " AND ".join(conditions)
+
+    sql = f"""
+        SELECT title,
+               url AS source_url,
+               image_url,
+               embedding <=> $1 AS distance
+        FROM recipes
+        WHERE {where}
+        ORDER BY embedding <=> $1
+        LIMIT {limit_placeholder}
+    """
+
+    async with pool.acquire() as conn:
+        rows = await conn.fetch(sql, *params)
+
+    return [
+        {
+            "title": r["title"],
+            "source_url": r["source_url"],
+            "image_url": r["image_url"],
+            "distance": r["distance"],
+        }
+        for r in rows
+    ]

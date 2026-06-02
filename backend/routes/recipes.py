@@ -5,7 +5,8 @@ from models.requests import ExtractRequest
 from models.recipes import Recipe
 from models.recipes import SimilarRecipe
 from services.recipe_service import extract_recipe
-from db.recipes import get_similar_recipes
+from db.recipes import get_similar_recipes, search_recipes
+from services.embedder import embed_query
 
 router = APIRouter()
 
@@ -28,3 +29,15 @@ async def similar_recipes(
             detail="Recipe not found or has no embedding",
         )
     return results
+
+@router.get("/search", response_model=list[SimilarRecipe])
+async def search(
+    pool: DbPool,
+    q: str = Query(..., min_length=1, description="Free-text recipe search query"),
+    limit: int = Query(10, ge=1, le=50),
+):
+    try:
+        query_embedding = await embed_query(q)
+    except Exception:
+        raise HTTPException(status_code=503, detail="Embedding service unavailable")
+    return await search_recipes(pool, query_embedding, limit)
