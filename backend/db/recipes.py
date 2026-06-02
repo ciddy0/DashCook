@@ -56,3 +56,39 @@ async def cache_recipe(
             json.dumps(recipe_data["instructions"]),
             embedding,
         )
+
+async def get_similar_recipes(pool, url: str, limit: int=5):
+    async with pool.acquire() as conn:
+        # Distinguish "no row" / "null embedding" from "has embedding".
+        # fetchval returns None (no row) or a bool (embedding IS NOT NULL).
+        has_embedding = await conn.fetchval(
+            "SELECT embedding IS NOT NULL FROM recipes WHERE url = $1", url
+        )
+        if not has_embedding:
+            return None
+
+        rows = await conn.fetch(
+            """
+            SELECT r.title,
+                   r.url        AS source_url,
+                   r.image_url,
+                   r.embedding <=> src.embedding AS distance
+            FROM recipes r,
+                 (SELECT embedding FROM recipes WHERE url = $1) AS src
+            WHERE r.url != $1
+              AND r.embedding IS NOT NULL
+            ORDER BY r.embedding <=> src.embedding
+            LIMIT $2
+            """,
+            url,
+            limit,
+        )
+        return [
+            {
+                "title": r["title"],
+                "source_url": r["source_url"],
+                "image_url": r["image_url"],
+                "distance": r["distance"],
+            }
+            for r in rows
+        ]

@@ -20,3 +20,10 @@ class Recipe(BaseModel):
     servings: str | None = None
     ingredients: list[Ingredient]
     instructions: list[str]
+
+class SimilarRecipe(BaseModel):
+    title: str
+    source_url: str
+    image_url: str | None = None
+    distance: float
+

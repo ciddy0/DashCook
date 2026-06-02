@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS recipes (
     servings     TEXT,
     ingredients  JSONB NOT NULL DEFAULT '[]',
     instructions JSONB NOT NULL DEFAULT '[]',
-    embedding    vector(1024),
+    embedding    vector(2560),
     section_id   INTEGER,
     created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
