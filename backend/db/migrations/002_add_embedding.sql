@@ -1,0 +1,6 @@
+CREATE EXTENSION IF NOT EXISTS vector;
+
+ALTER TABLE recipes
+    ADD COLUMN IF NOT EXISTS embedding  vector(1024),
+    ADD COLUMN IF NOT EXISTS section_id INTEGER;
+    

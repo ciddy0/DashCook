@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     cors_origins: str = "http://localhost:5173,http://localhost:3000"
     rate_limit: int = 30
     ollama_host: str = "http://localhost:11434"
-    embedding_model: str = "qwen3-embedding:0.6b"
+    embedding_model: str = "qwen3-embedding:4b"
 
     model_config = {"env_file": ".env", "extra": "ignore"}
 

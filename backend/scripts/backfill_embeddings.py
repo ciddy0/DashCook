@@ -23,7 +23,7 @@ from config import get_settings
 from db.pool import create_pool
 from services.embedder import build_embed_text
 
-BATCH_SIZE = 50
+BATCH_SIZE = 5
 
 
 async def backfill() -> None:
@@ -69,7 +69,7 @@ async def backfill() -> None:
             for item, embedding in zip(batch, embeddings):
                 await pool.execute(
                     "UPDATE recipes SET embedding = $1 WHERE url = $2",
-                    str(embedding),
+                    embedding,
                     item["url"],
                 )
 
