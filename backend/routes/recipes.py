@@ -16,10 +16,10 @@ async def get_recipe(body: ExtractRequest, pool: DbPool):
     return await extract_recipe(pool, str(body.url))
 
 
-@router.get("/url/{url:path}/similar", response_model=list[SimilarRecipe])
+@router.get("/similar", response_model=list[SimilarRecipe])
 async def similar_recipes(
-    url: str,
     pool: DbPool,
+    url: str = Query(..., description="Source recipe URL"),
     limit: int = Query(5, ge=1, le=20),
 ):
     results = await get_similar_recipes(pool, url, limit)
