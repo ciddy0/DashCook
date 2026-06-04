@@ -1,7 +1,8 @@
-import type { Recipe } from "./types";
+import type { Recipe, SimilarRecipe } from "./types";
 
-const API_URL =
-  "https://dashcook-api.happygrass-bd874e33.westus3.azurecontainerapps.io/url";
+const API_BASE =
+  "https://dashcook-api.happygrass-bd874e33.westus3.azurecontainerapps.io";
+const API_URL = `${API_BASE}/url`;
 
 function slugify(text: string): string {
   return text
@@ -45,4 +46,18 @@ export async function extractRecipe(url: string): Promise<Recipe> {
     })),
     instructions: data.instructions ?? [],
   };
+}
+
+export async function fetchSimilarRecipes(
+  sourceUrl: string,
+  limit = 6,
+): Promise<SimilarRecipe[]> {
+  try {
+    const params = new URLSearchParams({ url: sourceUrl, limit: String(limit) });
+    const res = await fetch(`${API_BASE}/similar?${params}`);
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
 }

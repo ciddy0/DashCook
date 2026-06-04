@@ -20,4 +20,11 @@ export interface Recipe {
   instructions: string[];
 }
 
+export interface SimilarRecipe {
+  title: string;
+  source_url: string;
+  image_url: string | null;
+  distance: number;
+}
+
 export type ThemeName = "cream" | "dark" | "calico" | "espresso";

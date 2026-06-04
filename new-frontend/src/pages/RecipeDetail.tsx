@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Icon } from "../components/Icon";
+import { SimilarRecipeCard } from "../components/SimilarRecipeCard";
 import { getRecipe } from "../store";
+import { fetchSimilarRecipes } from "../api";
 import { ingredientLine } from "../helpers";
+import type { SimilarRecipe } from "../types";
 
 function parseServings(s: string | null): number {
   if (!s) return 4;
@@ -24,6 +27,17 @@ export function RecipeDetail({
   const baseServings = parseServings(recipe?.servings ?? null);
   const [servings, setServings] = useState(baseServings);
   const [checked, setChecked] = useState<Record<number, boolean>>({});
+  const [similarRecipes, setSimilarRecipes] = useState<SimilarRecipe[]>([]);
+  const [similarLoading, setSimilarLoading] = useState(false);
+
+  useEffect(() => {
+    if (!recipe) return;
+    setSimilarLoading(true);
+    fetchSimilarRecipes(recipe.source_url).then((results) => {
+      setSimilarRecipes(results);
+      setSimilarLoading(false);
+    });
+  }, [recipe?.source_url]);
 
   if (!recipe) {
     return (
@@ -129,9 +143,6 @@ export function RecipeDetail({
           </div>
         )}
         <div className="col" style={{ justifyContent: "center", gap: 16 }}>
-          <span className="tag tag-soft" style={{ alignSelf: "flex-start" }}>
-            <Icon name="sparkle" size={12} /> Recipe
-          </span>
           <h1
             style={{
               fontSize: 40,
@@ -372,6 +383,19 @@ export function RecipeDetail({
           </div>
         </section>
       </div>
+
+      {!similarLoading && similarRecipes.length > 0 && (
+        <section className="print-hide" style={{ marginTop: 48 }}>
+          <div className="section-header">
+            <h2>Similar Recipes</h2>
+          </div>
+          <div className="recipe-grid">
+            {similarRecipes.map((sr) => (
+              <SimilarRecipeCard key={sr.source_url} recipe={sr} />
+            ))}
+          </div>
+        </section>
+      )}
 
       <style>{`
         @media (max-width: 820px) {

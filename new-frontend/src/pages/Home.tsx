@@ -48,7 +48,7 @@ export function Home({
     }
   };
 
-  const recent = getRecipes();
+  const recent = getRecipes().slice(0, 4);
   const savedRecipes: Recipe[] = recent.filter((r) => saved[r.id]);
 
   return (
