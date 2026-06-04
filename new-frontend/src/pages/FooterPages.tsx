@@ -19,7 +19,7 @@ export function TermsPage({ onClose }: PageProps) {
       <h3>2. Description of Service</h3>
       <p>
         SousChat is a recipe aggregation tool that helps you cook recipes from
-        around the web. We do not host original recipe content — we parse and
+        around the web. We do not host original recipe content. We parse and
         present recipes from their original sources for personal, non-commercial
         use.
       </p>
@@ -137,6 +137,15 @@ export function PatchNotesPage({ onClose }: PageProps) {
       <h2>Patch Notes</h2>
 
       <div className="footer-page-version">
+        <h3>v0.2.0 — Similar Recipes</h3>
+        <p className="footer-page-updated">June 2026</p>
+        <ul>
+          <li>Similar recipes shown at the bottom of each recipe page, powered by semantic embeddings</li>
+          <li>"Recently extracted" on the home page now shows the 4 most recent recipes</li>
+        </ul>
+      </div>
+
+      <div className="footer-page-version">
         <h3>v0.1.0 — Initial Release</h3>
         <p className="footer-page-updated">May 2026</p>
         <ul>
@@ -168,13 +177,13 @@ export function CreditsPage({ onClose }: PageProps) {
       <h3>Design</h3>
       <ul>
         <li>Fredoka — primary typeface by Milena Brandao</li>
-        <li>Lucide Icons — icon set</li>
+        <li>Phosphor — icon set</li>
       </ul>
 
       <h3>Inspiration</h3>
       <p>
         SousChat was inspired by the desire to make cooking from the web less
-        cluttered — no ads, no life stories, just the recipe. Named after a very
+        cluttered. No ads, no life stories, just the recipe. Named after a very
         opinionated cat.
       </p>
 
@@ -201,14 +210,14 @@ export function AboutPage({ onClose }: PageProps) {
       <h3>Why?</h3>
       <p>
         Recipe websites are full of ads, pop-ups, and multi-paragraph backstories.
-        SousChat extracts just the recipe — ingredients, steps, times — and
+        SousChat extracts just the recipe, ingredients, steps, times, and
         presents it in a clean interface designed for actually cooking.
       </p>
 
       <h3>How It Works</h3>
       <p>
         Paste a URL, and SousChat fetches the page, extracts structured recipe data
-        (using schema.org markup and heuristic parsing), and renders it in a
+        (using schema.org markup and heuristic parsing), runs an embedding model in order to recommend similar recipes and renders it in a
         consistent, readable format. Everything runs locally in your browser after
         the initial parse.
       </p>
