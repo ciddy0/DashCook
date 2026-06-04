@@ -18,9 +18,9 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="DashCook",
+    title="SousChat",
     description="extract clean recipes from bloated websites",
-    version="1.0.0",
+    version="1.1.0",
     lifespan=lifespan,
 )
 
@@ -29,13 +29,15 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[o.strip() for o in settings.cors_origins.split(",")],
     allow_methods=["GET", "POST"],
-    allow_headers=["*"],
+    allow_headers=["Content-Type", "Accept"],
 )
 
 
 @app.middleware("http")
 async def rate_limit_middleware(request: Request, call_next):
-    if request.method == "POST" and request.url.path == "/url":
+    if (request.method == "POST" and request.url.path == "/url") or (
+        request.method == "GET" and request.url.path == "/search"
+    ):
         ip = get_client_ip(request)
         allowed, retry_after = check_rate_limit(ip)
         if not allowed:

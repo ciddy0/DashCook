@@ -1,5 +1,9 @@
+import logging
+
 import asyncpg
 from fastapi import HTTPException
+
+logger = logging.getLogger(__name__)
 
 from utils.url import normalize_url, validate_url
 from db.recipes import get_cached_recipe, cache_recipe
@@ -25,7 +29,8 @@ async def extract_recipe(pool: asyncpg.Pool, raw_url: str) -> Recipe:
     except ValueError as e:
         raise HTTPException(status_code=422, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=422, detail=f"failed to fetch URL D: {e}")
+        logger.error("Failed to fetch URL %s: %s", url, e)
+        raise HTTPException(status_code=422, detail="Failed to fetch URL")
 
     try:
         recipe_data = parse_recipe(html)

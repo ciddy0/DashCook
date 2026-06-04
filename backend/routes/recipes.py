@@ -33,11 +33,11 @@ async def similar_recipes(
 @router.get("/search", response_model=list[SimilarRecipe])
 async def search(
     pool: DbPool,
-    q: str = Query(..., min_length=1, description="Free-text recipe search query"),
+    q: str = Query(..., min_length=1, max_length=500, description="Free-text recipe search query"),
     limit: int = Query(10, ge=1, le=50),
 ):
     try:
         query_embedding = await embed_query(q)
     except Exception:
-        raise HTTPException(status_code=503, detail="Embedding service unavailable")
+        raise HTTPException(status_code=503, detail="Search is unavailable — the embedding service (Ollama) is not running or not reachable")
     return await search_recipes(pool, query_embedding, limit)
