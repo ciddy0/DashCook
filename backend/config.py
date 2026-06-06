@@ -8,8 +8,8 @@ class Settings(BaseSettings):
     supabase_url: str | None = None
     cors_origins: str = "http://localhost:5173,http://localhost:3000"
     rate_limit: int = 30
-    ollama_host: str = "http://localhost:11434"
-    embedding_model: str = "qwen3-embedding:4b"
+    openai_api_key: str = ""
+    embedding_model: str = "text-embedding-3-large"
 
     model_config = {"env_file": ".env", "extra": "ignore"}
 

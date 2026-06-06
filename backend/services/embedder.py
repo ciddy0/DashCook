@@ -1,12 +1,11 @@
 import logging
 
-import ollama
+from openai import AsyncOpenAI
 
 from config import get_settings
 
 logger = logging.getLogger(__name__)
 
-SEARCH_TASK = "Given a recipe search query, retrieve recipes that match it"
 
 def build_embed_text(recipe_data: dict) -> str:
     title = (recipe_data.get("title") or "").strip()
@@ -33,9 +32,11 @@ def _ingredient_name(ing) -> str:
 async def _embed(text: str) -> list[float]:
     """Single embedding call. Raises on failure."""
     settings = get_settings()
-    client = ollama.AsyncClient(host=settings.ollama_host)
-    response = await client.embed(model=settings.embedding_model, input=text)
-    return response["embeddings"][0]
+    client = AsyncOpenAI(api_key=settings.openai_api_key)
+    response = await client.embeddings.create(
+        model=settings.embedding_model, input=text
+    )
+    return response.data[0].embedding
 
 async def generate_embedding(recipe_data: dict) -> list[float] | None:
     text = build_embed_text(recipe_data)
@@ -45,7 +46,6 @@ async def generate_embedding(recipe_data: dict) -> list[float] | None:
     except Exception as e:
         logger.warning("embedding generation failed (storing as null): %s", e)
         return None
-    
+
 async def embed_query(text: str) -> list[float]:
-    prompt = f"Instruct: {SEARCH_TASK}\nQuery:{text}"
-    return await _embed(prompt)
+    return await _embed(text)

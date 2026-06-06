@@ -39,5 +39,5 @@ async def search(
     try:
         query_embedding = await embed_query(q)
     except Exception:
-        raise HTTPException(status_code=503, detail="Search is unavailable — the embedding service (Ollama) is not running or not reachable")
+        raise HTTPException(status_code=503, detail="Search is unavailable — the embedding service is not reachable")
     return await search_recipes(pool, query_embedding, limit)

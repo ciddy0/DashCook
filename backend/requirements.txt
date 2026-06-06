@@ -4,5 +4,5 @@ httpx
 beautifulsoup4
 asyncpg
 pydantic-settings
-ollama
+openai
 pgvector

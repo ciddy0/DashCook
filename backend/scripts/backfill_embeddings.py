@@ -2,7 +2,7 @@
 Backfill NULL embeddings for recipes already in the database.
 
 Queries rows where embedding IS NULL, builds embed text via
-build_embed_text(), sends batches to Ollama's embed endpoint,
+build_embed_text(), sends batches to OpenAI's embeddings endpoint,
 and updates each row.
 
 Usage:
@@ -17,13 +17,13 @@ from pathlib import Path
 # Allow imports from the backend root
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-import ollama
+from openai import AsyncOpenAI
 
 from config import get_settings
 from db.pool import create_pool
 from services.embedder import build_embed_text
 
-BATCH_SIZE = 5
+BATCH_SIZE = 50
 
 
 async def backfill() -> None:
@@ -55,21 +55,20 @@ async def backfill() -> None:
             })
 
         # Process in batches
-        client = ollama.AsyncClient(host=settings.ollama_host)
+        client = AsyncOpenAI(api_key=settings.openai_api_key)
         batches = [items[i : i + BATCH_SIZE] for i in range(0, len(items), BATCH_SIZE)]
         backfilled = 0
 
         for batch_num, batch in enumerate(batches, 1):
             texts = [item["text"] for item in batch]
-            response = await client.embed(
+            response = await client.embeddings.create(
                 model=settings.embedding_model, input=texts
             )
-            embeddings = response["embeddings"]
 
-            for item, embedding in zip(batch, embeddings):
+            for item, data in zip(batch, response.data):
                 await pool.execute(
                     "UPDATE recipes SET embedding = $1 WHERE url = $2",
-                    embedding,
+                    data.embedding,
                     item["url"],
                 )
 
