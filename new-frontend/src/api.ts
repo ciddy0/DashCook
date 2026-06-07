@@ -48,6 +48,20 @@ export async function extractRecipe(url: string): Promise<Recipe> {
   };
 }
 
+export async function searchRecipes(
+  query: string,
+  limit = 6,
+): Promise<SimilarRecipe[]> {
+  try {
+    const params = new URLSearchParams({ q: query, limit: String(limit) });
+    const res = await fetch(`${API_BASE}/search?${params}`);
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+}
+
 export async function fetchSimilarRecipes(
   sourceUrl: string,
   limit = 6,

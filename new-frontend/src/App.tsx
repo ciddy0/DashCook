@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { Topbar } from "./components/Topbar";
 import { Footer } from "./components/Footer";
+import { ChatWidget } from "./components/ChatWidget";
 import { Home } from "./pages/Home";
 import { RecipeDetail } from "./pages/RecipeDetail";
 import { CookNow } from "./pages/CookNow";
@@ -69,6 +70,7 @@ function App() {
       </Routes>
 
       {!isCookMode && <Footer />}
+      {!isCookMode && <ChatWidget />}
     </>
   );
 }
