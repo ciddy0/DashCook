@@ -56,7 +56,7 @@ export function ChatWidget() {
       {open && (
         <div className="chat-panel card">
           <div className="chat-header">
-            <span className="chat-header-title">Ask souschat</span>
+            <span className="chat-header-title">Ask sous chef mochi</span>
             <button
               className="chat-header-close"
               onClick={() => setOpen(false)}

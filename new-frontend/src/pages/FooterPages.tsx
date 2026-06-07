@@ -134,7 +134,17 @@ export function SecurityPage({ onClose }: PageProps) {
 export function PatchNotesPage({ onClose }: PageProps) {
   return (
     <FooterOverlay title="Patch Notes" onClose={onClose}>
-      <h2>Patch Notes</h2>
+      <h2>Patch Notes</h2>     
+      <div className="footer-page-version">
+        <h3>v0.3.0 — Mochi Assistant aka Search Queries</h3>
+        <p className="footer-page-updated">June 2026</p>
+        <ul>
+          <li>Chat widget for natural language recipe search — ask for "summer meals" or "quick pasta" and get results</li>
+          <li>Powered by OpenAI semantic embeddings over all stored recipes</li>
+          <li>Clickable results link directly to original recipe sources</li>
+          <li>Widget adapts to all four themes and mobile viewports</li>
+        </ul>
+      </div>
 
       <div className="footer-page-version">
         <h3>v0.2.0 — Similar Recipes</h3>
