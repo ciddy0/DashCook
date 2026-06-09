@@ -949,15 +949,114 @@ button.footer-link {
 }
 
 @media print {
-  .topbar, .print-hide, .site-footer { display: none !important; }
-  body { background: #fff; color: #000; }
-  .card, .recipe-thumb, .ingredient-panel, .step-card {
-    border-color: #d9d9d9 !important;
-    box-shadow: none !important;
-    background: #fff !important;
+  @page { margin: 2cm 1.5cm; }
+
+  /* ---- Hide non-content elements ---- */
+  .topbar, .print-hide, .site-footer,
+  .btn, .icon-btn, .stepper,
+  .banner, .banner-info, .banner-success { display: none !important; }
+
+  /* ---- Hide images and their containers ---- */
+  img { display: none !important; }
+  .recipe-header-grid > :first-child:not(.recipe-thumb) {
+    display: none !important;
   }
+  .recipe-thumb {
+    min-height: 0 !important;
+    height: auto !important;
+    aspect-ratio: unset !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+  }
+  .recipe-thumb .ph { display: none !important; }
+
+  /* ---- Strip all color ---- */
+  * {
+    color: #000 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  body { background: #fff !important; }
+
+  /* ---- Simplify typography ---- */
+  body { font-family: Georgia, "Times New Roman", serif; font-size: 14pt; line-height: 1.5; }
+  h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; }
+  h1 { font-size: 22pt; margin-bottom: 0.3em; }
+
+  /* ---- Linearize layout ---- */
+  .recipe-header-grid,
+  .recipe-body-grid {
+    display: block !important;
+    grid-template-columns: none !important;
+  }
+
   .page { padding: 0; max-width: none; }
-  .btn, .icon-btn { display: none !important; }
+
+  /* ---- Clean up ingredients list ---- */
+  .check-box { display: none !important; }
+  .checkbox-row {
+    border: none !important;
+    padding: 0.15em 0 !important;
+    background: transparent !important;
+    opacity: 1 !important;
+    text-decoration: none !important;
+  }
+  .checkbox-row::before {
+    content: "– ";
+    font-weight: normal;
+  }
+  .checkbox-row.checked .check-label {
+    text-decoration: none !important;
+    opacity: 1 !important;
+  }
+  .check-label { font-size: 13pt; }
+  .qty { font-weight: bold !important; color: #000 !important; }
+
+  /* ---- Hide checkbox counter (e.g. "3/8") ---- */
+  .eyebrow { display: none !important; }
+
+  /* ---- Clean up step cards ---- */
+  .card {
+    border: none !important;
+    padding: 0.3em 0 !important;
+    margin-bottom: 0.5em !important;
+    page-break-inside: avoid;
+  }
+  .bubble {
+    width: auto !important;
+    height: auto !important;
+    border-radius: 0 !important;
+    font-size: 14pt !important;
+    box-shadow: none !important;
+  }
+  .bubble::after { content: "." !important; }
+
+  /* ---- Strip borders from time/servings stats ---- */
+  .stat {
+    border: none !important;
+    padding: 4px 0 !important;
+  }
+
+  /* ---- Source URL as plain text ---- */
+  .source {
+    position: static !important;
+    display: block !important;
+    font-size: 11pt;
+    margin-top: 0.5em;
+    text-decoration: underline;
+  }
+
+  /* ---- Hide similar-recipes grid ---- */
+  .recipe-grid { display: none !important; }
+
+  /* ---- Section headers ---- */
+  .section-header {
+    border-bottom: 1px solid #999 !important;
+    padding-bottom: 0.2em;
+    margin-top: 1em;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
