@@ -180,8 +180,9 @@ export function CreditsPage({ onClose }: PageProps) {
       <h3>Built With</h3>
       <ul>
         <li>React & TypeScript</li>
-        <li>Vite</li>
-        <li>React Router</li>
+        <li>Python (Fast API)</li>
+        <li>OpenAI Embedding Model</li>
+        <li>Postgres</li>
       </ul>
 
       <h3>Design</h3>
