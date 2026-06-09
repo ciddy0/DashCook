@@ -74,7 +74,7 @@ export function Topbar({ theme, onSetTheme }: TopbarProps) {
 
         <a
           className="icon-btn"
-          href="https://ko-fi.com/yourhandle"
+          href="https://ko-fi.com/ciddev"
           target="_blank"
           rel="noopener noreferrer"
         >
