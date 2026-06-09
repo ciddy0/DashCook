@@ -283,9 +283,6 @@ export function RecipeDetail({
               className="banner banner-info"
               style={{ marginBottom: 16, padding: "10px 14px" }}
             >
-              <span className="em" style={{ fontSize: 18 }}>
-                &#x2728;
-              </span>
               <div style={{ fontSize: 13, fontWeight: 600 }}>
                 Scaled to {servings} — ingredient amounts updated below.
               </div>

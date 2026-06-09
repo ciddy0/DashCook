@@ -162,7 +162,6 @@ export function Home({
             className="card"
             style={{ textAlign: "center", padding: "44px 24px" }}
           >
-            <div style={{ fontSize: 40, marginBottom: 8 }}>&#x1F431;</div>
             <h3
               style={{
                 fontSize: 20,

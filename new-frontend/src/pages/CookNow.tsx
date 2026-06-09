@@ -136,7 +136,6 @@ export function CookNow() {
 
           {idx === lastIdx && (
             <div className="banner banner-success">
-              <span className="em">&#x1F389;</span>
               <div>
                 <b>Last step — you've got this!</b>
                 <div style={{ fontSize: 15, fontWeight: 500 }}>
