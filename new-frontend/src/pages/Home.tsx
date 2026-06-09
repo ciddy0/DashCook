@@ -59,7 +59,7 @@ export function Home({
           Paste a recipe. Get the <span className="hl">recipe</span>.
         </h1>
         <p className="sub">
-          souschat strips the ads, the life stories, and the SEO fluff — and
+          souschat strips the ads, the life stories, and the SEO fluff, and
           gives you a calm, cookable recipe you can actually use in the
           kitchen.
         </p>
@@ -105,27 +105,27 @@ export function Home({
         )}
 
         <div
-          className="row"
           style={{
-            justifyContent: "center",
-            gap: 18,
             marginTop: 24,
-            color: "var(--text-3)",
-            fontSize: 13,
-            fontWeight: 600,
-            letterSpacing: 0.4,
-            textTransform: "uppercase",
+            textAlign: "center",
           }}
         >
-          <span>Works with</span>
-          <span style={{ color: "var(--text-2)" }}>&middot; any blog</span>
-          <span style={{ color: "var(--text-2)" }}>
-            &middot; NYT Cooking
+          <span
+            className="tag tag-soft"
+            style={{ fontSize: 11, letterSpacing: 1 }}
+          >
+            Works with most recipe sites
           </span>
-          <span style={{ color: "var(--text-2)" }}>
-            &middot; Serious Eats
-          </span>
-          <span style={{ color: "var(--text-2)" }}>&middot; Food52</span>
+          <p
+            style={{
+              marginTop: 8,
+              fontSize: 12,
+              fontWeight: 500,
+              color: "var(--text-3)",
+            }}
+          >
+            Some sites may block requests
+          </p>
         </div>
       </section>
 
