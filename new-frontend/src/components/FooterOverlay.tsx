@@ -14,13 +14,16 @@ export function FooterOverlay({ title, onClose, children }: FooterOverlayProps) 
     };
     window.addEventListener("keydown", onKey);
 
-    // Lock background scroll
-    const prev = document.body.style.overflow;
+    // Lock background scroll on both html and body
+    const prevBody = document.body.style.overflow;
+    const prevHtml = document.documentElement.style.overflow;
     document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
 
     return () => {
       window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
+      document.body.style.overflow = prevBody;
+      document.documentElement.style.overflow = prevHtml;
     };
   }, [onClose]);
 

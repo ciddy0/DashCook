@@ -381,6 +381,25 @@ export function RecipeDetail({
         </section>
       </div>
 
+      {similarLoading && (
+        <section className="print-hide" style={{ marginTop: 48 }}>
+          <div className="section-header">
+            <h2>Similar Recipes</h2>
+          </div>
+          <div className="recipe-grid">
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="skeleton-card">
+                <div className="skeleton-thumb skeleton" />
+                <div className="skeleton-body">
+                  <div className="skeleton-line skeleton" style={{ width: "85%" }} />
+                  <div className="skeleton-line skeleton skeleton-line-short" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {!similarLoading && similarRecipes.length > 0 && (
         <section className="print-hide" style={{ marginTop: 48 }}>
           <div className="section-header">
