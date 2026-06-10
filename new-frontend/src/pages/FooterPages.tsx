@@ -136,6 +136,15 @@ export function PatchNotesPage({ onClose }: PageProps) {
     <FooterOverlay title="Patch Notes" onClose={onClose}>
       <h2>Patch Notes</h2>
       <div className="footer-page-version">
+        <h3>v0.3.2 — Fresh Coat of Paint</h3>
+        <p className="footer-page-updated">June 2026</p>
+        <ul>
+          <li>New logo and updated Mochi chat icon</li>
+          <li>Improved recipe scraper with better reliability against blocking</li>
+          <li>Print layout now hides the chat widget and uses tighter spacing</li>
+        </ul>
+      </div>
+      <div className="footer-page-version">
         <h3>v0.3.1 — Polish & Fixes</h3>
         <p className="footer-page-updated">June 2026</p>
         <ul>
