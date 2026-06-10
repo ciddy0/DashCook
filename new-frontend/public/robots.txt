@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Crawl-delay: 10
+
+Sitemap: https://souschat.com/sitemap.xml
+
+# you're welcome to crawl, but please be respectful — this is a small site.
