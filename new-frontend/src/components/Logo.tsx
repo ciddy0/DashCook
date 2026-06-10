@@ -1,9 +1,9 @@
+import { SouschatLogoIcon } from "./SouschatLogoIcon";
+
 export function Logo({ onClick }: { onClick?: () => void }) {
   return (
     <div className="logo" onClick={onClick}>
-      <span className="logo-mark">
-        <span>c</span>
-      </span>
+      <SouschatLogoIcon className="logo-mark" />
       <span>souschat</span>
     </div>
   );

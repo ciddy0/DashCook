@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { searchRecipes } from "../api";
 import type { SimilarRecipe } from "../types";
+import { MochiChatIcon } from "./MochiChatIcon";
 
 interface Message {
   role: "user" | "bot";
@@ -49,7 +50,7 @@ export function ChatWidget() {
           onClick={() => setOpen(true)}
           aria-label="Open chat"
         >
-          <img src="/cat.svg" alt="" width={224} height={224} />
+          <MochiChatIcon className="chat-fab-icon" />
         </button>
       )}
 

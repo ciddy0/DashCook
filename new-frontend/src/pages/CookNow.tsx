@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Icon } from "../components/Icon";
+import { SouschatLogoIcon } from "../components/SouschatLogoIcon";
 import { getRecipe } from "../store";
 import { ingredientLine } from "../helpers";
 
@@ -62,9 +63,7 @@ export function CookNow() {
     <div className="cook-overlay" role="dialog" aria-modal="true" aria-label="Cook Now">
       {/* Header */}
       <header className="cook-header">
-        <div className="logo-mark" style={{ width: 36, height: 36 }}>
-          <span style={{ fontSize: 15 }}>c</span>
-        </div>
+        <SouschatLogoIcon className="logo-mark" style={{ width: 36, height: 36 }} />
         <div className="cook-title">
           Cooking <b>{recipe.title}</b>
         </div>
