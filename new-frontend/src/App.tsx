@@ -6,11 +6,13 @@ import { ChatWidget } from "./components/ChatWidget";
 import { Home } from "./pages/Home";
 import { RecipeDetail } from "./pages/RecipeDetail";
 import { CookNow } from "./pages/CookNow";
+import { useClickSound } from "./hooks/useClickSound";
 import type { ThemeName } from "./types";
 
 const THEMES: ThemeName[] = ["cream", "dark", "calico", "espresso"];
 
 function App() {
+  useClickSound();
   const location = useLocation();
   const isCookMode = location.pathname.startsWith("/cook/");
 

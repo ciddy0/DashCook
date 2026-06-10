@@ -72,14 +72,16 @@ export function Topbar({ theme, onSetTheme }: TopbarProps) {
           )}
         </div>
 
-        <a
+        <button
           className="icon-btn"
-          href="https://ko-fi.com/ciddev"
-          target="_blank"
-          rel="noopener noreferrer"
+          onClick={() =>
+            window.open("https://ko-fi.com/ciddev", "_blank", "noopener,noreferrer")
+          }
+          title="Support on Ko-fi"
+          aria-label="Support on Ko-fi"
         >
-          <img src={kofi} alt="Ko-fi" width={24} height={24} />
-        </a>
+          <img src={kofi} alt="Ko-fi" width={24} height={24} draggable={false} />
+        </button>
         <button className="btn btn-secondary btn-sm" onClick={goHome}>
           Home
         </button>

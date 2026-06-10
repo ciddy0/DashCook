@@ -87,7 +87,7 @@ export function RecipeDetail({
         </button>
         <button
           className="icon-btn"
-          onClick={() => window.print()}
+          onClick={() => setTimeout(() => window.print(), 150)}
           title="Print"
           aria-label="Print"
         >
@@ -198,7 +198,7 @@ export function RecipeDetail({
             </button>
             <button
               className="btn btn-secondary"
-              onClick={() => window.print()}
+              onClick={() => setTimeout(() => window.print(), 150)}
             >
               <Icon name="print" size={16} /> Print
             </button>
