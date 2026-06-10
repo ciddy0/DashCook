@@ -136,6 +136,16 @@ export function PatchNotesPage({ onClose }: PageProps) {
     <FooterOverlay title="Patch Notes" onClose={onClose}>
       <h2>Patch Notes</h2>
       <div className="footer-page-version">
+        <h3>v0.3.3 — Smooth Edges</h3>
+        <p className="footer-page-updated">June 2026</p>
+        <ul>
+          <li>Skeleton loading for a smoother experience while similar recipes load</li>
+          <li>Fallback image on recipe cards when the original fails to load</li>
+          <li>Logo now scrolls back to the top of the home page</li>
+          <li>Fixed some minor UI issues</li>
+        </ul>
+      </div>
+      <div className="footer-page-version">
         <h3>v0.3.2 — Fresh Coat of Paint</h3>
         <p className="footer-page-updated">June 2026</p>
         <ul>
