@@ -222,7 +222,8 @@ export function CreditsPage({ onClose }: PageProps) {
       <h3>Special Thanks</h3>
       <p>
         To everyone who shared feedback, tested early builds, and sent in recipe
-        URLs that broke the parser. You made this better.
+        URLs that broke the parser. You made this better. Also wanna thank this very smart
+        engineer by the name of meow who inspired me to add embeddings.
       </p>
     </FooterOverlay>
   );
