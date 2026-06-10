@@ -134,7 +134,19 @@ export function SecurityPage({ onClose }: PageProps) {
 export function PatchNotesPage({ onClose }: PageProps) {
   return (
     <FooterOverlay title="Patch Notes" onClose={onClose}>
-      <h2>Patch Notes</h2>     
+      <h2>Patch Notes</h2>
+      <div className="footer-page-version">
+        <h3>v0.3.1 — Polish & Fixes</h3>
+        <p className="footer-page-updated">June 2026</p>
+        <ul>
+          <li>Cleaner print layout: strips images, colors, and non-content UI for a simple printout</li>
+          <li>Added disclaimer noting some recipe sites may block requests</li>
+          <li>Fix some of the UI issues and added button clicks</li>
+          <li>Updated credits to reflect current tech stack</li>
+          <li>Ko-fi support link added to the top bar</li>
+        </ul>
+      </div>
+
       <div className="footer-page-version">
         <h3>v0.3.0 — Mochi Assistant aka Search Queries</h3>
         <p className="footer-page-updated">June 2026</p>
