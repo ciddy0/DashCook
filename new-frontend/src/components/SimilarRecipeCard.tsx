@@ -43,6 +43,8 @@ export function SimilarRecipeCard({ recipe }: { recipe: SimilarRecipe }) {
           <img
             src={recipe.image_url}
             alt={recipe.title}
+            loading="lazy"
+            decoding="async"
             onError={() => setImgFailed(true)}
             className="recipe-thumb-img"
           />

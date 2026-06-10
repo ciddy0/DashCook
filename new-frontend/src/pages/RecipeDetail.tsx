@@ -120,6 +120,8 @@ export function RecipeDetail({
             <img
               src={recipe.image_url}
               alt={recipe.title}
+              fetchPriority="high"
+              decoding="async"
               onError={() => setImgFailed(true)}
               style={{
                 width: "100%",
