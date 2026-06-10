@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Logo } from "./Logo";
 import { Icon } from "./Icon";
 import kofi from "../assets/kofi.png";
@@ -19,7 +19,14 @@ interface TopbarProps {
 
 export function Topbar({ theme, onSetTheme }: TopbarProps) {
   const navigate = useNavigate();
-  const goHome = () => navigate("/");
+  const location = useLocation();
+  const goHome = () => {
+    if (location.pathname === "/") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      navigate("/");
+    }
+  };
 
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
