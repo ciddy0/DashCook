@@ -1,0 +1,105 @@
+@media print {
+  @page { margin: 1.5cm 1.2cm; }
+
+  .topbar, .print-hide, .site-footer,
+  .btn, .icon-btn, .stepper,
+  .banner, .banner-info, .banner-success,
+  .chat-fab, .chat-panel { display: none !important; }
+
+  img { display: none !important; }
+  .recipe-header-grid > :first-child:not(.recipe-thumb) {
+    display: none !important;
+  }
+  .recipe-thumb {
+    min-height: 0 !important;
+    height: auto !important;
+    aspect-ratio: unset !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+  }
+  .recipe-thumb .ph { display: none !important; }
+
+  * {
+    color: #000 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  body { background: #fff !important; }
+
+  /* ---- Simplify typography ---- */
+  body { font-family: Georgia, "Times New Roman", serif; font-size: 12pt; line-height: 1.35; }
+  h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; }
+  h1 { font-size: 16pt; margin: 0 0 0.15em !important; }
+  h2 { font-size: 13pt; margin: 0 0 0.1em !important; }
+
+  /* ---- Linearize layout ---- */
+  .recipe-header-grid,
+  .recipe-body-grid {
+    display: block !important;
+    grid-template-columns: none !important;
+    margin-bottom: 0.3em !important;
+    gap: 0 !important;
+  }
+
+  .page { padding: 0; max-width: none; }
+
+  .recipe-header-grid > .col {
+    gap: 4px !important;
+  }
+  .recipe-header-grid .row { margin-top: 0 !important; }
+  .stat { border: none !important; padding: 2px 0 !important; }
+
+  .check-box { display: none !important; }
+  .checkbox-row {
+    border: none !important;
+    padding: 0.1em 0 !important;
+    background: transparent !important;
+    opacity: 1 !important;
+    text-decoration: none !important;
+  }
+  .checkbox-row::before {
+    content: "– ";
+    font-weight: normal;
+  }
+  .checkbox-row.checked .check-label {
+    text-decoration: none !important;
+    opacity: 1 !important;
+  }
+  .check-label { font-size: 11pt; }
+  .qty { font-weight: bold !important; color: #000 !important; }
+
+  .eyebrow { display: none !important; }
+
+  .card {
+    border: none !important;
+    padding: 0.15em 0 !important;
+    margin-bottom: 0.25em !important;
+    page-break-inside: avoid;
+  }
+  .bubble {
+    width: auto !important;
+    height: auto !important;
+    border-radius: 0 !important;
+    font-size: 12pt !important;
+    box-shadow: none !important;
+  }
+  .bubble::after { content: "." !important; }
+
+  .source {
+    position: static !important;
+    display: block !important;
+    font-size: 11pt;
+    margin-top: 0.3em;
+    text-decoration: underline;
+  }
+
+  .recipe-grid { display: none !important; }
+
+  .section-header {
+    border-bottom: 1px solid #999 !important;
+    padding-bottom: 0.2em;
+    margin-top: 0.6em;
+  }
+}

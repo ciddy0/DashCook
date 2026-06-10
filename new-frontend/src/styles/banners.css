@@ -1,0 +1,23 @@
+.banner {
+  border-radius: var(--r-lg);
+  padding: 16px 18px;
+  border: 2px solid;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.banner-success {
+  background: var(--success-soft);
+  color: var(--success-dark);
+  border-color: var(--success);
+}
+.banner-warning {
+  background: var(--warning-soft);
+  color: var(--warning-dark);
+  border-color: var(--warning);
+}
+.banner-info {
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  border-color: var(--accent);
+}
+.banner .em { font-size: 22px; line-height: 1; }
+.banner b { font-weight: 700; display: block; margin-bottom: 2px; }

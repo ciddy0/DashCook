@@ -1,0 +1,123 @@
+.card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 20px;
+  box-shadow: var(--sh-card);
+  transition: transform var(--t), border-color var(--t);
+}
+.card-hover:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+  cursor: pointer;
+}
+
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+.recipe-card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-card);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform var(--t), border-color var(--t), box-shadow var(--t);
+  display: flex; flex-direction: column;
+}
+.recipe-card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-3px);
+}
+.recipe-thumb {
+  aspect-ratio: 4 / 3;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 2px solid var(--border);
+}
+.recipe-thumb-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.recipe-thumb-fallback {
+  background: url(/recipe-background.svg) center / cover;
+}
+body.theme-dark .recipe-thumb-fallback {
+  background-image: url(/recipe-background-dark.svg);
+}
+body.theme-calico .recipe-thumb-fallback {
+  background-image: url(/recipe-background-calico.svg);
+}
+body.theme-espresso .recipe-thumb-fallback {
+  background-image: url(/recipe-background-espresso.svg);
+}
+.recipe-thumb .ph {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px; color: rgba(255,255,255,.85);
+  letter-spacing: 1px; text-transform: uppercase;
+  background-size: 14px 14px;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255,255,255,.08) 0 7px,
+    rgba(255,255,255,0) 7px 14px
+  );
+}
+.recipe-thumb-fallback .ph {
+  background-image: none;
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(255,255,255,.6);
+}
+.recipe-thumb .save {
+  position: absolute; top: 12px; right: 12px;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--surface);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--text-2);
+  box-shadow: 0 2px 0 rgba(0,0,0,.08);
+  transition: all var(--t);
+}
+.recipe-thumb .save:hover { transform: scale(1.06); color: var(--accent); }
+.recipe-thumb .save.saved {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+.recipe-thumb .source {
+  position: absolute; bottom: 12px; left: 12px;
+  padding: 4px 10px;
+  background: rgba(0,0,0,.55);
+  color: white;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+  border-radius: var(--r-pill);
+  backdrop-filter: blur(8px);
+}
+.recipe-body {
+  padding: 16px 18px 18px;
+  display: flex; flex-direction: column; gap: 10px;
+  flex: 1;
+}
+.recipe-title {
+  font-size: 19px; font-weight: 600; letter-spacing: -0.2px;
+  color: var(--text); line-height: 1.25;
+}
+.recipe-meta {
+  display: flex; gap: 14px; flex-wrap: wrap;
+  color: var(--text-2); font-size: 13px; font-weight: 500;
+}
+.recipe-meta span { display: inline-flex; align-items: center; gap: 5px; }

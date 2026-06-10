@@ -1,0 +1,134 @@
+:root {
+  /* Brand palette — Cream Tabby (Catsous) */
+  --primary:       #8B5E3C;
+  --primary-hover: #714A2E;
+  --primary-soft:  #F3E7DB;
+  --primary-dark:  #5d3d24;
+
+  --accent:        #D98F70;
+  --accent-soft:   #FBE9E1;
+  --accent-dark:   #b46a4f;
+
+  --bg:            #FAF7F2;
+  --surface:       #FFFFFF;
+  --surface-alt:   #F3EEE8;
+  --border:        #DDD3C7;
+  --border-strong: #C7B9A8;
+
+  --text:          #1F1A17;
+  --text-2:        #5F554E;
+  --text-3:        #8B8178;
+
+  --success:       #3D7A57;
+  --success-soft:  #E0EFE6;
+  --success-dark:  #2c5a40;
+
+  --warning:       #B8841E;
+  --warning-soft:  #FBEFD2;
+  --warning-dark:  #8a6112;
+
+  --error:         #B54848;
+  --error-soft:    #F5DCDC;
+  --error-dark:    #8a3535;
+
+  --info:          #3F6FA8;
+  --info-dark:     #2e578a;
+
+  /* Radius / shadows */
+  --r-sm:   12px;
+  --r-md:   16px;
+  --r-lg:   20px;
+  --r-xl:   24px;
+  --r-pill: 999px;
+
+  --sh-primary: 0 4px 0 var(--primary-dark);
+  --sh-accent:  0 4px 0 var(--accent-dark);
+  --sh-success: 0 4px 0 var(--success-dark);
+  --sh-warning: 0 4px 0 var(--warning-dark);
+  --sh-error:   0 4px 0 var(--error-dark);
+  --sh-gray:    0 4px 0 var(--border-strong);
+  --sh-card:    0 2px 0 var(--border);
+  --sh-bubble:  0 6px 0 var(--primary-dark);
+
+  --t: 150ms cubic-bezier(.4, 0, .2, 1);
+
+  --font: "Fredoka", system-ui, sans-serif;
+}
+
+/* Dark — "Midnight Cat Café" */
+body.theme-dark {
+  --primary:       #C39267;
+  --primary-hover: #D6A77F;
+  --primary-soft:  #32251C;
+  --primary-dark:  #8a5d3a;
+
+  --accent:        #F0A98A;
+  --accent-soft:   #3B2A24;
+  --accent-dark:   #b97a5c;
+
+  --bg:            #141312;
+  --surface:       #1E1C1A;
+  --surface-alt:   #292623;
+  --border:        #3B3733;
+  --border-strong: #564f49;
+
+  --text:          #F7F3EE;
+  --text-2:        #CDC4BB;
+  --text-3:        #978C82;
+
+  --success:       #6AB083;
+  --success-soft:  #1f3328;
+  --success-dark:  #4a8b62;
+
+  --warning:       #D4A547;
+  --warning-soft:  #33270f;
+  --warning-dark:  #a07c2d;
+
+  --error:         #E17878;
+  --error-soft:    #361e1e;
+  --error-dark:    #a85454;
+}
+
+/* Seasonal — "Calico" */
+body.theme-calico {
+  --primary:       #C96B5C;
+  --primary-hover: #b25344;
+  --primary-soft:  #FCE6E1;
+  --primary-dark:  #8f3d31;
+
+  --accent:        #E7B05A;
+  --accent-soft:   #FCEED1;
+  --accent-dark:   #b3853a;
+
+  --bg:            #FFF7F2;
+  --surface:       #FFFFFF;
+  --surface-alt:   #FAEDE3;
+  --border:        #EBD7C9;
+  --border-strong: #d6b8a3;
+
+  --text:          #2A201B;
+  --text-2:        #6e5a4f;
+  --text-3:        #a59487;
+}
+
+/* Seasonal — "Black Cat Espresso" */
+body.theme-espresso {
+  --primary:       #6E4B3A;
+  --primary-hover: #58392b;
+  --primary-soft:  #EFE2D6;
+  --primary-dark:  #4a3022;
+
+  --accent:        #C78D4F;
+  --accent-soft:   #F6E6CF;
+  --accent-dark:   #946432;
+
+  --bg:            #F4EFE9;
+  --surface:       #FFFDF9;
+  --surface-alt:   #ECE3D8;
+  --border:        #D9CDBE;
+  --border-strong: #b9a890;
+
+  --text:          #201A16;
+  --text-2:        #57463b;
+  --text-3:        #998877;
+}
