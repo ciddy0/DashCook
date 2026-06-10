@@ -72,7 +72,7 @@ export function RecipeDetail({
     <div className="page">
       <div className="row print-hide" style={{ marginBottom: 18 }}>
         <button
-          className="btn-ghost btn btn-sm"
+          className="btn btn-secondary"
           onClick={() => navigate("/")}
         >
           <Icon name="arrow-l" size={16} /> Back
