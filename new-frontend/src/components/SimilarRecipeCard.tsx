@@ -7,6 +7,8 @@ import { addRecipe } from "../store";
 export function SimilarRecipeCard({ recipe }: { recipe: SimilarRecipe }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [imgFailed, setImgFailed] = useState(false);
+  const showFallback = !recipe.image_url || imgFailed;
 
   const sourceDomain = (() => {
     try {
@@ -35,18 +37,17 @@ export function SimilarRecipeCard({ recipe }: { recipe: SimilarRecipe }) {
       style={{ opacity: loading ? 0.6 : 1, pointerEvents: loading ? "none" : "auto" }}
     >
       <div
-        className="recipe-thumb"
-        style={
-          recipe.image_url
-            ? {
-                backgroundImage: `url(${recipe.image_url})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }
-            : { background: "var(--surface-2, #C39267)" }
-        }
+        className={"recipe-thumb" + (showFallback ? " recipe-thumb-fallback" : "")}
       >
-        {!recipe.image_url && (
+        {recipe.image_url && !imgFailed && (
+          <img
+            src={recipe.image_url}
+            alt={recipe.title}
+            onError={() => setImgFailed(true)}
+            className="recipe-thumb-img"
+          />
+        )}
+        {showFallback && (
           <div className="ph">
             {recipe.title.split(" ").slice(0, 3).join(" ")}
           </div>

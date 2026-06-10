@@ -20,7 +20,7 @@ export function Home({
 
   const onOpen = (id: string) => navigate(`/recipe/${id}`);
 
-  const submit = async (e?: React.FormEvent) => {
+  const submit = async (e?: React.SyntheticEvent) => {
     e?.preventDefault();
     if (!url.trim()) {
       setError("Paste a recipe link first :)");
@@ -169,7 +169,7 @@ export function Home({
                 marginBottom: 6,
               }}
             >
-              No saved recipes yet — let's fix that.
+              No saved recipes yet. let's fix that :3
             </h3>
             <p
               style={{

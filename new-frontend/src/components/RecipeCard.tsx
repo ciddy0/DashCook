@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Icon } from "./Icon";
 import type { Recipe } from "../types";
 
@@ -10,6 +11,9 @@ function RecipeThumb({
   saved: boolean;
   onToggleSave: (id: string) => void;
 }) {
+  const [imgFailed, setImgFailed] = useState(false);
+  const showFallback = !recipe.image_url || imgFailed;
+
   const sourceDomain = (() => {
     try {
       return new URL(recipe.source_url).hostname.replace(/^www\./, "");
@@ -20,18 +24,17 @@ function RecipeThumb({
 
   return (
     <div
-      className="recipe-thumb"
-      style={
-        recipe.image_url
-          ? {
-              backgroundImage: `url(${recipe.image_url})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }
-          : { background: "var(--surface-2, #C39267)" }
-      }
+      className={"recipe-thumb" + (showFallback ? " recipe-thumb-fallback" : "")}
     >
-      {!recipe.image_url && (
+      {recipe.image_url && !imgFailed && (
+        <img
+          src={recipe.image_url}
+          alt={recipe.title}
+          onError={() => setImgFailed(true)}
+          className="recipe-thumb-img"
+        />
+      )}
+      {showFallback && (
         <div className="ph">
           {recipe.title.split(" ").slice(0, 3).join(" ")}
         </div>

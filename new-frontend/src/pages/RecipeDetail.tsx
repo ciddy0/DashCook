@@ -29,6 +29,7 @@ export function RecipeDetail({
   const [checked, setChecked] = useState<Record<number, boolean>>({});
   const [similarRecipes, setSimilarRecipes] = useState<SimilarRecipe[]>([]);
   const [similarLoading, setSimilarLoading] = useState(false);
+  const [imgFailed, setImgFailed] = useState(false);
 
   useEffect(() => {
     if (!recipe) return;
@@ -106,7 +107,7 @@ export function RecipeDetail({
           marginBottom: 40,
         }}
       >
-        {recipe.image_url ? (
+        {recipe.image_url && !imgFailed ? (
           <div
             style={{
               borderRadius: "var(--r-xl)",
@@ -119,6 +120,7 @@ export function RecipeDetail({
             <img
               src={recipe.image_url}
               alt={recipe.title}
+              onError={() => setImgFailed(true)}
               style={{
                 width: "100%",
                 height: "100%",
@@ -129,9 +131,8 @@ export function RecipeDetail({
           </div>
         ) : (
           <div
-            className="recipe-thumb"
+            className="recipe-thumb recipe-thumb-fallback"
             style={{
-              background: "var(--surface-2, #C39267)",
               borderRadius: "var(--r-xl)",
               border: "2px solid var(--border)",
               aspectRatio: "5/4",

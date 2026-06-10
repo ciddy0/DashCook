@@ -494,6 +494,27 @@ body.theme-espresso .topbar { background: rgba(244, 239, 233, 0.92); }
   overflow: hidden;
   border-bottom: 2px solid var(--border);
 }
+.recipe-thumb-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* Fallback background for broken/missing recipe images */
+.recipe-thumb-fallback {
+  background: url(/recipe-background.svg) center / cover;
+}
+body.theme-dark .recipe-thumb-fallback {
+  background-image: url(/recipe-background-dark.svg);
+}
+body.theme-calico .recipe-thumb-fallback {
+  background-image: url(/recipe-background-calico.svg);
+}
+body.theme-espresso .recipe-thumb-fallback {
+  background-image: url(/recipe-background-espresso.svg);
+}
 .recipe-thumb .ph {
   position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
@@ -506,6 +527,13 @@ body.theme-espresso .topbar { background: rgba(244, 239, 233, 0.92); }
     rgba(255,255,255,.08) 0 7px,
     rgba(255,255,255,0) 7px 14px
   );
+}
+.recipe-thumb-fallback .ph {
+  background-image: none;
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(255,255,255,.6);
 }
 .recipe-thumb .save {
   position: absolute; top: 12px; right: 12px;
