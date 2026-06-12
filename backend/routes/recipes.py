@@ -5,8 +5,9 @@ from models.requests import ExtractRequest
 from models.recipes import Recipe
 from models.recipes import SimilarRecipe
 from services.recipe_service import extract_recipe
-from db.recipes import get_similar_recipes, search_recipes
+from db.recipes import get_similar_recipes, search_recipes, hybrid_search_recipes
 from services.embedder import embed_query
+from services.search_service import rerank_results
 
 router = APIRouter()
 
@@ -35,9 +36,13 @@ async def search(
     pool: DbPool,
     q: str = Query(..., min_length=1, max_length=500, description="Free-text recipe search query"),
     limit: int = Query(10, ge=1, le=50),
+    rerank: bool = Query(False),
 ):
     try:
         query_embedding = await embed_query(q)
     except Exception:
         raise HTTPException(status_code=503, detail="Search is unavailable — the embedding service is not reachable")
-    return await search_recipes(pool, query_embedding, limit)
+    results = await hybrid_search_recipes(pool, query_embedding, q, limit=50 if rerank else limit)
+    if rerank:
+        results = await rerank_results(q, results, pool, top_n=limit)
+    return results

@@ -128,3 +128,66 @@ async def search_recipes(
         }
         for r in rows
     ]
+
+
+async def hybrid_search_recipes(
+    pool,
+    query_embedding: list[float],
+    query_text: str,
+    limit: int = 10,
+):
+    sql = """
+        WITH vector_search AS (
+            SELECT url, title, image_url,
+                   ROW_NUMBER() OVER (ORDER BY embedding <=> $1) AS rank
+            FROM recipes
+            WHERE embedding IS NOT NULL
+            LIMIT 50
+        ),
+        text_search AS (
+            SELECT url, title, image_url,
+                   ROW_NUMBER() OVER (
+                       ORDER BY ts_rank(fts, websearch_to_tsquery('english', $2)) DESC
+                   ) AS rank
+            FROM recipes
+            WHERE fts @@ websearch_to_tsquery('english', $2)
+            LIMIT 50
+        )
+        SELECT COALESCE(v.url, t.url)       AS source_url,
+               COALESCE(v.title, t.title)   AS title,
+               COALESCE(v.image_url, t.image_url) AS image_url,
+               COALESCE(1.0 / (60 + v.rank), 0) +
+               COALESCE(1.0 / (60 + t.rank), 0) AS score
+        FROM vector_search v
+        FULL OUTER JOIN text_search t ON v.url = t.url
+        ORDER BY score DESC
+        LIMIT $3
+    """
+
+    async with pool.acquire() as conn:
+        rows = await conn.fetch(sql, query_embedding, query_text, limit)
+
+    return [
+        {
+            "title": r["title"],
+            "source_url": r["source_url"],
+            "image_url": r["image_url"],
+            "score": float(r["score"]),
+        }
+        for r in rows
+    ]
+
+
+async def get_recipes_by_urls(pool, urls: list[str]) -> dict:
+    async with pool.acquire() as conn:
+        rows = await conn.fetch(
+            "SELECT url, title, ingredients FROM recipes WHERE url = ANY($1)",
+            urls,
+        )
+    return {
+        r["url"]: {
+            "title": r["title"],
+            "ingredients": json.loads(r["ingredients"]),
+        }
+        for r in rows
+    }

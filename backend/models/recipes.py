@@ -25,5 +25,6 @@ class SimilarRecipe(BaseModel):
     title: str
     source_url: str
     image_url: str | None = None
-    distance: float
+    distance: float | None = None
+    score: float | None = None
 

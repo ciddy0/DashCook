@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     rate_limit: int = 30
     openai_api_key: str = ""
     embedding_model: str = "text-embedding-3-large"
+    cohere_api_key: str = ""
 
     model_config = {"env_file": ".env", "extra": "ignore"}
 
