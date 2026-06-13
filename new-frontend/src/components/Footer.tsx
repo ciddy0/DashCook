@@ -34,7 +34,7 @@ export function Footer() {
 
   return (
     <>
-      <footer className="site-footer">
+      <footer className="site-footer" role="contentinfo">
         <nav className="footer-links">
           {FOOTER_LINKS.map(({ label, id }, i) => (
             <span key={id}>

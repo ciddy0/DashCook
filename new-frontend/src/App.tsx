@@ -66,22 +66,28 @@ function App() {
         <Topbar theme={theme} onSetTheme={setTheme} />
       )}
 
-      <Suspense fallback={<div className="page" />}>
-        <Routes>
-          <Route
-            path="/"
-            element={<Home saved={saved} onToggleSave={toggleSave} />}
-          />
-          <Route
-            path="/recipe/:id"
-            element={
-              <RecipeDetail saved={saved} onToggleSave={toggleSave} />
-            }
-          />
-          <Route path="/cook/:id" element={<CookNow />} />
-        </Routes>
-        {!isCookMode && <Footer />}
-      </Suspense>
+      <main role="main">
+        <Suspense fallback={<div className="page" />}>
+          <Routes>
+            <Route
+              path="/"
+              element={<Home saved={saved} onToggleSave={toggleSave} />}
+            />
+            <Route
+              path="/recipe/:id"
+              element={
+                <RecipeDetail saved={saved} onToggleSave={toggleSave} />
+              }
+            />
+            <Route path="/cook/:id" element={<CookNow />} />
+          </Routes>
+        </Suspense>
+      </main>
+      {!isCookMode && (
+        <Suspense fallback={null}>
+          <Footer />
+        </Suspense>
+      )}
       {!isCookMode && (
         <Suspense fallback={null}>
           <ChatWidget />

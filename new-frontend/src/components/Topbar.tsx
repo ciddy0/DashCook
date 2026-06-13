@@ -43,7 +43,7 @@ export function Topbar({ theme, onSetTheme }: TopbarProps) {
   }, [open]);
 
   return (
-    <header className="topbar">
+    <header className="topbar" role="banner">
       <div className="topbar-inner">
         <Logo onClick={goHome} />
         <div className="spacer" />
