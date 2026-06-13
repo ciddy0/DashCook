@@ -331,7 +331,6 @@ export function RecipeDetail({
               className="banner banner-success"
               style={{ marginTop: 16 }}
             >
-              <span className="em">&#x1F389;</span>
               <div>
                 <b>Nicely done!</b>
                 <div style={{ fontSize: 14, fontWeight: 500 }}>
