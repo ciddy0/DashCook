@@ -36,6 +36,40 @@
 .tag-success { background: var(--success-soft); color: var(--success-dark); }
 .tag-warning { background: var(--warning-soft); color: var(--warning-dark); }
 
+/* Category filter chips */
+.chip-row {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  margin-bottom: 20px;
+}
+.chip {
+  font-family: inherit;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--r-pill);
+  box-shadow: var(--sh-card);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all var(--t);
+}
+.chip:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-alt);
+}
+.chip:active {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 var(--border);
+}
+.chip.is-active {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  box-shadow: 0 2px 0 var(--primary);
+  color: var(--primary-dark);
+}
+
 .stat {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 8px 14px;

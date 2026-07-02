@@ -27,4 +27,8 @@ export interface SimilarRecipe {
   distance: number;
 }
 
+export interface BrowseRecipe extends SimilarRecipe {
+  category: string;
+}
+
 export type ThemeName = "cream" | "dark" | "calico" | "espresso";
