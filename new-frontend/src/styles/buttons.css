@@ -75,7 +75,11 @@
   cursor: pointer;
   transition: all var(--t);
 }
-.icon-btn:hover { border-color: var(--border-strong); color: var(--text); }
+.icon-btn:hover {
+  background: var(--surface-alt);
+  border-color: var(--border-strong);
+  color: var(--text);
+}
 .icon-btn:active { transform: translateY(2px); box-shadow: 0 0 0 var(--border-strong); }
 .icon-btn.is-active {
   background: var(--accent-soft); color: var(--accent-dark);

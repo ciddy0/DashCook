@@ -53,6 +53,7 @@ export function Topbar({ theme, onSetTheme }: TopbarProps) {
             className="icon-btn"
             onClick={() => setOpen((v) => !v)}
             title={`Theme: ${theme}`}
+            aria-label="Change theme"
             aria-expanded={open}
           >
             <Icon name="palette" size={20} />
