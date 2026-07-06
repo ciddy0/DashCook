@@ -1,5 +1,4 @@
-import type { BrowseRecipe, Recipe, SimilarRecipe } from "./types";
-import { DUMMY_DB_RECIPES } from "./data/browseRecipes";
+import type { Recipe, SimilarRecipe } from "./types";
 
 const API_BASE =
   "https://dashcook-api.happygrass-bd874e33.westus3.azurecontainerapps.io";
@@ -47,14 +46,6 @@ export async function extractRecipe(url: string): Promise<Recipe> {
     })),
     instructions: data.instructions ?? [],
   };
-}
-
-// TODO: swap for the real backend route once GET /recipes + clustering land.
-// Expected contract: GET `${API_BASE}/recipes` ->
-//   [{ title, source_url, image_url, category, distance? }]
-export async function fetchDbRecipes(): Promise<BrowseRecipe[]> {
-  await new Promise((r) => setTimeout(r, 400)); // simulate network
-  return DUMMY_DB_RECIPES;
 }
 
 export async function searchRecipes(

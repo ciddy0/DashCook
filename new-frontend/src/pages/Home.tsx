@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Icon } from "../components/Icon";
 import { RecipeCard } from "../components/RecipeCard";
-import { SimilarRecipeCard } from "../components/SimilarRecipeCard";
-import { extractRecipe, fetchDbRecipes } from "../api";
+import { extractRecipe } from "../api";
 import { getRecipes, addRecipe } from "../store";
 import { EXAMPLE_RECIPE_URL } from "../data/browseRecipes";
-import type { BrowseRecipe, Recipe } from "../types";
+import type { Recipe } from "../types";
 
 export function Home({
   saved,
@@ -18,19 +17,7 @@ export function Home({
   const [url, setUrl] = useState("");
   const [pasting, setPasting] = useState(false);
   const [error, setError] = useState("");
-  const [browse, setBrowse] = useState<BrowseRecipe[] | null>(null);
-  const [category, setCategory] = useState("All");
   const navigate = useNavigate();
-
-  useEffect(() => {
-    let cancelled = false;
-    fetchDbRecipes().then((recipes) => {
-      if (!cancelled) setBrowse(recipes);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const onOpen = (id: string) => navigate(`/recipe/${id}`);
 
@@ -128,69 +115,11 @@ export function Home({
           >
             Works with most recipe sites
           </span>
-          <p
-            style={{
-              marginTop: 8,
-              fontSize: 12,
-              fontWeight: 500,
-              color: "var(--text-3)",
-            }}
-          >
-            Some sites may block requests
-          </p>
           <p style={{ marginTop: 10, fontSize: 13, fontWeight: 500 }}>
             Not sure? Just hit Extract to try the example above.
           </p>
         </div>
       </section>
-
-      {/* Browse the pantry — recipes already in the database */}
-      {(browse === null || browse.length > 0) && (
-        <section style={{ marginBottom: 56 }}>
-          <div className="section-header">
-            <h2>Browse the pantry</h2>
-            <span className="eyebrow">tap to extract</span>
-          </div>
-
-          {browse === null ? (
-            <div className="recipe-grid">
-              {Array.from({ length: 4 }, (_, i) => (
-                <div key={i} className="skeleton-card">
-                  <div className="skeleton skeleton-thumb" />
-                  <div className="skeleton-body">
-                    <div className="skeleton skeleton-line" />
-                    <div className="skeleton skeleton-line skeleton-line-short" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <>
-              <div className="chip-row">
-                {["All", ...new Set(browse.map((r) => r.category))].map(
-                  (c) => (
-                    <button
-                      key={c}
-                      type="button"
-                      className={"chip" + (category === c ? " is-active" : "")}
-                      onClick={() => setCategory(c)}
-                    >
-                      {c}
-                    </button>
-                  )
-                )}
-              </div>
-              <div className="recipe-grid">
-                {browse
-                  .filter((r) => category === "All" || r.category === category)
-                  .map((r) => (
-                    <SimilarRecipeCard key={r.source_url} recipe={r} />
-                  ))}
-              </div>
-            </>
-          )}
-        </section>
-      )}
 
       {/* Recently extracted */}
       {recent.length > 0 && (
