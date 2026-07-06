@@ -10,6 +10,7 @@
   --accent-dark:   #b46a4f;
 
   --bg:            #FAF7F2;
+  --bg-rgb:        250, 247, 242;
   --surface:       #FFFFFF;
   --surface-alt:   #F3EEE8;
   --border:        #DDD3C7;
@@ -51,6 +52,20 @@
   --sh-bubble:  0 6px 0 var(--primary-dark);
 
   --t: 150ms cubic-bezier(.4, 0, .2, 1);
+  --t-med:  200ms cubic-bezier(.4, 0, .2, 1);
+  --t-slow: 250ms cubic-bezier(.4, 0, .2, 1);
+
+  /* Spacing scale */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px;
+  --s-5: 20px; --s-6: 24px; --s-8: 32px; --s-10: 40px;
+
+  /* Type scale */
+  --fs-xs: 11px; --fs-sm: 13px; --fs-md: 15px; --fs-lg: 19px;
+  --fs-xl: 24px; --fs-2xl: 40px;
+
+  /* Misc */
+  --opacity-disabled: 0.6;
+  --focus-ring: 2px solid var(--primary);
 
   --font: "Fredoka", system-ui, sans-serif;
 }
@@ -67,6 +82,7 @@ body.theme-dark {
   --accent-dark:   #b97a5c;
 
   --bg:            #141312;
+  --bg-rgb:        20, 19, 18;
   --surface:       #1E1C1A;
   --surface-alt:   #292623;
   --border:        #3B3733;
@@ -101,6 +117,7 @@ body.theme-calico {
   --accent-dark:   #b3853a;
 
   --bg:            #FFF7F2;
+  --bg-rgb:        255, 247, 242;
   --surface:       #FFFFFF;
   --surface-alt:   #FAEDE3;
   --border:        #EBD7C9;
@@ -123,6 +140,7 @@ body.theme-espresso {
   --accent-dark:   #946432;
 
   --bg:            #F4EFE9;
+  --bg-rgb:        244, 239, 233;
   --surface:       #FFFDF9;
   --surface-alt:   #ECE3D8;
   --border:        #D9CDBE;

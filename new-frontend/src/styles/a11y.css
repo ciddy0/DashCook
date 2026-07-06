@@ -5,6 +5,13 @@
   }
 }
 
+/* Visible keyboard focus for all interactive elements */
+:where(button, a, [role="button"], [role="checkbox"], input, .chip, .theme-option):focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+.theme-option:focus-visible { outline-offset: -2px; }
+
 @media (max-width: 720px) {
   .topbar-inner { padding: 12px 16px; }
   .page { padding: 20px 16px 80px; }
@@ -19,4 +26,15 @@
     bottom: 16px;
   }
   .chat-fab { bottom: 16px; right: 16px; }
+}
+
+@media (max-width: 640px) {
+  .paster { flex-direction: column; }
+  .paster .btn { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .topbar-inner { padding: 10px 12px; gap: 10px; }
+  .page { padding: 16px 12px 72px; }
+  .logo { font-size: 20px; }
 }

@@ -21,6 +21,21 @@ export function CookNow() {
 
   const [idx, setIdx] = useState(0);
 
+  const recipeId = recipe?.id;
+  const instructionCount = recipe?.instructions.length ?? 0;
+
+  // keyboard nav
+  useEffect(() => {
+    const lastStep = instructionCount - 1;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") setIdx((i) => Math.min(lastStep, i + 1));
+      else if (e.key === "ArrowLeft") setIdx((i) => Math.max(0, i - 1));
+      else if (e.key === "Escape") navigate(recipeId ? `/recipe/${recipeId}` : "/");
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [instructionCount, recipeId, navigate]);
+
   if (!recipe) {
     return (
       <div className="page" style={{ textAlign: "center", paddingTop: 80 }}>
@@ -38,17 +53,6 @@ export function CookNow() {
   const progress = ((idx + 1) / recipe.instructions.length) * 100;
 
   const onExit = () => navigate(`/recipe/${recipe.id}`);
-
-  // keyboard nav
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight") setIdx((i) => Math.min(lastIdx, i + 1));
-      else if (e.key === "ArrowLeft") setIdx((i) => Math.max(0, i - 1));
-      else if (e.key === "Escape") onExit();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [lastIdx]);
 
   // ingredients used in this step
   const stepIngredients =
@@ -95,7 +99,7 @@ export function CookNow() {
                     "pip " +
                     (i === idx ? "active" : i < idx ? "done" : "")
                   }
-                  style={{ transition: "all 200ms" }}
+                  style={{ transition: "all var(--t-med)" }}
                 />
               ))}
             </div>
@@ -156,7 +160,14 @@ export function CookNow() {
           <Icon name="arrow-l" size={16} /> Back
         </button>
 
-        <div className="progress-track" aria-label="Progress">
+        <div
+          className="progress-track"
+          role="progressbar"
+          aria-valuemin={1}
+          aria-valuemax={recipe.instructions.length}
+          aria-valuenow={idx + 1}
+          aria-label={`Step ${idx + 1} of ${recipe.instructions.length}`}
+        >
           <div
             className="progress-fill"
             style={{

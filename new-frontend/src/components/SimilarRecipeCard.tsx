@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import type { SimilarRecipe } from "../types";
 import { extractRecipe } from "../api";
 import { addRecipe } from "../store";
+import { onActivateKey } from "../helpers";
 
 export function SimilarRecipeCard({ recipe }: { recipe: SimilarRecipe }) {
   const navigate = useNavigate();
@@ -33,8 +34,16 @@ export function SimilarRecipeCard({ recipe }: { recipe: SimilarRecipe }) {
   return (
     <div
       className="recipe-card"
+      role="button"
+      tabIndex={0}
+      aria-label={`Open ${recipe.title}`}
+      aria-busy={loading}
       onClick={handleClick}
-      style={{ opacity: loading ? 0.6 : 1, pointerEvents: loading ? "none" : "auto" }}
+      onKeyDown={onActivateKey(handleClick)}
+      style={{
+        opacity: loading ? "var(--opacity-disabled)" : 1,
+        pointerEvents: loading ? "none" : "auto",
+      }}
     >
       <div
         className={"recipe-thumb" + (showFallback ? " recipe-thumb-fallback" : "")}

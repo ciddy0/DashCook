@@ -82,7 +82,7 @@
   position: fixed; inset: 0; z-index: 1000;
   background: var(--bg);
   display: flex; flex-direction: column;
-  animation: fadeIn 250ms cubic-bezier(.4,0,.2,1);
+  animation: fadeIn var(--t-slow);
 }
 .footer-overlay-close {
   position: absolute; top: 18px; right: 18px;

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Icon } from "./Icon";
+import { onActivateKey } from "../helpers";
 import type { Recipe } from "../types";
 
 function RecipeThumb({
@@ -72,7 +73,14 @@ export function RecipeCard({
   const servings = recipe.servings ? parseInt(recipe.servings, 10) : null;
 
   return (
-    <div className="recipe-card" onClick={() => onOpen(recipe.id)}>
+    <div
+      className="recipe-card"
+      role="button"
+      tabIndex={0}
+      aria-label={`View ${recipe.title}`}
+      onClick={() => onOpen(recipe.id)}
+      onKeyDown={onActivateKey(() => onOpen(recipe.id))}
+    >
       <RecipeThumb
         recipe={recipe}
         saved={saved}

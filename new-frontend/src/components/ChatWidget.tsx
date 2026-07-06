@@ -20,6 +20,15 @@ export function ChatWidget() {
     messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
+  useEffect(() => {
+    if (!open) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [open]);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const query = input.trim();
@@ -55,7 +64,12 @@ export function ChatWidget() {
       )}
 
       {open && (
-        <div className="chat-panel card">
+        <div
+          className="chat-panel card"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Ask sous chef mochi"
+        >
           <div className="chat-header">
             <span className="chat-header-title">Ask sous chef mochi</span>
             <button

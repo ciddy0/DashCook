@@ -68,6 +68,8 @@ export function Icon({ name, size = 18 }: { name: string; size?: number }) {
       height={size}
       viewBox="0 0 256 256"
       fill="currentColor"
+      aria-hidden="true"
+      focusable="false"
       style={{ display: "inline-block", verticalAlign: "middle", flexShrink: 0 }}
     >
       <path d={icon.path} />

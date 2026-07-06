@@ -1,13 +1,10 @@
 .topbar {
   position: sticky; top: 0; z-index: 50;
-  background: rgba(250, 247, 242, 0.92);
+  background: rgba(var(--bg-rgb), 0.92);
   backdrop-filter: blur(12px) saturate(140%);
   -webkit-backdrop-filter: blur(12px) saturate(140%);
   border-bottom: 2px solid var(--border);
 }
-body.theme-dark .topbar { background: rgba(20, 19, 18, 0.92); }
-body.theme-calico .topbar { background: rgba(255, 247, 242, 0.92); }
-body.theme-espresso .topbar { background: rgba(244, 239, 233, 0.92); }
 
 .topbar-inner {
   max-width: 1180px; margin: 0 auto;
@@ -55,7 +52,7 @@ body.theme-espresso .topbar { background: rgba(244, 239, 233, 0.92); }
   color: var(--text);
   font-size: 14px;
   cursor: pointer;
-  transition: background .15s;
+  transition: background var(--t);
 }
 .theme-option:hover { background: var(--border); }
 .theme-option:active { opacity: .75; }

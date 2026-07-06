@@ -31,14 +31,21 @@ export function RecipeDetail({
   const [similarLoading, setSimilarLoading] = useState(false);
   const [imgFailed, setImgFailed] = useState(false);
 
+  const sourceUrl = recipe?.source_url;
   useEffect(() => {
-    if (!recipe) return;
+    if (!sourceUrl) return;
+    let active = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- show the loading state while the fetch is in flight
     setSimilarLoading(true);
-    fetchSimilarRecipes(recipe.source_url).then((results) => {
+    fetchSimilarRecipes(sourceUrl).then((results) => {
+      if (!active) return;
       setSimilarRecipes(results);
       setSimilarLoading(false);
     });
-  }, [recipe?.source_url]);
+    return () => {
+      active = false;
+    };
+  }, [sourceUrl]);
 
   if (!recipe) {
     return (
@@ -102,7 +109,7 @@ export function RecipeDetail({
         style={{
           display: "grid",
           gridTemplateColumns: "1.05fr 1fr",
-          gap: 32,
+          gap: "clamp(16px, 4vw, 32px)",
           alignItems: "stretch",
           marginBottom: 40,
         }}
@@ -114,7 +121,7 @@ export function RecipeDetail({
               border: "2px solid var(--border)",
               overflow: "hidden",
               aspectRatio: "5/4",
-              minHeight: 280,
+              minHeight: "clamp(200px, 40vw, 280px)",
             }}
           >
             <img
@@ -138,7 +145,7 @@ export function RecipeDetail({
               borderRadius: "var(--r-xl)",
               border: "2px solid var(--border)",
               aspectRatio: "5/4",
-              minHeight: 280,
+              minHeight: "clamp(200px, 40vw, 280px)",
             }}
           >
             <div className="ph">{recipe.title}</div>
@@ -148,11 +155,12 @@ export function RecipeDetail({
         <div className="col" style={{ justifyContent: "center", gap: 16 }}>
           <h1
             style={{
-              fontSize: 40,
+              fontSize: "clamp(28px, 5vw, 40px)",
               fontWeight: 700,
               lineHeight: 1.05,
               letterSpacing: -0.8,
               textWrap: "balance",
+              overflowWrap: "anywhere",
             }}
           >
             {recipe.title}
@@ -184,7 +192,11 @@ export function RecipeDetail({
               href={recipe.source_url}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: "var(--text-2)", textDecoration: "underline" }}
+              style={{
+                color: "var(--text-2)",
+                textDecoration: "underline",
+                overflowWrap: "anywhere",
+              }}
             >
               {sourceDomain}
             </a>
@@ -214,7 +226,7 @@ export function RecipeDetail({
         style={{
           display: "grid",
           gridTemplateColumns: "minmax(0, 0.95fr) minmax(0, 1.4fr)",
-          gap: 32,
+          gap: "clamp(16px, 4vw, 32px)",
         }}
       >
         {/* Ingredients */}

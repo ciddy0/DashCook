@@ -1,4 +1,4 @@
-import type { Recipe, SimilarRecipe } from "./types";
+import type { Ingredient, Recipe, SimilarRecipe } from "./types";
 
 const API_BASE =
   "https://dashcook-api.happygrass-bd874e33.westus3.azurecontainerapps.io";
@@ -36,7 +36,7 @@ export async function extractRecipe(url: string): Promise<Recipe> {
     cook_time: data.cook_time ?? null,
     total_time: data.total_time ?? null,
     servings: data.servings ?? null,
-    ingredients: (data.ingredients ?? []).map((ing: any) => ({
+    ingredients: (data.ingredients ?? []).map((ing: Partial<Ingredient>) => ({
       raw: ing.raw ?? "",
       name: ing.name ?? "",
       quantity: ing.quantity ?? null,

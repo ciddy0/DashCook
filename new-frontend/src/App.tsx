@@ -53,7 +53,7 @@ function App() {
     try {
       localStorage.setItem("souschat.saved", JSON.stringify(saved));
     } catch {
-
+      // ignore write failures (e.g. storage quota or private mode)
     }
   }, [saved]);
 

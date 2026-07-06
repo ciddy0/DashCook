@@ -150,28 +150,9 @@ export function Home({
         </div>
 
         {savedRecipes.length === 0 ? (
-          <div
-            className="card"
-            style={{ textAlign: "center", padding: "44px 24px" }}
-          >
-            <h3
-              style={{
-                fontSize: 20,
-                fontWeight: 600,
-                marginBottom: 6,
-              }}
-            >
-              No saved recipes yet. let's fix that :3
-            </h3>
-            <p
-              style={{
-                color: "var(--text-2)",
-                fontWeight: 500,
-                fontSize: 15,
-                maxWidth: 420,
-                margin: "0 auto 18px",
-              }}
-            >
+          <div className="card empty-state">
+            <h3>No saved recipes yet. let's fix that :3</h3>
+            <p>
               Tap the bookmark on any recipe to keep it. We'll remember the
               servings you cooked with last time.
             </p>
