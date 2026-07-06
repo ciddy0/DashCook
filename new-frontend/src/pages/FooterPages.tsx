@@ -136,6 +136,18 @@ export function PatchNotesPage({ onClose }: PageProps) {
     <FooterOverlay title="Patch Notes" onClose={onClose}>
       <h2>Patch Notes</h2>
       <div className="footer-page-version">
+        <h3>v0.3.4 — Consistent & Accessible</h3>
+        <p className="footer-page-updated">July 2026</p>
+        <ul>
+          <li>Consistent hover effect across all buttons — theme, Ko-fi, Home, back, bookmark, print, and close</li>
+          <li>Full keyboard support: visible focus outlines, recipe cards and the logo activate with Enter/Space, and Escape closes the theme menu and chat</li>
+          <li>Screen-reader improvements: clearer button labels, decorative icons hidden, and Cook Mode announces the current step</li>
+          <li>Better small-screen layout for the recipe header, chat window, and cook steps</li>
+          <li>Long recipe titles and source links no longer overflow their cards</li>
+          <li>Larger tap targets for the save and serving-adjuster buttons</li>
+        </ul>
+      </div>
+      <div className="footer-page-version">
         <h3>v0.3.3 — Smooth Edges</h3>
         <p className="footer-page-updated">June 2026</p>
         <ul>
