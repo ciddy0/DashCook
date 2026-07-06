@@ -28,11 +28,6 @@
   .chat-fab { bottom: 16px; right: 16px; }
 }
 
-@media (max-width: 640px) {
-  .paster { flex-direction: column; }
-  .paster .btn { width: 100%; }
-}
-
 @media (max-width: 480px) {
   .topbar-inner { padding: 10px 12px; gap: 10px; }
   .page { padding: 16px 12px 72px; }
