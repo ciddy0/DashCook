@@ -132,6 +132,7 @@ body.theme-espresso .recipe-thumb-fallback {
   overflow-wrap: anywhere;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
