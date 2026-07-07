@@ -71,7 +71,7 @@ export function ExplorePantry() {
         <span className="eyebrow">{categories.length} shelves</span>
       </div>
       <p className="explore-intro">
-        Every recipe you and other cooks have extracted, sorted onto shelves by souschat. Tap a shelf to browse.
+        Every recipe you and other cooks have extracted, sorted onto shelves by sous chef mochi. Tap a shelf to browse.
       </p>
 
       <div className="explore-shelves">
