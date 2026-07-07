@@ -3,6 +3,7 @@
 No live database: a FakePool returns canned rows so we can verify the /recipes and
 /categories endpoints, the category filter, and card mapping.
 """
+import asyncio
 from datetime import datetime, timezone
 
 import pytest
@@ -92,3 +93,56 @@ def test_filter_by_category(client):
 
 def test_invalid_category_rejected(client):
     assert client.get("/recipes?category=0").status_code == 422
+
+
+# --- assign_category threshold behaviour -------------------------------------------------
+
+from db.categories import assign_category
+
+OTHER_ROW = {"id": 99, "name": "Other"}
+
+
+class AssignConn:
+    """Stub: `in_radius` decides whether the nearest real category is within its radius."""
+
+    def __init__(self, in_radius: bool):
+        self.in_radius = in_radius
+
+    async def fetchrow(self, sql, *args):
+        if "is_catchall LIMIT 1" in sql:
+            return OTHER_ROW
+        # nearest in-radius real category
+        return {"id": 1, "name": "Desserts"} if self.in_radius else None
+
+
+class AssignAcquire:
+    def __init__(self, in_radius):
+        self.in_radius = in_radius
+
+    async def __aenter__(self):
+        return AssignConn(self.in_radius)
+
+    async def __aexit__(self, *a):
+        return False
+
+
+class AssignPool:
+    def __init__(self, in_radius):
+        self.in_radius = in_radius
+
+    def acquire(self):
+        return AssignAcquire(self.in_radius)
+
+
+def test_assign_within_radius_uses_real_category():
+    result = asyncio.run(assign_category(AssignPool(in_radius=True), [0.1, 0.2]))
+    assert result == (1, "Desserts")
+
+
+def test_assign_outside_radius_falls_back_to_other():
+    result = asyncio.run(assign_category(AssignPool(in_radius=False), [9.9, 9.9]))
+    assert result == (99, "Other")
+
+
+def test_assign_none_embedding_returns_none():
+    assert asyncio.run(assign_category(AssignPool(in_radius=True), None)) is None

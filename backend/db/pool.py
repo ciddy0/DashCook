@@ -27,12 +27,21 @@ CREATE INDEX IF NOT EXISTS idx_recipes_created_at ON recipes (created_at DESC, u
 -- Named recipe categories. `recipes.section_id` references categories.id (kept as a
 -- plain INTEGER, no FK, to avoid altering the existing column). Populated occasionally
 -- by scripts/build_categories.py; each new recipe is assigned the nearest centroid.
+-- `centroid` is NULL for the catch-all ("Other") row, which collects recipes that fall
+-- outside every real cluster's `radius` (the membership distance cutoff, in cosine space).
 CREATE TABLE IF NOT EXISTS categories (
     id          SERIAL PRIMARY KEY,
     name        TEXT NOT NULL,
     description TEXT,
-    centroid    vector(3072) NOT NULL
+    centroid    vector(3072),
+    radius      DOUBLE PRECISION,
+    is_catchall BOOLEAN NOT NULL DEFAULT FALSE
 );
+
+-- Idempotent upgrades for pre-existing `categories` tables (no migration system).
+ALTER TABLE categories ADD COLUMN IF NOT EXISTS radius DOUBLE PRECISION;
+ALTER TABLE categories ADD COLUMN IF NOT EXISTS is_catchall BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE categories ALTER COLUMN centroid DROP NOT NULL;
 """
 
 
