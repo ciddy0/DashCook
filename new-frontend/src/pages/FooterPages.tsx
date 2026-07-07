@@ -136,6 +136,16 @@ export function PatchNotesPage({ onClose }: PageProps) {
     <FooterOverlay title="Patch Notes" onClose={onClose}>
       <h2>Patch Notes</h2>
       <div className="footer-page-version">
+        <h3>v0.4.0 — Explore the Pantry</h3>
+        <p className="footer-page-updated">July 2026</p>
+        <ul>
+          <li>New "Explore the pantry" section — browse every extracted recipe sorted onto themed shelves</li>
+          <li>Recipes are automatically grouped into categories by a clustering algorithm that labels each shelf</li>
+          <li>Tap a shelf to preview its recipes, or open it to browse the full category with pagination</li>
+          <li>Each shelf gets its own themed color accent that adapts across all four themes</li>
+        </ul>
+      </div>
+      <div className="footer-page-version">
         <h3>v0.3.4 — Consistent & Accessible</h3>
         <p className="footer-page-updated">July 2026</p>
         <ul>
@@ -275,6 +285,17 @@ export function AboutPage({ onClose }: PageProps) {
         (using schema.org markup and heuristic parsing), runs an embedding model in order to recommend similar recipes and renders it in a
         consistent, readable format. Everything runs locally in your browser after
         the initial parse.
+      </p>
+
+      <h3>How Categories Get Their Names</h3>
+      <p>
+        The shelves in "Explore the pantry" aren't hand-labeled. SousChat takes the
+        embedding of every stored recipe and groups them with a clustering algorithm
+        (K-Means), automatically choosing the number of shelves that separates the
+        recipes most cleanly. Each cluster is then handed to a language model along
+        with a representative sample of its recipe titles, which writes a short, broad
+        label and description for the shelf. Any recipe that doesn't fit neatly into a
+        cluster lands on the catch-all "Other" shelf.
       </p>
 
       <h3>Not Affiliated</h3>
