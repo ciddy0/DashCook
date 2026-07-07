@@ -75,7 +75,7 @@ export function ExplorePantry() {
       </p>
 
       <div className="explore-shelves">
-        {categories.map((cat) => {
+        {categories.map((cat, idx) => {
           const active = cat.id === selectedId;
           return (
             <div
@@ -90,7 +90,7 @@ export function ExplorePantry() {
             >
               <span
                 className="explore-shelf-swatch"
-                style={{ background: shelfColor(cat.id) }}
+                style={{ background: shelfColor(idx, cat.name) }}
               />
               <div className="explore-shelf-name">{cat.name}</div>
             </div>

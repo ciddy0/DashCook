@@ -35,6 +35,17 @@
   --info:          #3F6FA8;
   --info-dark:     #2e578a;
 
+  /* Pantry shelf swatches — distinct hues tuned for the warm cream surface */
+  --cat-1: #C2703D;  /* terracotta */
+  --cat-2: #5E8B5A;  /* olive */
+  --cat-3: #C99A2E;  /* mustard */
+  --cat-4: #C0574B;  /* clay red */
+  --cat-5: #4A7CB5;  /* blue */
+  --cat-6: #9B6A8F;  /* mauve */
+  --cat-7: #3E8E8A;  /* teal */
+  --cat-8: #A97C50;  /* caramel */
+  --cat-neutral: var(--text-3);
+
   /* Radius / shadows */
   --r-sm:   12px;
   --r-md:   16px;
@@ -103,6 +114,16 @@ body.theme-dark {
   --error:         #E17878;
   --error-soft:    #361e1e;
   --error-dark:    #a85454;
+
+  /* Pantry shelf swatches — lightened to read on the dark surface */
+  --cat-1: #E0996A;
+  --cat-2: #7FB87A;
+  --cat-3: #E4C05C;
+  --cat-4: #E38279;
+  --cat-5: #6F9BD1;
+  --cat-6: #C295B6;
+  --cat-7: #5FB5B0;
+  --cat-8: #CBA279;
 }
 
 /* Seasonal — "Calico" */
