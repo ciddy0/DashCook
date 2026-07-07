@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Icon } from "../components/Icon";
 import { RecipeCard } from "../components/RecipeCard";
+import { ExplorePantry } from "../components/ExplorePantry";
 import { extractRecipe } from "../api";
 import { getRecipes, addRecipe } from "../store";
 import { EXAMPLE_RECIPE_URL } from "../data/browseRecipes";
@@ -120,6 +121,9 @@ export function Home({
           </p>
         </div>
       </section>
+
+      {/* Explore the pantry — browse what's already in the database */}
+      <ExplorePantry />
 
       {/* Recently extracted */}
       {recent.length > 0 && (

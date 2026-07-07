@@ -1,4 +1,10 @@
-import type { Ingredient, Recipe, SimilarRecipe } from "./types";
+import type {
+  Category,
+  Ingredient,
+  Recipe,
+  RecipeListResponse,
+  SimilarRecipe,
+} from "./types";
 
 const API_BASE =
   "https://dashcook-api.happygrass-bd874e33.westus3.azurecontainerapps.io";
@@ -73,5 +79,33 @@ export async function fetchSimilarRecipes(
     return await res.json();
   } catch {
     return [];
+  }
+}
+
+export async function listCategories(): Promise<Category[]> {
+  try {
+    const res = await fetch(`${API_BASE}/categories`);
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+}
+
+export async function listRecipes(opts: {
+  limit?: number;
+  cursor?: string | null;
+  category?: number;
+} = {}): Promise<RecipeListResponse> {
+  try {
+    const params = new URLSearchParams();
+    if (opts.limit != null) params.set("limit", String(opts.limit));
+    if (opts.cursor) params.set("cursor", opts.cursor);
+    if (opts.category != null) params.set("category", String(opts.category));
+    const res = await fetch(`${API_BASE}/recipes?${params}`);
+    if (!res.ok) return { items: [], next_cursor: null };
+    return await res.json();
+  } catch {
+    return { items: [], next_cursor: null };
   }
 }

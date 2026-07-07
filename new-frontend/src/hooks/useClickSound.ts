@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 const SOUND_URL = "/sounds/button_click.mp3";
 const POOL_SIZE = 4;
-const SELECTOR = "button, .btn, .icon-btn";
+const SELECTOR = "button, .btn, .icon-btn, .explore-shelf";
 
 export function useClickSound() {
   useEffect(() => {

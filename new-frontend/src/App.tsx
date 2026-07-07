@@ -14,6 +14,9 @@ const RecipeDetail = lazy(() =>
 const CookNow = lazy(() =>
   import("./pages/CookNow").then((m) => ({ default: m.CookNow }))
 );
+const ExploreCategory = lazy(() =>
+  import("./pages/ExploreCategory").then((m) => ({ default: m.ExploreCategory }))
+);
 const ChatWidget = lazy(() =>
   import("./components/ChatWidget").then((m) => ({ default: m.ChatWidget }))
 );
@@ -80,6 +83,7 @@ function App() {
               }
             />
             <Route path="/cook/:id" element={<CookNow />} />
+            <Route path="/explore/:categoryId" element={<ExploreCategory />} />
           </Routes>
         </Suspense>
       </main>

@@ -14,6 +14,40 @@ export function onActivateKey(fn: () => void) {
   };
 }
 
+// Stable per-category color pulled from the theme palette, so each shelf keeps
+// the same swatch across renders and adapts to the active theme.
+const SHELF_COLORS = [
+  "var(--primary)",
+  "var(--accent)",
+  "var(--success)",
+  "var(--warning)",
+  "var(--error)",
+  "var(--info)",
+];
+
+export function shelfColor(categoryId: number): string {
+  return SHELF_COLORS[Math.abs(categoryId) % SHELF_COLORS.length];
+}
+
+// Session-scoped JSON cache. Lives until the tab is closed; any storage error
+// (private mode, quota, disabled) is swallowed so callers fall back to network.
+export function readSessionCache<T>(key: string): T | null {
+  try {
+    const raw = sessionStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function writeSessionCache<T>(key: string, value: T): void {
+  try {
+    sessionStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // storage unavailable or full — skip caching, network still works
+  }
+}
+
 const fractions: Record<string, string> = {
   "0.125": "\u215B",
   "0.25": "\u00BC",

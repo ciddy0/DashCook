@@ -1,0 +1,61 @@
+.explore-pantry {
+  margin-bottom: calc(var(--s-8) + var(--s-6));
+}
+
+.explore-intro {
+  color: var(--text-2);
+  font-weight: 500;
+  font-size: var(--fs-md);
+  margin: calc(-1 * var(--s-2)) 0 var(--s-5);
+  max-width: 620px;
+}
+
+.explore-shelves {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+}
+
+.explore-shelf {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-sm);
+  flex: 1 1 150px;
+}
+.explore-shelf.is-active {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.explore-shelf-swatch {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border-radius: var(--r-sm);
+  box-shadow: var(--sh-card);
+}
+
+.explore-shelf-name {
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.2px;
+  line-height: 1.2;
+}
+
+.explore-preview {
+  margin-top: var(--s-8);
+}
+.explore-preview .section-header {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+@media (max-width: 480px) {
+  .explore-shelf {
+    flex-basis: 45%;
+  }
+}
