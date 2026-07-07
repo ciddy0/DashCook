@@ -1,12 +1,13 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 from config import get_settings
 from db.pool import create_pool
-from middleware.rate_limiter import check_rate_limit, get_client_ip
+from middleware.rate_limiter import limiter
 from routes import health, recipes
 
 
@@ -32,21 +33,8 @@ app.add_middleware(
     allow_headers=["Content-Type", "Accept"],
 )
 
-
-@app.middleware("http")
-async def rate_limit_middleware(request: Request, call_next):
-    if (request.method == "POST" and request.url.path == "/url") or (
-        request.method == "GET" and request.url.path == "/search"
-    ):
-        ip = get_client_ip(request)
-        allowed, retry_after = check_rate_limit(ip)
-        if not allowed:
-            return JSONResponse(
-                status_code=429,
-                content={"detail": "Rate limit exceeded"},
-                headers={"Retry-After": str(retry_after)},
-            )
-    return await call_next(request)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 
 app.include_router(health.router)

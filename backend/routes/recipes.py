@@ -1,6 +1,8 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request, Response
 
+from config import get_settings
 from dependencies import DbPool
+from middleware.rate_limiter import limiter
 from models.requests import ExtractRequest
 from models.recipes import Recipe
 from models.recipes import SimilarRecipe
@@ -12,20 +14,26 @@ from services.embedder import embed_query
 from utils.pagination import decode_cursor, encode_cursor
 
 router = APIRouter()
+settings = get_settings()
 
 
 @router.post("/url", response_model=Recipe)
-async def get_recipe(body: ExtractRequest, pool: DbPool):
+@limiter.limit(settings.rate_limit_expensive)
+async def get_recipe(request: Request, response: Response, body: ExtractRequest, pool: DbPool):
     return await extract_recipe(pool, str(body.url))
 
 
 @router.get("/categories", response_model=list[Category])
-async def get_categories(pool: DbPool):
+@limiter.limit(settings.rate_limit_read)
+async def get_categories(request: Request, response: Response, pool: DbPool):
     return await list_categories(pool)
 
 
 @router.get("/recipes", response_model=RecipeListResponse)
+@limiter.limit(settings.rate_limit_read)
 async def list_recipes_endpoint(
+    request: Request,
+    response: Response,
     pool: DbPool,
     limit: int = Query(20, ge=1, le=50, description="Max recipes per page"),
     cursor: str | None = Query(
@@ -67,7 +75,10 @@ async def list_recipes_endpoint(
 
 
 @router.get("/similar", response_model=list[SimilarRecipe])
+@limiter.limit(settings.rate_limit_read)
 async def similar_recipes(
+    request: Request,
+    response: Response,
     pool: DbPool,
     url: str = Query(..., description="Source recipe URL"),
     limit: int = Query(5, ge=1, le=20),
@@ -81,7 +92,10 @@ async def similar_recipes(
     return results
 
 @router.get("/search", response_model=list[SimilarRecipe])
+@limiter.limit(settings.rate_limit_expensive)
 async def search(
+    request: Request,
+    response: Response,
     pool: DbPool,
     q: str = Query(..., min_length=1, max_length=500, description="Free-text recipe search query"),
     limit: int = Query(10, ge=1, le=50),
