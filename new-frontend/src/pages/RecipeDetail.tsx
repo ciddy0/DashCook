@@ -148,7 +148,6 @@ export function RecipeDetail({
               minHeight: "clamp(200px, 40vw, 280px)",
             }}
           >
-            <div className="ph">{recipe.title}</div>
             <span className="source">{sourceDomain}</span>
           </div>
         )}

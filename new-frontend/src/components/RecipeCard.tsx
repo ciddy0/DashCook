@@ -37,11 +37,6 @@ function RecipeThumb({
           className="recipe-thumb-img"
         />
       )}
-      {showFallback && (
-        <div className="ph">
-          {recipe.title.split(" ").slice(0, 3).join(" ")}
-        </div>
-      )}
       <span className="source">{sourceDomain}</span>
       <button
         className={"save" + (saved ? " saved" : "")}

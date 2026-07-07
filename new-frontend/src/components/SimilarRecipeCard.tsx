@@ -58,11 +58,6 @@ export function SimilarRecipeCard({ recipe }: { recipe: SimilarRecipe }) {
             className="recipe-thumb-img"
           />
         )}
-        {showFallback && (
-          <div className="ph">
-            {recipe.title.split(" ").slice(0, 3).join(" ")}
-          </div>
-        )}
         <span className="source">{sourceDomain}</span>
       </div>
       <div className="recipe-body">
