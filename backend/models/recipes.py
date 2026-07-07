@@ -18,6 +18,7 @@ class Recipe(BaseModel):
     cook_time: str | None = None
     total_time: str | None = None
     servings: str | None = None
+    category: str | None = None
     ingredients: list[Ingredient]
     instructions: list[str]
 
@@ -26,4 +27,26 @@ class SimilarRecipe(BaseModel):
     source_url: str
     image_url: str | None = None
     distance: float
+
+
+class RecipeCard(BaseModel):
+    title: str
+    source_url: str
+    image_url: str | None = None
+    prep_time: str | None = None
+    cook_time: str | None = None
+    total_time: str | None = None
+    servings: str | None = None
+    category: str | None = None
+
+
+class RecipeListResponse(BaseModel):
+    items: list[RecipeCard]
+    next_cursor: str | None = None  # null when there are no more pages
+
+
+class Category(BaseModel):
+    id: int
+    name: str
+    description: str | None = None
 

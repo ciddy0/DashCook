@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 
 from pydantic import BaseModel
 
@@ -11,7 +12,15 @@ class _PydanticEncoder(json.JSONEncoder):
 
 async def get_cached_recipe(pool, url: str):
     async with pool.acquire() as conn:
-        row = await conn.fetchrow("SELECT * FROM recipes WHERE url = $1", url)
+        row = await conn.fetchrow(
+            """
+            SELECT r.*, c.name AS category
+            FROM recipes r
+            LEFT JOIN categories c ON c.id = r.section_id
+            WHERE r.url = $1
+            """,
+            url,
+        )
         if not row:
             return None
         return {
@@ -22,18 +31,23 @@ async def get_cached_recipe(pool, url: str):
             "cook_time": row["cook_time"],
             "total_time": row["total_time"],
             "servings": row["servings"],
+            "category": row["category"],
             "ingredients": json.loads(row["ingredients"]),
             "instructions": json.loads(row["instructions"]),
         }
 
 async def cache_recipe(
-    pool, url: str, recipe_data: dict, embedding: list[float] | None = None
+    pool,
+    url: str,
+    recipe_data: dict,
+    embedding: list[float] | None = None,
+    section_id: int | None = None,
 ):
     async with pool.acquire() as conn:
         await conn.execute(
             """
-            INSERT INTO recipes (url, title, image_url, prep_time, cook_time, total_time, servings, ingredients, instructions, embedding)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+            INSERT INTO recipes (url, title, image_url, prep_time, cook_time, total_time, servings, ingredients, instructions, embedding, section_id)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
             ON CONFLICT (url) DO UPDATE SET
                 title        = EXCLUDED.title,
                 image_url    = EXCLUDED.image_url,
@@ -43,7 +57,8 @@ async def cache_recipe(
                 servings     = EXCLUDED.servings,
                 ingredients  = EXCLUDED.ingredients,
                 instructions = EXCLUDED.instructions,
-                embedding    = COALESCE(EXCLUDED.embedding, recipes.embedding)
+                embedding    = COALESCE(EXCLUDED.embedding, recipes.embedding),
+                section_id   = COALESCE(EXCLUDED.section_id, recipes.section_id)
             """,
             url,
             recipe_data["title"],
@@ -55,7 +70,43 @@ async def cache_recipe(
             json.dumps(recipe_data["ingredients"], cls=_PydanticEncoder),
             json.dumps(recipe_data["instructions"]),
             embedding,
+            section_id,
         )
+
+async def list_recipes(
+    pool,
+    limit: int = 20,
+    cursor_created_at: datetime | None = None,
+    cursor_url: str | None = None,
+    category_id: int | None = None,
+):
+    """Keyset-paginated recipe list, newest first, optionally filtered by category.
+
+    Returns (rows, has_more). Fetches limit + 1 rows so the caller can tell
+    whether another page exists and build the next cursor from the last kept row.
+    """
+    # $1 cursor timestamp, $2 cursor url, $3 category filter (NULL = no filter).
+    # $4 is limit + 1, appended last.
+    params: list = [cursor_created_at, cursor_url, category_id, limit + 1]
+    async with pool.acquire() as conn:
+        rows = await conn.fetch(
+            """
+            SELECT r.url, r.title, r.image_url, r.prep_time, r.cook_time,
+                   r.total_time, r.servings, r.created_at, c.name AS category
+            FROM recipes r
+            LEFT JOIN categories c ON c.id = r.section_id
+            WHERE ($1::timestamptz IS NULL
+                   OR (r.created_at, r.url) < ($1::timestamptz, $2::text))
+              AND ($3::int IS NULL OR r.section_id = $3::int)
+            ORDER BY r.created_at DESC, r.url DESC
+            LIMIT $4
+            """,
+            *params,
+        )
+
+    has_more = len(rows) > limit
+    return rows[:limit], has_more
+
 
 async def get_similar_recipes(pool, url: str, limit: int=5):
     async with pool.acquire() as conn:

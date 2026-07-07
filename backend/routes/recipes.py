@@ -4,9 +4,12 @@ from dependencies import DbPool
 from models.requests import ExtractRequest
 from models.recipes import Recipe
 from models.recipes import SimilarRecipe
+from models.recipes import RecipeCard, RecipeListResponse, Category
 from services.recipe_service import extract_recipe
-from db.recipes import get_similar_recipes, search_recipes
+from db.recipes import get_similar_recipes, search_recipes, list_recipes
+from db.categories import list_categories
 from services.embedder import embed_query
+from utils.pagination import decode_cursor, encode_cursor
 
 router = APIRouter()
 
@@ -14,6 +17,53 @@ router = APIRouter()
 @router.post("/url", response_model=Recipe)
 async def get_recipe(body: ExtractRequest, pool: DbPool):
     return await extract_recipe(pool, str(body.url))
+
+
+@router.get("/categories", response_model=list[Category])
+async def get_categories(pool: DbPool):
+    return await list_categories(pool)
+
+
+@router.get("/recipes", response_model=RecipeListResponse)
+async def list_recipes_endpoint(
+    pool: DbPool,
+    limit: int = Query(20, ge=1, le=50, description="Max recipes per page"),
+    cursor: str | None = Query(
+        None, max_length=512, description="Opaque cursor from a previous page"
+    ),
+    category: int | None = Query(None, ge=1, description="Filter by category id"),
+):
+    cursor_created_at = None
+    cursor_url = None
+    if cursor is not None:
+        try:
+            cursor_created_at, cursor_url = decode_cursor(cursor)
+        except ValueError:
+            raise HTTPException(status_code=422, detail="Invalid cursor")
+
+    rows, has_more = await list_recipes(
+        pool, limit, cursor_created_at, cursor_url, category
+    )
+
+    next_cursor = None
+    if has_more and rows:
+        last = rows[-1]
+        next_cursor = encode_cursor(last["created_at"], last["url"])
+
+    items = [
+        RecipeCard(
+            title=r["title"],
+            source_url=r["url"],
+            image_url=r["image_url"],
+            prep_time=r["prep_time"],
+            cook_time=r["cook_time"],
+            total_time=r["total_time"],
+            servings=r["servings"],
+            category=r["category"],
+        )
+        for r in rows
+    ]
+    return RecipeListResponse(items=items, next_cursor=next_cursor)
 
 
 @router.get("/similar", response_model=list[SimilarRecipe])

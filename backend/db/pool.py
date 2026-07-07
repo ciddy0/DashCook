@@ -22,6 +22,17 @@ CREATE TABLE IF NOT EXISTS recipes (
 );
 
 CREATE INDEX IF NOT EXISTS idx_recipes_title ON recipes (title);
+CREATE INDEX IF NOT EXISTS idx_recipes_created_at ON recipes (created_at DESC, url DESC);
+
+-- Named recipe categories. `recipes.section_id` references categories.id (kept as a
+-- plain INTEGER, no FK, to avoid altering the existing column). Populated occasionally
+-- by scripts/build_categories.py; each new recipe is assigned the nearest centroid.
+CREATE TABLE IF NOT EXISTS categories (
+    id          SERIAL PRIMARY KEY,
+    name        TEXT NOT NULL,
+    description TEXT,
+    centroid    vector(3072) NOT NULL
+);
 """
 
 

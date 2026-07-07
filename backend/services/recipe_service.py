@@ -7,6 +7,7 @@ logger = logging.getLogger(__name__)
 
 from utils.url import normalize_url, validate_url
 from db.recipes import get_cached_recipe, cache_recipe
+from db.categories import assign_category
 from services.scraper import fetch_page
 from services.parser import parse_recipe
 from models.recipes import Recipe
@@ -38,6 +39,14 @@ async def extract_recipe(pool: asyncpg.Pool, raw_url: str) -> Recipe:
         raise HTTPException(status_code=422, detail=str(e))
 
     embedding = await generate_embedding(recipe_data)
-    await cache_recipe(pool, url, recipe_data, embedding)
 
-    return Recipe(source_url=url, **recipe_data)
+    # Assign the nearest existing category (no-op if no categories exist yet).
+    section_id = None
+    category_name = None
+    assigned = await assign_category(pool, embedding)
+    if assigned is not None:
+        section_id, category_name = assigned
+
+    await cache_recipe(pool, url, recipe_data, embedding, section_id)
+
+    return Recipe(source_url=url, category=category_name, **recipe_data)
