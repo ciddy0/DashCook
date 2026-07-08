@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Icon } from "../components/Icon";
+import { ReportIssueModal } from "../components/ReportIssueModal";
 import { SimilarRecipeCard } from "../components/SimilarRecipeCard";
 import { getRecipe } from "../store";
 import { fetchSimilarRecipes } from "../api";
@@ -30,6 +31,7 @@ export function RecipeDetail({
   const [similarRecipes, setSimilarRecipes] = useState<SimilarRecipe[]>([]);
   const [similarLoading, setSimilarLoading] = useState(false);
   const [imgFailed, setImgFailed] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
 
   const sourceUrl = recipe?.source_url;
   useEffect(() => {
@@ -101,7 +103,22 @@ export function RecipeDetail({
         >
           <Icon name="print" size={18} />
         </button>
+        <button
+          className="icon-btn"
+          onClick={() => setReportOpen(true)}
+          title="Report issue"
+          aria-label="Report an issue"
+        >
+          <Icon name="flag" size={18} />
+        </button>
       </div>
+
+      {reportOpen && (
+        <ReportIssueModal
+          recipeUrl={recipe.source_url}
+          onClose={() => setReportOpen(false)}
+        />
+      )}
 
       {/* Header */}
       <div

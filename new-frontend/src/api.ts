@@ -54,6 +54,37 @@ export async function extractRecipe(url: string): Promise<Recipe> {
   };
 }
 
+export interface TicketInput {
+  subject: string;
+  description: string;
+  recipe_url?: string | null;
+}
+
+export async function submitTicket(input: TicketInput): Promise<void> {
+  const res = await fetch(`${API_BASE}/tickets`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      category: "parser",
+      subject: input.subject,
+      description: input.description,
+      ...(input.recipe_url ? { recipe_url: input.recipe_url } : {}),
+    }),
+  });
+
+  if (!res.ok) {
+    if (res.status === 429) {
+      throw new Error(
+        "Too many reports have been submitted recently. Please try again later.",
+      );
+    }
+    if (res.status === 422) {
+      throw new Error("Please check the form and try again.");
+    }
+    throw new Error("Couldn't submit your report. Please try again.");
+  }
+}
+
 export async function searchRecipes(
   query: string,
   limit = 6,

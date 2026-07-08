@@ -2,6 +2,7 @@ import { useState, useEffect, lazy, Suspense } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { Topbar } from "./components/Topbar";
 import { Footer } from "./components/Footer";
+import { ToastProvider } from "./components/Toast";
 import { useClickSound } from "./hooks/useClickSound";
 import type { ThemeName } from "./types";
 
@@ -64,7 +65,7 @@ function App() {
     setSaved((s) => ({ ...s, [id]: !s[id] }));
 
   return (
-    <>
+    <ToastProvider>
       {!isCookMode && (
         <Topbar theme={theme} onSetTheme={setTheme} />
       )}
@@ -97,7 +98,7 @@ function App() {
           <ChatWidget />
         </Suspense>
       )}
-    </>
+    </ToastProvider>
   );
 }
 
