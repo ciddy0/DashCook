@@ -42,6 +42,26 @@ CREATE TABLE IF NOT EXISTS categories (
 ALTER TABLE categories ADD COLUMN IF NOT EXISTS radius DOUBLE PRECISION;
 ALTER TABLE categories ADD COLUMN IF NOT EXISTS is_catchall BOOLEAN NOT NULL DEFAULT FALSE;
 ALTER TABLE categories ALTER COLUMN centroid DROP NOT NULL;
+
+-- Support tickets (see db/migrations/006_tickets.sql). `submitter_ip_hash` is a
+-- salted SHA-256 of the client IP for abuse correlation — never the raw address.
+CREATE TABLE IF NOT EXISTS tickets (
+    id                UUID PRIMARY KEY,
+    category          TEXT NOT NULL,
+    status            TEXT NOT NULL DEFAULT 'open',
+    subject           TEXT NOT NULL,
+    description       TEXT NOT NULL,
+    recipe_url        TEXT,
+    metadata          JSONB NOT NULL DEFAULT '{}',
+    submitter_ip_hash TEXT,
+    user_agent        TEXT,
+    created_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_tickets_created_at ON tickets (created_at DESC, id DESC);
+CREATE INDEX IF NOT EXISTS idx_tickets_category ON tickets (category);
+CREATE INDEX IF NOT EXISTS idx_tickets_status ON tickets (status);
 """
 
 

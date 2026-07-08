@@ -223,6 +223,13 @@ defaults except the OpenAI key, which is required for embeddings, search, and ca
 | `RATE_LIMIT_READ`      | `60/minute`                                                | No       | Limit for cheap read endpoints                      |
 | `EMBEDDING_MODEL`      | `text-embedding-3-large`                                   | No       | OpenAI embedding model (3072 dims)                  |
 | `CATEGORY_MODEL`       | `gpt-4o-mini`                                              | No       | Chat model used to name recipe clusters             |
+| `RATE_LIMIT_TICKET`    | `2/minute;5/hour`                                          | No       | Aggressive per-IP limit for `POST /tickets`         |
+| `ADMIN_TOKEN`          | `""`                                                       | No*      | Secret for `GET /tickets`; unset ⇒ that endpoint returns 503 |
+| `IP_HASH_SALT`         | `""`                                                       | No       | Salt for hashing submitter IPs; unset ⇒ hash stored as NULL |
+| `MAX_REQUEST_BODY_BYTES` | `16384`                                                 | No       | Reject request bodies larger than this with 413     |
+
+\* `ADMIN_TOKEN` is only required to use the owner-only `GET /tickets` endpoint. Generate one with
+`python -c "import secrets; print(secrets.token_urlsafe(32))"`.
 
 ---
 
@@ -235,6 +242,8 @@ defaults except the OpenAI key, which is required for embeddings, search, and ca
 | `GET`  | `/recipes`    | List recipes (cursor paginated)  | `limit` (1–50), `cursor`, `category` | read   |
 | `GET`  | `/categories` | List all categories              | —                               | read        |
 | `GET`  | `/similar`    | Recipes similar to a given URL   | `url`, `limit` (1–20)           | read        |
+| `POST` | `/tickets`    | Submit a support ticket (public) | body: see below                 | ticket      |
+| `GET`  | `/tickets`    | List tickets (**owner only**)    | `limit`, `offset`, `category`, `status`, `search` | read |
 | `GET`  | `/`           | Health check                     | —                               | unlimited   |
 | `GET`  | `/ping`       | Health check                     | —                               | unlimited   |
 
@@ -298,6 +307,33 @@ curl "http://localhost:8000/recipes?limit=20&category=3"
 curl "http://localhost:8000/search?q=spicy%20thai%20noodles&limit=10"
 ```
 
+**Submit a support ticket (public):**
+
+```bash
+curl -X POST http://localhost:8000/tickets \
+  -H "Content-Type: application/json" \
+  -d '{
+        "category": "parser",
+        "subject": "Recipe parser failed",
+        "description": "The recipe at example.com/x did not parse.",
+        "recipe_url": "https://example.com/x"
+      }'
+```
+
+`category` is one of `parser`, `recipe`, `account`, `bug`, `feature_request`, `other`.
+`recipe_url` and `metadata` (a JSON object) are optional. The response is a minimal
+acknowledgement — `{ "id", "status", "created_at" }` — and does not echo the submitted content.
+
+**List tickets (owner only):**
+
+```bash
+curl "http://localhost:8000/tickets?status=open&category=parser&search=fail&limit=20&offset=0" \
+  -H "X-Admin-Token: $ADMIN_TOKEN"
+```
+
+Newest first. Returns `{ "items": [...], "total", "limit", "offset" }`. Without a valid
+`X-Admin-Token` the endpoint returns **401**; if `ADMIN_TOKEN` is unset it returns **503**.
+
 ---
 
 ## Rate limiting
@@ -307,9 +343,14 @@ Rate limiting is enforced per client IP via [slowapi](https://github.com/laurent
 
 - **Expensive** (`RATE_LIMIT_EXPENSIVE`, default `30/hour`) — `POST /url`, `GET /search`.
   These call OpenAI, so they're kept strict.
-- **Read** (`RATE_LIMIT_READ`, default `60/minute`) — `/recipes`, `/categories`, `/similar`.
-  Cheap DB reads; generous enough for normal browsing, tight enough to stop bulk scraping.
+- **Read** (`RATE_LIMIT_READ`, default `60/minute`) — `/recipes`, `/categories`, `/similar`,
+  `GET /tickets`. Cheap DB reads; generous for browsing, tight enough to stop bulk scraping.
+- **Ticket** (`RATE_LIMIT_TICKET`, default `2/minute;5/hour`) — `POST /tickets`. Deliberately
+  aggressive: the `2/minute` burst cap stops rapid spam, the `5/hour` cap stops sustained abuse.
 - Health endpoints (`/`, `/ping`) are unlimited.
+
+Requests larger than `MAX_REQUEST_BODY_BYTES` (default 16 KB) are rejected with **413** before
+any handler runs, and unhandled server errors return a generic **500** without leaking internals.
 
 Client IP is resolved from the first `X-Forwarded-For` entry (behind the Azure Container Apps
 ingress), falling back to the socket peer.
@@ -322,7 +363,7 @@ ingress), falling back to the socket peer.
 
 ## Data model & migrations
 
-Two main tables:
+Three main tables:
 
 - **`recipes`** — structured columns (`title`, `image_url`, `prep_time`, `cook_time`,
   `total_time`, `servings`, `ingredients` JSONB, `instructions` JSONB, `created_at`) plus an
@@ -330,11 +371,20 @@ Two main tables:
 - **`categories`** — `id`, `name`, `description`, and a `centroid` embedding. This table is
   (re)built by `scripts/build_categories.py`, which truncates and repopulates it from the
   latest clustering run.
+- **`tickets`** — support tickets (`id` UUID, `category`, `status`, `subject`, `description`,
+  `recipe_url`, `metadata` JSONB, `submitter_ip_hash`, `user_agent`, `created_at`,
+  `updated_at`). **Privacy:** the raw client IP is never stored — only a salted SHA-256 hash
+  (`IP_HASH_SALT`), which lets the owner spot repeat abuse from one source without retaining
+  personal data. If no salt is set, the hash is stored as `NULL`.
 
-The `recipes` schema is evolved by the ordered SQL in `db/migrations/` (`001` → `005`), applied
-in numeric order. These migrations mutate an existing `recipes` table rather than creating the
-schema from scratch, and `005` resizes the embedding column to 3072 dims for
-`text-embedding-3-large`.
+The `recipes` schema is evolved by the ordered SQL in `db/migrations/` (`001` → `006`), applied
+in numeric order. `005` resizes the embedding column to 3072 dims for `text-embedding-3-large`;
+`006` creates the `tickets` table. The `tickets` DDL is also bootstrapped at startup for local
+dev (`db/pool.py`), but **production/Supabase skips startup DDL**, so run `006` there manually:
+
+```bash
+psql "$SUPABASE_URL" -f db/migrations/006_tickets.sql
+```
 
 ---
 
