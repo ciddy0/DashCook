@@ -123,6 +123,11 @@
 }
 .paster .input:focus { background: transparent; }
 
+main {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
 .page {
   max-width: 1180px; margin: 0 auto;
   padding: var(--s-8) var(--s-6) var(--s-24);

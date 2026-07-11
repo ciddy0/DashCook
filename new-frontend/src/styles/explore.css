@@ -30,6 +30,11 @@
   background: var(--primary-soft);
 }
 
+.explore-shelf-placeholder {
+  background: var(--surface-alt);
+  opacity: 0.6;
+}
+
 .explore-shelf-swatch {
   width: 6px;
   align-self: stretch;
@@ -45,6 +50,10 @@
   color: var(--text);
   letter-spacing: -0.2px;
   line-height: 1.2;
+  /* Longer shelf names ("Baked Goods & Desserts") wrap to a second line and short ones
+     don't, so row height would depend on which names the clustering happens to produce —
+     and the loading placeholder could never match it. Always reserve both lines. */
+  min-height: calc(var(--fs-md) * 1.2 * 2);
 }
 
 .explore-preview {

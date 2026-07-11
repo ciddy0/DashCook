@@ -12,18 +12,30 @@ import {
 import type { Category, ExploreRecipe } from "../types";
 
 const PREVIEW_LIMIT = 4;
+const CATEGORIES_CACHE_KEY = "explore:categories";
+const PLACEHOLDER_SHELVES = 9;
 
 export function ExplorePantry() {
-  const [categories, setCategories] = useState<Category[]>([]);
+  // Hydrate from the session cache so a repeat render has the shelves on frame one.
+  const cachedCategories = readSessionCache<Category[]>(CATEGORIES_CACHE_KEY);
+  const [categories, setCategories] = useState<Category[]>(cachedCategories ?? []);
+  const [loading, setLoading] = useState(!cachedCategories);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [preview, setPreview] = useState<ExploreRecipe[]>([]);
   const [previewLoading, setPreviewLoading] = useState(false);
 
   useEffect(() => {
+    if (cachedCategories) return;
     let alive = true;
-    listCategories().then((cats) => {
-      if (alive) setCategories(cats);
-    });
+    listCategories()
+      .then((cats) => {
+        if (!alive) return;
+        setCategories(cats);
+        writeSessionCache(CATEGORIES_CACHE_KEY, cats);
+      })
+      .finally(() => {
+        if (alive) setLoading(false);
+      });
     return () => {
       alive = false;
     };
@@ -32,12 +44,9 @@ export function ExplorePantry() {
   useEffect(() => {
     if (selectedId == null) return;
 
-    // Serve a previously-fetched shelf straight from sessionStorage — no request,
-    // no loading flash. Cache lives until the tab closes.
     const cacheKey = `explore:recipes:${selectedId}:${PREVIEW_LIMIT}`;
     const cached = readSessionCache<ExploreRecipe[]>(cacheKey);
     if (cached) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate synchronously from cache to avoid a loading flash
       setPreview(cached);
       setPreviewLoading(false);
       return;
@@ -59,7 +68,28 @@ export function ExplorePantry() {
     };
   }, [selectedId]);
 
-  // Nothing to show until the shelves load.
+  if (loading) {
+    return (
+      <section className="explore-pantry" aria-busy="true">
+        <div className="section-header">
+          <h2>Explore the pantry</h2>
+        </div>
+        <p className="explore-intro">
+          Every recipe you and other cooks have extracted, sorted onto shelves by sous chef mochi. Tap a shelf to browse.
+        </p>
+        <div className="explore-shelves">
+          {Array.from({ length: PLACEHOLDER_SHELVES }, (_, i) => (
+            <div key={`placeholder-${i}`} className="card explore-shelf explore-shelf-placeholder">
+              <span className="explore-shelf-swatch" />
+              <div className="explore-shelf-name">&nbsp;</div>
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  // Loaded, but the pantry is genuinely empty.
   if (categories.length === 0) return null;
 
   const selected = categories.find((c) => c.id === selectedId) ?? null;

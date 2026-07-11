@@ -31,6 +31,8 @@ function RecipeThumb({
         <img
           src={recipe.image_url}
           alt={recipe.title}
+          width={400}
+          height={300}
           loading="lazy"
           decoding="async"
           onError={() => setImgFailed(true)}

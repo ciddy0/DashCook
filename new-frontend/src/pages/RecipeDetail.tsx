@@ -144,6 +144,8 @@ export function RecipeDetail({
             <img
               src={recipe.image_url}
               alt={recipe.title}
+              width={500}
+              height={400}
               fetchPriority="high"
               decoding="async"
               onError={() => setImgFailed(true)}
