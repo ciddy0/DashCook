@@ -136,6 +136,15 @@ export function PatchNotesPage({ onClose }: PageProps) {
     <FooterOverlay title="Patch Notes" onClose={onClose}>
       <h2>Patch Notes</h2>
       <div className="footer-page-version">
+        <h3>v0.4.1 — Speak Up</h3>
+        <p className="footer-page-updated">July 2026</p>
+        <ul>
+          <li>New support tickets — tell us when something's broken, confusing, or missing, no account required</li>
+          <li>"Report an issue" button on every recipe page, so a bad parse can be flagged from the recipe that broke</li>
+          <li>Tightened up the whole interface — spacing, text sizes, and rounded corners now follow one consistent system, so everything lines up and body copy reads a little larger</li>
+        </ul>
+      </div>
+      <div className="footer-page-version">
         <h3>v0.4.0 — Explore the Pantry</h3>
         <p className="footer-page-updated">July 2026</p>
         <ul>
