@@ -15,7 +15,7 @@
 }
 .footer-link {
   font-family: inherit;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 600;
   letter-spacing: 0.8px;
   text-transform: uppercase;
@@ -33,7 +33,7 @@
   text-decoration: none;
   font-family: inherit;
   font-weight: 600;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   border-radius: var(--r-pill);
   box-shadow: 0 4px 0 var(--accent-dark);
   transition: transform var(--t), box-shadow var(--t), filter var(--t);
@@ -47,11 +47,11 @@
   width: 32px; height: 32px;
   border-radius: 50%;
   display: inline-flex; align-items: center; justify-content: center;
-  font-size: 16px;
+  font-size: var(--fs-md);
 }
 .kofi-lbl {
   display: block;
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 500;
   opacity: 0.85;
   letter-spacing: 0.4px;
@@ -60,19 +60,19 @@
 }
 .kofi-btn b {
   display: block;
-  font-size: 16px; font-weight: 700;
+  font-size: var(--fs-md); font-weight: 700;
   letter-spacing: -0.2px;
 }
 .kofi-btn-sm {
   padding: var(--s-2) var(--s-3) var(--s-2) var(--s-2);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   gap: var(--s-2);
   box-shadow: 0 3px 0 var(--accent-dark);
 }
 .kofi-btn-sm .kofi-cup { width: 24px; height: 24px; }
-.kofi-btn-sm b { font-size: 13px; }
+.kofi-btn-sm b { font-size: var(--fs-sm); }
 .site-footer-fineprint {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-3);
   font-weight: 500;
   letter-spacing: 0.2px;
@@ -99,18 +99,18 @@
   max-width: 680px;
 }
 .footer-overlay-content h2 {
-  font-size: 28px; font-weight: 700;
+  font-size: var(--fs-2xl); font-weight: 700;
   letter-spacing: -0.4px;
   margin-bottom: var(--s-2);
 }
 .footer-overlay-content h3 {
-  font-size: 17px; font-weight: 700;
+  font-size: var(--fs-lg); font-weight: 700;
   color: var(--primary);
   margin-top: var(--s-6); margin-bottom: var(--s-2);
   letter-spacing: -0.1px;
 }
 .footer-overlay-content p {
-  font-size: 15px; font-weight: 500;
+  font-size: var(--fs-md); font-weight: 500;
   line-height: 1.6;
   color: var(--text-2);
   margin-bottom: var(--s-1);
@@ -121,7 +121,7 @@
   display: flex; flex-direction: column; gap: var(--s-2);
 }
 .footer-overlay-content ul li {
-  font-size: 15px; font-weight: 500;
+  font-size: var(--fs-md); font-weight: 500;
   color: var(--text-2);
   line-height: 1.5;
   padding-left: var(--s-4);
@@ -136,7 +136,7 @@
   background: var(--primary);
 }
 .footer-page-updated {
-  font-size: 13px !important;
+  font-size: var(--fs-sm) !important;
   color: var(--text-3) !important;
   font-weight: 600 !important;
   letter-spacing: 0.3px;

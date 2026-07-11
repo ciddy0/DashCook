@@ -46,7 +46,9 @@
   --cat-8: #A97C50;  /* caramel */
   --cat-neutral: var(--text-3);
 
-  /* Radius / shadows */
+  /* Radius — 4px ladder. --r-2xs is the bubble-tail corner. */
+  --r-2xs:  4px;
+  --r-xs:   8px;
   --r-sm:   12px;
   --r-md:   16px;
   --r-lg:   20px;
@@ -79,9 +81,17 @@
      rounding this down to 40px breaks the accessibility floor. */
   --touch: 44px;
 
-  /* Type scale */
-  --fs-xs: 11px; --fs-sm: 13px; --fs-md: 15px; --fs-lg: 19px;
-  --fs-xl: 24px; --fs-2xl: 40px;
+  /* Type scale — ~1.2 ratio anchored on a 16px body. Type does NOT sit on the
+     8px spacing grid; it follows its own ratio. Eight steps, one per role:
+     labels / meta / body / card title / heading / display / hero. */
+  --fs-xs:  12px;  /* uppercase micro-labels, badges, fineprint */
+  --fs-sm:  14px;  /* meta, dates, secondary links */
+  --fs-md:  16px;  /* body copy, inputs — the a11y default, do not shrink */
+  --fs-lg:  19px;  /* card titles, subheads */
+  --fs-xl:  24px;  /* section headings */
+  --fs-2xl: 32px;  /* overlay titles, cook-step text */
+  --fs-3xl: 40px;  /* hero, clamp floor */
+  --fs-4xl: 64px;  /* hero, clamp ceiling */
 
   /* Misc */
   --opacity-disabled: 0.6;

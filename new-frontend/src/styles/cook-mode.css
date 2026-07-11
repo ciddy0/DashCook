@@ -13,7 +13,7 @@
 }
 .cook-title {
   flex: 1;
-  font-size: 18px; font-weight: 600;
+  font-size: var(--fs-lg); font-weight: 600;
   color: var(--text-2);
   letter-spacing: -0.2px;
 }
@@ -38,7 +38,7 @@
 .cook-step-num {
   display: flex; align-items: center; gap: var(--s-4);
   color: var(--text-3);
-  font-size: 13px; font-weight: 700; letter-spacing: 1.4px;
+  font-size: var(--fs-sm); font-weight: 700; letter-spacing: 1.4px;
   text-transform: uppercase;
 }
 .cook-step-num .pip {
@@ -50,7 +50,7 @@
 .cook-step-num .pip.done { background: var(--success); }
 
 .cook-step-text {
-  font-size: clamp(24px, 3vw, 32px);
+  font-size: clamp(var(--fs-xl), 3vw, var(--fs-2xl));
   line-height: 1.32;
   font-weight: 500;
   color: var(--text);
@@ -65,11 +65,11 @@
   display: flex; flex-direction: column; gap: var(--s-2);
 }
 .cook-ing-list .lbl {
-  font-size: 11px; font-weight: 700; letter-spacing: 1.4px;
+  font-size: var(--fs-xs); font-weight: 700; letter-spacing: 1.4px;
   color: var(--text-3); text-transform: uppercase; margin-bottom: var(--s-1);
 }
 .cook-ing-list .ing {
-  font-size: 16px; color: var(--text); font-weight: 500;
+  font-size: var(--fs-md); color: var(--text); font-weight: 500;
 }
 .cook-ing-list .ing .qty { color: var(--primary); font-weight: 700; }
 
@@ -84,7 +84,7 @@
 .timer .face {
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
   font-variant-numeric: tabular-nums;
-  font-size: 22px; font-weight: 700;
+  font-size: var(--fs-xl); font-weight: 700;
   min-width: var(--s-20); text-align: center;
 }
 .timer.running { background: var(--warning); color: white; }
@@ -101,7 +101,7 @@
   width: var(--s-14); height: var(--s-14);
   border-radius: 50%;
   display: inline-flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 22px;
+  font-weight: 700; font-size: var(--fs-xl);
   color: white;
   background: var(--primary);
   box-shadow: var(--sh-bubble);

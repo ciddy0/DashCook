@@ -19,7 +19,7 @@
   color: var(--accent-dark);
   border-color: var(--accent);
 }
-.banner .em { font-size: 22px; line-height: 1; }
+.banner .em { font-size: var(--fs-xl); line-height: 1; }
 .banner b { font-weight: 700; display: block; margin-bottom: 2px; }
 
 /* Toast: a transient banner pinned to the viewport */
@@ -39,7 +39,7 @@
   box-shadow: var(--sh-card);
   animation: toast-in var(--t-slow) cubic-bezier(.4, 0, .2, 1);
 }
-.toast-msg { flex: 1; font-weight: 600; font-size: 15px; line-height: 1.4; }
+.toast-msg { flex: 1; font-weight: 600; font-size: var(--fs-md); line-height: 1.4; }
 .toast-close {
   flex-shrink: 0;
   display: inline-flex; align-items: center; justify-content: center;

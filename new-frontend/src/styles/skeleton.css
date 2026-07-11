@@ -25,6 +25,6 @@
 }
 .skeleton-card .skeleton-line {
   height: 16px;
-  border-radius: 8px;
+  border-radius: var(--r-xs);
 }
 .skeleton-card .skeleton-line-short { width: 60%; }

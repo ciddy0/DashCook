@@ -1,7 +1,7 @@
 .btn {
   font-family: inherit;
   font-weight: 700;
-  font-size: 15px;
+  font-size: var(--fs-md);
   text-transform: uppercase;
   letter-spacing: 0.8px;
   border: 2px solid transparent;
@@ -61,8 +61,8 @@
 .btn-ghost:hover { border-color: var(--border-strong); color: var(--text); }
 .btn-ghost:active { transform: translateY(1px); }
 
-.btn-sm { padding: var(--s-2) var(--s-3); font-size: 13px; min-width: 0; }
-.btn-xl { padding: var(--s-4) var(--s-8); font-size: 17px; }
+.btn-sm { padding: var(--s-2) var(--s-3); font-size: var(--fs-sm); min-width: 0; }
+.btn-xl { padding: var(--s-4) var(--s-8); font-size: var(--fs-lg); }
 
 .icon-btn {
   width: var(--touch); height: var(--touch); min-width: var(--touch);

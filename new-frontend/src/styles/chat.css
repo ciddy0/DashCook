@@ -47,14 +47,14 @@
 }
 .chat-header-title {
   font-weight: 700;
-  font-size: 16px;
+  font-size: var(--fs-md);
   color: var(--text);
   letter-spacing: -0.2px;
 }
 .chat-header-close {
   background: none;
   border: none;
-  font-size: 22px;
+  font-size: var(--fs-xl);
   color: var(--text-3);
   cursor: pointer;
   line-height: 1;
@@ -75,7 +75,7 @@
 .chat-empty {
   text-align: center;
   color: var(--text-3);
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 500;
   padding: var(--s-8) var(--s-3);
   line-height: 1.5;
@@ -86,8 +86,8 @@
   background: var(--primary-soft);
   color: var(--text);
   padding: var(--s-2) var(--s-3);
-  border-radius: var(--r-md) var(--r-md) 4px var(--r-md);
-  font-size: 14px;
+  border-radius: var(--r-md) var(--r-md) var(--r-2xs) var(--r-md);
+  font-size: var(--fs-sm);
   font-weight: 500;
   max-width: 85%;
   word-break: break-word;
@@ -98,8 +98,8 @@
   background: var(--surface-alt);
   color: var(--text);
   padding: var(--s-2) var(--s-3);
-  border-radius: var(--r-md) var(--r-md) var(--r-md) 4px;
-  font-size: 14px;
+  border-radius: var(--r-md) var(--r-md) var(--r-md) var(--r-2xs);
+  font-size: var(--fs-sm);
   font-weight: 500;
   max-width: 85%;
   word-break: break-word;
@@ -107,7 +107,7 @@
 
 .chat-results-label {
   font-weight: 600;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-2);
   display: block;
   margin-bottom: var(--s-2);
@@ -132,7 +132,7 @@
   text-decoration: none;
   color: var(--primary);
   font-weight: 600;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   transition: border-color var(--t), background var(--t), transform var(--t);
 }
 .chat-result-link:hover {
@@ -144,7 +144,7 @@
 .chat-result-thumb {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
+  border-radius: var(--r-xs);
   object-fit: cover;
   flex-shrink: 0;
 }
@@ -177,7 +177,7 @@
 .chat-input {
   flex: 1;
   padding: var(--s-2) var(--s-3);
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .chat-send {
   flex-shrink: 0;
