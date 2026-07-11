@@ -6,14 +6,14 @@
   letter-spacing: 0.8px;
   border: 2px solid transparent;
   border-radius: var(--r-sm);
-  padding: 13px 22px;
+  padding: var(--s-3) var(--s-5);
   cursor: pointer;
   color: white;
   user-select: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: var(--s-2);
   min-width: 120px;
   transition: filter var(--t), transform var(--t), box-shadow var(--t), background var(--t);
   background: var(--primary);
@@ -61,11 +61,11 @@
 .btn-ghost:hover { border-color: var(--border-strong); color: var(--text); }
 .btn-ghost:active { transform: translateY(1px); }
 
-.btn-sm { padding: 9px 14px; font-size: 13px; min-width: 0; }
-.btn-xl { padding: 18px 32px; font-size: 17px; }
+.btn-sm { padding: var(--s-2) var(--s-3); font-size: 13px; min-width: 0; }
+.btn-xl { padding: var(--s-4) var(--s-8); font-size: 17px; }
 
 .icon-btn {
-  width: 44px; height: 44px; min-width: 44px;
+  width: var(--touch); height: var(--touch); min-width: var(--touch);
   border-radius: var(--r-sm);
   background: var(--surface);
   color: var(--text-2);

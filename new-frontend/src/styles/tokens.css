@@ -66,9 +66,18 @@
   --t-med:  200ms cubic-bezier(.4, 0, .2, 1);
   --t-slow: 250ms cubic-bezier(.4, 0, .2, 1);
 
-  /* Spacing scale */
-  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px;
-  --s-5: 20px; --s-6: 24px; --s-8: 32px; --s-10: 40px;
+  /* Spacing scale — 8px grid, with 4px half-steps below 24px for tight work
+     (icon gaps, chip padding). Above 24px it is 8px steps only. --s-N is
+     always N × 4px. Nothing outside this scale: 6/10/14/18/22 are the values
+     that make a layout look eyeballed. */
+  --s-1: 4px;   --s-2: 8px;   --s-3: 12px;  --s-4: 16px;
+  --s-5: 20px;  --s-6: 24px;
+  --s-8: 32px;  --s-10: 40px; --s-12: 48px; --s-14: 56px;
+  --s-16: 64px; --s-18: 72px; --s-20: 80px; --s-24: 96px;
+
+  /* Minimum touch target (WCAG 2.5.5, iOS HIG). Deliberately off-grid —
+     rounding this down to 40px breaks the accessibility floor. */
+  --touch: 44px;
 
   /* Type scale */
   --fs-xs: 11px; --fs-sm: 13px; --fs-md: 15px; --fs-lg: 19px;

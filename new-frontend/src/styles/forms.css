@@ -5,7 +5,7 @@
   background: var(--surface-alt);
   border: 2px solid var(--border);
   border-radius: var(--r-sm);
-  padding: 14px 18px;
+  padding: var(--s-3) var(--s-4);
   color: var(--text);
   width: 100%;
   transition: background var(--t), border-color var(--t);
@@ -18,8 +18,8 @@
 }
 
 .tag {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 6px 12px;
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  padding: var(--s-2) var(--s-3);
   background: var(--primary);
   color: white;
   font-weight: 700;
@@ -38,13 +38,13 @@
 
 /* Category filter chips */
 .chip-row {
-  display: flex; flex-wrap: wrap; gap: 10px;
-  margin-bottom: 20px;
+  display: flex; flex-wrap: wrap; gap: var(--s-2);
+  margin-bottom: var(--s-5);
 }
 .chip {
   font-family: inherit;
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 8px 16px;
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  padding: var(--s-2) var(--s-4);
   background: var(--surface);
   border: 2px solid var(--border);
   border-radius: var(--r-pill);
@@ -71,8 +71,8 @@
 }
 
 .stat {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 8px 14px;
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  padding: var(--s-2) var(--s-3);
   background: var(--surface-alt);
   border: 2px solid var(--border);
   border-radius: var(--r-pill);
@@ -107,8 +107,8 @@
 }
 
 .section-header {
-  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
-  margin-bottom: 20px; padding-bottom: 12px;
+  display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-3);
+  margin-bottom: var(--s-5); padding-bottom: var(--s-3);
   border-bottom: 2px solid var(--border);
 }
 .section-header h2 {
@@ -120,8 +120,8 @@
 }
 
 .checkbox-row {
-  display: flex; align-items: flex-start; gap: 14px;
-  padding: 14px 16px;
+  display: flex; align-items: flex-start; gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
   background: var(--surface);
   border: 2px solid var(--border);
   border-radius: var(--r-sm);
@@ -167,11 +167,11 @@
   background: var(--surface-alt);
   border: 2px solid var(--border);
   border-radius: var(--r-pill);
-  padding: 4px;
+  padding: var(--s-1);
   box-shadow: var(--sh-card);
 }
 .stepper button {
-  width: 44px; height: 44px;
+  width: var(--touch); height: var(--touch);
   border-radius: var(--r-pill);
   border: none;
   background: var(--primary);
@@ -190,5 +190,5 @@
   min-width: 64px;
   font-weight: 700; font-size: 18px;
   color: var(--text);
-  padding: 0 12px;
+  padding: 0 var(--s-3);
 }

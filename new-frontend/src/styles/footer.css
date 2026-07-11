@@ -1,16 +1,16 @@
 .site-footer {
   max-width: 1180px;
-  margin: 48px auto 0;
-  padding: 32px 24px 48px;
+  margin: var(--s-12) auto 0;
+  padding: var(--s-8) var(--s-6) var(--s-12);
 }
 .footer-links {
   display: flex; align-items: center; justify-content: center;
   flex-wrap: wrap;
-  margin-bottom: 18px;
+  margin-bottom: var(--s-4);
 }
 .footer-dot {
   color: var(--text-3);
-  margin: 0 8px;
+  margin: 0 var(--s-2);
   font-weight: 700;
 }
 .footer-link {
@@ -26,8 +26,8 @@
 .footer-link:hover { color: var(--primary); }
 
 .kofi-btn {
-  display: inline-flex; align-items: center; gap: 12px;
-  padding: 12px 20px 12px 14px;
+  display: inline-flex; align-items: center; gap: var(--s-3);
+  padding: var(--s-3) var(--s-5) var(--s-3) var(--s-3);
   background: var(--accent);
   color: white;
   text-decoration: none;
@@ -64,9 +64,9 @@
   letter-spacing: -0.2px;
 }
 .kofi-btn-sm {
-  padding: 6px 14px 6px 8px;
+  padding: var(--s-2) var(--s-3) var(--s-2) var(--s-2);
   font-size: 13px;
-  gap: 8px;
+  gap: var(--s-2);
   box-shadow: 0 3px 0 var(--accent-dark);
 }
 .kofi-btn-sm .kofi-cup { width: 24px; height: 24px; }
@@ -85,13 +85,13 @@
   animation: fadeIn var(--t-slow);
 }
 .footer-overlay-close {
-  position: absolute; top: 18px; right: 18px;
+  position: absolute; top: var(--s-4); right: var(--s-4);
   z-index: 1;
 }
 .footer-overlay-body {
   flex: 1;
   overflow-y: auto;
-  padding: 48px 24px 64px;
+  padding: var(--s-12) var(--s-6) var(--s-16);
   display: flex; align-items: flex-start; justify-content: center;
 }
 .footer-overlay-content {
@@ -101,32 +101,33 @@
 .footer-overlay-content h2 {
   font-size: 28px; font-weight: 700;
   letter-spacing: -0.4px;
-  margin-bottom: 6px;
+  margin-bottom: var(--s-2);
 }
 .footer-overlay-content h3 {
   font-size: 17px; font-weight: 700;
   color: var(--primary);
-  margin-top: 28px; margin-bottom: 8px;
+  margin-top: var(--s-6); margin-bottom: var(--s-2);
   letter-spacing: -0.1px;
 }
 .footer-overlay-content p {
   font-size: 15px; font-weight: 500;
   line-height: 1.6;
   color: var(--text-2);
-  margin-bottom: 4px;
+  margin-bottom: var(--s-1);
 }
 .footer-overlay-content ul {
   list-style: none;
   padding: 0;
-  display: flex; flex-direction: column; gap: 6px;
+  display: flex; flex-direction: column; gap: var(--s-2);
 }
 .footer-overlay-content ul li {
   font-size: 15px; font-weight: 500;
   color: var(--text-2);
   line-height: 1.5;
-  padding-left: 18px;
+  padding-left: var(--s-4);
   position: relative;
 }
+/* Bullet is optically centered on the first text line, not on the grid. */
 .footer-overlay-content ul li::before {
   content: "";
   position: absolute; left: 0; top: 9px;
@@ -139,11 +140,11 @@
   color: var(--text-3) !important;
   font-weight: 600 !important;
   letter-spacing: 0.3px;
-  margin-bottom: 12px !important;
+  margin-bottom: var(--s-3) !important;
 }
 .footer-page-version {
-  margin-bottom: 28px;
-  padding-bottom: 24px;
+  margin-bottom: var(--s-6);
+  padding-bottom: var(--s-6);
   border-bottom: 2px solid var(--border);
 }
 .footer-page-version:last-child {

@@ -6,9 +6,9 @@
 }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .cook-header {
-  padding: 18px 28px;
+  padding: var(--s-4) var(--s-6);
   border-bottom: 2px solid var(--border);
-  display: flex; align-items: center; gap: 18px;
+  display: flex; align-items: center; gap: var(--s-4);
   background: var(--surface);
 }
 .cook-title {
@@ -22,7 +22,7 @@
 .cook-body {
   flex: 1;
   overflow-y: auto;
-  padding: 48px 24px 32px;
+  padding: var(--s-12) var(--s-6) var(--s-8);
   display: flex; align-items: flex-start; justify-content: center;
 }
 .cook-step-card {
@@ -31,12 +31,12 @@
   background: var(--surface);
   border: 2px solid var(--border);
   border-radius: var(--r-xl);
-  padding: clamp(24px, 5vw, 44px);
+  padding: clamp(var(--s-6), 5vw, var(--s-12));
   box-shadow: var(--sh-card);
-  display: flex; flex-direction: column; gap: 24px;
+  display: flex; flex-direction: column; gap: var(--s-6);
 }
 .cook-step-num {
-  display: flex; align-items: center; gap: 16px;
+  display: flex; align-items: center; gap: var(--s-4);
   color: var(--text-3);
   font-size: 13px; font-weight: 700; letter-spacing: 1.4px;
   text-transform: uppercase;
@@ -61,12 +61,12 @@
   background: var(--surface-alt);
   border: 2px solid var(--border);
   border-radius: var(--r-md);
-  padding: 16px 20px;
-  display: flex; flex-direction: column; gap: 6px;
+  padding: var(--s-4) var(--s-5);
+  display: flex; flex-direction: column; gap: var(--s-2);
 }
 .cook-ing-list .lbl {
   font-size: 11px; font-weight: 700; letter-spacing: 1.4px;
-  color: var(--text-3); text-transform: uppercase; margin-bottom: 4px;
+  color: var(--text-3); text-transform: uppercase; margin-bottom: var(--s-1);
 }
 .cook-ing-list .ing {
   font-size: 16px; color: var(--text); font-weight: 500;
@@ -74,8 +74,8 @@
 .cook-ing-list .ing .qty { color: var(--primary); font-weight: 700; }
 
 .timer {
-  display: inline-flex; align-items: center; gap: 14px;
-  padding: 14px 18px 14px 14px;
+  display: inline-flex; align-items: center; gap: var(--s-3);
+  padding: var(--s-3) var(--s-4) var(--s-3) var(--s-3);
   background: var(--warning-soft);
   border: 2px solid var(--warning);
   border-radius: var(--r-pill);
@@ -85,20 +85,20 @@
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
   font-variant-numeric: tabular-nums;
   font-size: 22px; font-weight: 700;
-  min-width: 76px; text-align: center;
+  min-width: var(--s-20); text-align: center;
 }
 .timer.running { background: var(--warning); color: white; }
 
 .cook-footer {
   border-top: 2px solid var(--border);
   background: var(--surface);
-  padding: 18px 28px;
-  display: flex; align-items: center; gap: 14px;
+  padding: var(--s-4) var(--s-6);
+  display: flex; align-items: center; gap: var(--s-3);
 }
 .cook-footer .progress-track { flex: 1; }
 
 .bubble {
-  width: 56px; height: 56px;
+  width: var(--s-14); height: var(--s-14);
   border-radius: 50%;
   display: inline-flex; align-items: center; justify-content: center;
   font-weight: 700; font-size: 22px;
