@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Icon } from "../components/Icon";
 import { ReportIssueModal } from "../components/ReportIssueModal";
 import { SimilarRecipeCard } from "../components/SimilarRecipeCard";
+import { RecipeGridSkeleton } from "../components/RecipeGridSkeleton";
 import { getRecipe } from "../store";
 import { fetchSimilarRecipes } from "../api";
 import { ingredientLine } from "../helpers";
@@ -418,17 +419,7 @@ export function RecipeDetail({
           <div className="section-header">
             <h2>Similar Recipes</h2>
           </div>
-          <div className="recipe-grid">
-            {[0, 1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="skeleton-card">
-                <div className="skeleton-thumb skeleton" />
-                <div className="skeleton-body">
-                  <div className="skeleton-line skeleton" style={{ width: "85%" }} />
-                  <div className="skeleton-line skeleton skeleton-line-short" />
-                </div>
-              </div>
-            ))}
-          </div>
+          <RecipeGridSkeleton count={6} />
         </section>
       )}
 

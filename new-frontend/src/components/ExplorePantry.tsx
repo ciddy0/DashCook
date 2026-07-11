@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Icon } from "./Icon";
 import { ExploreRecipeCard } from "./ExploreRecipeCard";
+import { RecipeGridSkeleton } from "./RecipeGridSkeleton";
 import { listCategories, listRecipes } from "../api";
 import {
   shelfColor,
@@ -39,6 +40,7 @@ export function ExplorePantry() {
     return () => {
       alive = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetch once on mount; cachedCategories is a mount-time snapshot
   }, []);
 
   useEffect(() => {
@@ -47,6 +49,7 @@ export function ExplorePantry() {
     const cacheKey = `explore:recipes:${selectedId}:${PREVIEW_LIMIT}`;
     const cached = readSessionCache<ExploreRecipe[]>(cacheKey);
     if (cached) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate synchronously from cache to avoid a loading flash
       setPreview(cached);
       setPreviewLoading(false);
       return;
@@ -137,9 +140,7 @@ export function ExplorePantry() {
             </Link>
           </div>
           {previewLoading ? (
-            <div className="card empty-state">
-              <p>Loading recipes…</p>
-            </div>
+            <RecipeGridSkeleton count={PREVIEW_LIMIT} />
           ) : preview.length === 0 ? (
             <div className="card empty-state">
               <p>No recipes on this shelf yet.</p>

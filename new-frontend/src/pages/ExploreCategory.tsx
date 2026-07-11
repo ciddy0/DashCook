@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Icon } from "../components/Icon";
 import { ExploreRecipeCard } from "../components/ExploreRecipeCard";
+import { RecipeGridSkeleton } from "../components/RecipeGridSkeleton";
 import { listCategories, listRecipes } from "../api";
 import type { ExploreRecipe } from "../types";
 
@@ -72,7 +73,11 @@ export function ExploreCategory() {
         )}
       </div>
 
-      {items.length === 0 && !loading ? (
+      {loading && items.length === 0 ? (
+        // First load only — "Load more" keeps the grid it already has and reports
+        // progress on the button instead.
+        <RecipeGridSkeleton count={PAGE_LIMIT} />
+      ) : items.length === 0 ? (
         <div className="card empty-state">
           <h3>Nothing on this shelf yet</h3>
           <p>Extract a few recipes and they'll get sorted onto shelves here.</p>
