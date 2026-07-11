@@ -18,6 +18,9 @@ const CookNow = lazy(() =>
 const ExploreCategory = lazy(() =>
   import("./pages/ExploreCategory").then((m) => ({ default: m.ExploreCategory }))
 );
+const Tickets = lazy(() =>
+  import("./pages/Tickets").then((m) => ({ default: m.Tickets }))
+);
 const ChatWidget = lazy(() =>
   import("./components/ChatWidget").then((m) => ({ default: m.ChatWidget }))
 );
@@ -28,6 +31,9 @@ function App() {
   useClickSound();
   const location = useLocation();
   const isCookMode = location.pathname.startsWith("/cook/");
+  // Admin dashboard — no marketing footer, no assistant.
+  const isAdmin = location.pathname.startsWith("/tickets");
+  const isChrome = !isCookMode && !isAdmin;
 
   const [theme, setTheme] = useState<ThemeName>(() => {
     const stored = localStorage.getItem("souschat.theme");
@@ -85,15 +91,16 @@ function App() {
             />
             <Route path="/cook/:id" element={<CookNow />} />
             <Route path="/explore/:categoryId" element={<ExploreCategory />} />
+            <Route path="/tickets" element={<Tickets />} />
           </Routes>
         </Suspense>
       </main>
-      {!isCookMode && (
+      {isChrome && (
         <Suspense fallback={null}>
           <Footer />
         </Suspense>
       )}
-      {!isCookMode && (
+      {isChrome && (
         <Suspense fallback={null}>
           <ChatWidget />
         </Suspense>

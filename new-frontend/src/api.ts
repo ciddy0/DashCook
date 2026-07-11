@@ -4,6 +4,7 @@ import type {
   Recipe,
   RecipeListResponse,
   SimilarRecipe,
+  TicketListResponse,
 } from "./types";
 
 const API_BASE =
@@ -83,6 +84,37 @@ export async function submitTicket(input: TicketInput): Promise<void> {
     }
     throw new Error("Couldn't submit your report. Please try again.");
   }
+}
+
+// Sentinel thrown when the admin token is missing/wrong (HTTP 401), so the
+// tickets page can distinguish it and drop back to the token gate.
+export const UNAUTHORIZED = "UNAUTHORIZED";
+
+export async function listTickets(opts: {
+  token: string;
+  limit?: number;
+  offset?: number;
+  category?: string;
+  status?: string;
+  search?: string;
+}): Promise<TicketListResponse> {
+  const params = new URLSearchParams();
+  if (opts.limit != null) params.set("limit", String(opts.limit));
+  if (opts.offset != null) params.set("offset", String(opts.offset));
+  if (opts.category) params.set("category", opts.category);
+  if (opts.status) params.set("status", opts.status);
+  if (opts.search) params.set("search", opts.search);
+
+  const res = await fetch(`${API_BASE}/tickets?${params}`, {
+    headers: { "X-Admin-Token": opts.token },
+  });
+
+  if (res.status === 401) throw new Error(UNAUTHORIZED);
+  if (res.status === 503) {
+    throw new Error("The tickets endpoint is not enabled on the server.");
+  }
+  if (!res.ok) throw new Error("Couldn't load tickets. Please try again.");
+  return res.json();
 }
 
 export async function searchRecipes(
