@@ -27,14 +27,27 @@ export interface SimilarRecipe {
   distance: number;
 }
 
+export interface DiscoveredRecipe {
+  title: string;
+  source_url: string;
+  image_url: string | null;
+  total_time: string | null;
+  why: string | null;
+}
+
+export interface DiscoverResult {
+  mode: "ai" | "search";
+  answer: string | null;
+  recipes: DiscoveredRecipe[];
+  remaining: number;
+}
+
 export interface Category {
   id: number;
   name: string;
   description: string | null;
 }
 
-// One row from GET /recipes (backend RecipeCard model). Has no `id` — open
-// via extract-on-click like SimilarRecipe.
 export interface ExploreRecipe {
   title: string;
   source_url: string;
@@ -63,7 +76,6 @@ export type TicketCategory =
 
 export type TicketStatus = "open" | "in_progress" | "resolved" | "closed";
 
-// One ticket from GET /tickets (backend TicketDetail model).
 export interface TicketDetail {
   id: string;
   category: TicketCategory;

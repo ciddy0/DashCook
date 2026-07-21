@@ -136,6 +136,26 @@ export function PatchNotesPage({ onClose }: PageProps) {
     <FooterOverlay title="Patch Notes" onClose={onClose}>
       <h2>Patch Notes</h2>
       <div className="footer-page-version">
+        <h3>v0.5.0 — Sous Chef Mochi</h3>
+        <p className="footer-page-updated">July 2026</p>
+        <ul>
+          <li>Ask mochi about the recipe you're cooking — substitutions, timing, doneness, make-ahead and storage. Answered from that recipe's own ingredients and steps</li>
+          <li>Follow-up questions remember what you just asked, so "what about margarine?" works without repeating yourself</li>
+          <li>Search now understands moods, not just dishes: ask for "cozy warm dinners" and mochi picks recipes that fit.</li>
+          <li>Picks only ever come from recipes already in the collection. mochi can't make one up!</li>
+          <li>5 mochi requests a day, shared between questions and picks. Run out and search still works exactly as before; you'll just see the closest matches without the commentary</li>
+        </ul>
+      </div>
+      <div className="footer-page-version">
+        <h3>v0.4.2 — Steady on Your Feet</h3>
+        <p className="footer-page-updated">July 2026</p>
+        <ul>
+          <li>New Black Cat theme, darker than Espresso</li>
+          <li>Category shelves now show placeholder cards while recipes load, instead of an empty gap</li>
+          <li>The home page no longer shifts around as it finishes loading</li>
+        </ul>
+      </div>
+      <div className="footer-page-version">
         <h3>v0.4.1 — Speak Up</h3>
         <p className="footer-page-updated">July 2026</p>
         <ul>
@@ -244,6 +264,7 @@ export function CreditsPage({ onClose }: PageProps) {
         <li>React & TypeScript</li>
         <li>Python (Fast API)</li>
         <li>OpenAI Embedding Model</li>
+        <li>Anthropic Claude — sous chef mochi</li>
         <li>Postgres</li>
       </ul>
 
@@ -304,6 +325,21 @@ export function AboutPage({ onClose }: PageProps) {
         with a representative sample of its recipe titles, which writes a short, broad
         label and description for the shelf. Any recipe that doesn't fit neatly into a
         cluster lands on the catch-all "Other" shelf.
+      </p>
+
+      <h3>How Mochi Picks Recipes</h3>
+      <p>
+        Asking for something like "cozy warm dinners" runs a retrieval-augmented
+        generation (RAG) pipeline. Your query is embedded with OpenAI's
+        text-embedding-3-large, Postgres with pgvector returns the twenty recipes
+        closest to it by cosine distance, and that shortlist (titles, times,
+        ingredient names) is the only thing Claude is given.
+      </p>
+      <p>
+        Claude is constrained to a JSON schema and can only answer with ids from
+        that shortlist, each re-checked on the server before anything renders, so
+        mochi can't invent a recipe. Picks are capped at five a day; once they're
+        spent you get the raw nearest matches, minus the commentary.
       </p>
 
       <h3>Not Affiliated</h3>
