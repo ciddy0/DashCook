@@ -11,6 +11,7 @@ Paste a URL, get the recipe — no ads, no life stories, no popups. SousChat scr
 - **Recipe extraction** — paste any recipe URL and get a clean, structured recipe via JSON-LD parsing
 - **Ingredient parsing** — quantities, units, and names broken out with support for fractions, ranges, and scaling
 - **Semantic search** — find recipes by description using OpenAI embeddings and pgvector cosine similarity
+- **AI recipe discovery** — describe a mood ("cozy warm dinners") and Claude picks recipes from the search results and says why each fits, falling back to plain semantic search once the daily limit is spent
 - **Similar recipes** — discover related recipes based on title and ingredient embeddings
 - **Cook mode** — distraction-free step-by-step view for following along while cooking
 - **Offline saves** — save recipes to localStorage, no account required
@@ -137,6 +138,37 @@ Semantic search across all stored recipes. Rate limited to 30 requests/hour per 
 
 Response shape is the same as `/similar`.
 
+### `POST /discover`
+
+Retrieval-augmented recipe discovery: semantic search retrieves a shortlist of 20 recipes, then Claude picks the ones that fit the query and explains why.
+
+Draws on a shared daily AI budget (5/day per IP, also spent by `/ask`). When that budget is gone — or the assistant is unavailable, or nothing on the shortlist fits — the endpoint **falls back to plain semantic search** rather than failing, and reports which path it took via `mode`.
+
+**Request:**
+```json
+{ "query": "cozy warm dinners", "limit": 5 }
+```
+
+**Response:**
+```json
+{
+  "mode": "ai",
+  "answer": "For a cozy night in, these all lean slow-cooked and rich:",
+  "recipes": [
+    {
+      "title": "Beef Bourguignon",
+      "source_url": "https://example.com/beef-bourguignon",
+      "image_url": "https://example.com/img.jpg",
+      "total_time": "3 hours",
+      "why": "Braises for three hours in red wine — about as warming as dinner gets."
+    }
+  ],
+  "remaining": 4
+}
+```
+
+`mode` is `"ai"` when Claude made the picks and `"search"` when it fell back (in which case `answer` and every `why` are `null`). `remaining` is the caller's AI requests left today.
+
 ## Project Structure
 
 ```
@@ -145,7 +177,7 @@ Response shape is the same as `/similar`.
 │   ├── config.py               # Environment/settings (pydantic-settings)
 │   ├── routes/
 │   │   ├── health.py           # GET /, GET /ping
-│   │   └── recipes.py          # POST /url, GET /similar, GET /search
+│   │   └── recipes.py          # POST /url, POST /ask, POST /discover, GET /similar, GET /search
 │   ├── models/
 │   │   ├── recipes.py          # Recipe, Ingredient, SimilarRecipe
 │   │   └── requests.py         # ExtractRequest
@@ -154,13 +186,16 @@ Response shape is the same as `/similar`.
 │   │   ├── scraper.py          # HTTP fetching with cloudscraper fallback
 │   │   ├── parser.py           # JSON-LD schema.org/Recipe extraction
 │   │   ├── embedder.py         # OpenAI embedding generation
+│   │   ├── recipe_qa.py        # Claude Q&A about one recipe
+│   │   ├── recipe_discovery.py # Claude picks recipes from search results (RAG)
 │   │   └── ingredient_parser.py
 │   ├── db/
 │   │   ├── pool.py             # asyncpg connection pool
 │   │   ├── recipes.py          # Query functions
 │   │   └── migrations/         # SQL migration files
 │   ├── middleware/
-│   │   └── rate_limiter.py     # IP-based sliding window rate limiter
+│   │   ├── rate_limiter.py     # IP-based sliding window rate limiter
+│   │   └── ai_quota.py         # Shared daily budget for the Claude endpoints
 │   └── tests/
 ├── new-frontend/
 │   ├── src/
