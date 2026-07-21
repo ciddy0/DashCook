@@ -1,5 +1,6 @@
 import type {
   Category,
+  DiscoverResult,
   Ingredient,
   Recipe,
   RecipeListResponse,
@@ -7,8 +8,6 @@ import type {
   TicketListResponse,
 } from "./types";
 
-// Thrown by askRecipeQuestion when the daily question limit (HTTP 429) is hit,
-// so the UI can show a distinct "come back tomorrow" message.
 export const QA_RATE_LIMITED = "QA_RATE_LIMITED";
 
 const API_BASE =
@@ -90,8 +89,6 @@ export async function submitTicket(input: TicketInput): Promise<void> {
   }
 }
 
-// Sentinel thrown when the admin token is missing/wrong (HTTP 401), so the
-// tickets page can distinguish it and drop back to the token gate.
 export const UNAUTHORIZED = "UNAUTHORIZED";
 
 export async function listTickets(opts: {
@@ -139,10 +136,8 @@ export async function askRecipeQuestion(
       title: recipe.title,
       servings: recipe.servings,
       total_time: recipe.total_time,
-      // Send the original parsed lines; the model reads them as-is.
       ingredients: recipe.ingredients.map((ing) => ing.raw || ing.name),
       instructions: recipe.instructions,
-      // Prior exchanges so follow-ups have context (backend caps this).
       history: history.slice(-8),
     }),
   });
@@ -159,17 +154,26 @@ export async function askRecipeQuestion(
   return (data.answer ?? "").trim();
 }
 
-export async function searchRecipes(
+export async function discoverRecipes(
   query: string,
-  limit = 6,
-): Promise<SimilarRecipe[]> {
+  limit = 5,
+): Promise<DiscoverResult> {
+  const empty: DiscoverResult = {
+    mode: "search",
+    answer: null,
+    recipes: [],
+    remaining: 0,
+  };
   try {
-    const params = new URLSearchParams({ q: query, limit: String(limit) });
-    const res = await fetch(`${API_BASE}/search?${params}`);
-    if (!res.ok) return [];
+    const res = await fetch(`${API_BASE}/discover`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query, limit }),
+    });
+    if (!res.ok) return empty;
     return await res.json();
   } catch {
-    return [];
+    return empty;
   }
 }
 

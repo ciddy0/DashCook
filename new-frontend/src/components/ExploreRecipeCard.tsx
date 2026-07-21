@@ -6,9 +6,6 @@ import { extractRecipe } from "../api";
 import { addRecipe } from "../store";
 import { onActivateKey } from "../helpers";
 
-// Card for recipes already stored in the DB (from GET /recipes). These rows have
-// no `id`, so opening one re-extracts by source_url (served from cache) to get a
-// full Recipe, then navigates to its detail page — same flow as SimilarRecipeCard.
 export function ExploreRecipeCard({ recipe }: { recipe: ExploreRecipe }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);

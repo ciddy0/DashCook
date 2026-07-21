@@ -17,7 +17,6 @@ const CATEGORIES_CACHE_KEY = "explore:categories";
 const PLACEHOLDER_SHELVES = 9;
 
 export function ExplorePantry() {
-  // Hydrate from the session cache so a repeat render has the shelves on frame one.
   const cachedCategories = readSessionCache<Category[]>(CATEGORIES_CACHE_KEY);
   const [categories, setCategories] = useState<Category[]>(cachedCategories ?? []);
   const [loading, setLoading] = useState(!cachedCategories);
@@ -92,7 +91,6 @@ export function ExplorePantry() {
     );
   }
 
-  // Loaded, but the pantry is genuinely empty.
   if (categories.length === 0) return null;
 
   const selected = categories.find((c) => c.id === selectedId) ?? null;

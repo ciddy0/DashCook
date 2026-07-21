@@ -1,19 +1,20 @@
 import { useState, useRef, useEffect } from "react";
 import { useMatch } from "react-router-dom";
 import {
-  searchRecipes,
+  discoverRecipes,
   askRecipeQuestion,
   QA_RATE_LIMITED,
   type QATurn,
 } from "../api";
 import { getRecipe } from "../store";
-import type { SimilarRecipe } from "../types";
+import type { DiscoveredRecipe } from "../types";
 import { MochiChatIcon } from "./MochiChatIcon";
 
 interface Message {
   role: "user" | "bot";
   text?: string;
-  recipes?: SimilarRecipe[];
+  recipes?: DiscoveredRecipe[];
+  note?: string;
 }
 
 const EXAMPLE_QUESTIONS = [
@@ -22,23 +23,26 @@ const EXAMPLE_QUESTIONS = [
   "How do I know when it's done?",
 ];
 
+const EXAMPLE_SEARCHES = [
+  "Cozy warm dinners",
+  "Quick weeknight pasta",
+  "Something with leftover chicken",
+];
+
 export function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [rateLimited, setRateLimited] = useState(false);
+  const [aiRemaining, setAiRemaining] = useState<number | null>(null);
   const messagesEnd = useRef<HTMLDivElement>(null);
 
-  // Context awareness: on /recipe/:id the widget answers questions about that
-  // recipe (Q&A mode); everywhere else it searches for recipes (search mode).
   const match = useMatch("/recipe/:id");
   const recipe = match?.params.id ? getRecipe(match.params.id) : undefined;
   const mode: "qa" | "search" = recipe ? "qa" : "search";
   const recipeId = recipe?.id;
 
-  // A conversation is tied to one context. Reset when the recipe (or mode)
-  // changes so Q&A about one recipe never bleeds into another or into search.
   useEffect(() => {
     setMessages([]);
     setRateLimited(false);
@@ -58,24 +62,35 @@ export function ChatWidget() {
     return () => window.removeEventListener("keydown", handleKey);
   }, [open]);
 
-  async function search(query: string) {
+  async function discover(query: string) {
     setLoading(true);
-    const results = await searchRecipes(query);
+    const result = await discoverRecipes(query);
     setLoading(false);
 
-    if (results.length > 0) {
-      setMessages((prev) => [...prev, { role: "bot", recipes: results }]);
-    } else {
+    if (result.recipes.length === 0) {
       setMessages((prev) => [
         ...prev,
         { role: "bot", text: "No matching recipes found. Try a different search!" },
       ]);
+      return;
     }
+
+    setAiRemaining(result.remaining);
+
+    const note =
+      result.mode === "search" && result.remaining === 0
+        ? "You've used today's AI picks — here are the closest matches."
+        : undefined;
+
+    setMessages((prev) => [
+      ...prev,
+      ...(result.answer ? [{ role: "bot" as const, text: result.answer }] : []),
+      { role: "bot", recipes: result.recipes, note },
+    ]);
   }
 
   async function askAboutRecipe(query: string) {
     if (!recipe) return;
-    // History is the prior Q&A already in this conversation.
     const history: QATurn[] = [];
     for (let i = 0; i < messages.length - 1; i++) {
       const m = messages[i];
@@ -126,7 +141,7 @@ export function ChatWidget() {
     if (mode === "qa") {
       await askAboutRecipe(query);
     } else {
-      await search(query);
+      await discover(query);
     }
   }
 
@@ -169,7 +184,7 @@ export function ChatWidget() {
             {messages.length === 0 &&
               (mode === "qa" && recipe ? (
                 <div className="chat-empty">
-                  Ask anything about <b>{recipe.title}</b> — substitutions,
+                  Ask anything about <b>{recipe.title}</b>: substitutions,
                   timing, doneness, storage. 5 questions a day.
                   <div className="chip-row" style={{ marginTop: "var(--s-4)" }}>
                     {EXAMPLE_QUESTIONS.map((q) => (
@@ -186,7 +201,20 @@ export function ChatWidget() {
                 </div>
               ) : (
                 <div className="chat-empty">
-                  Search for recipes by describing what you're in the mood for!
+                  Describe what you're in the mood for and sous chef mochi will pick
+                  recipes that fit. 5 picks a day.
+                  <div className="chip-row" style={{ marginTop: "var(--s-4)" }}>
+                    {EXAMPLE_SEARCHES.map((q) => (
+                      <button
+                        key={q}
+                        type="button"
+                        className="chip"
+                        onClick={() => send(q)}
+                      >
+                        {q}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               ))}
             {messages.map((msg, i) =>
@@ -197,7 +225,10 @@ export function ChatWidget() {
               ) : msg.recipes ? (
                 <div key={i} className="chat-bubble-bot">
                   <span className="chat-results-label">
-                    Found {msg.recipes.length} recipe{msg.recipes.length !== 1 && "s"}:
+                    {msg.note ??
+                      `Found ${msg.recipes.length} recipe${
+                        msg.recipes.length !== 1 ? "s" : ""
+                      }:`}
                   </span>
                   <ul className="chat-results-list">
                     {msg.recipes.map((r) => (
@@ -215,7 +246,12 @@ export function ChatWidget() {
                               className="chat-result-thumb"
                             />
                           )}
-                          <span>{r.title}</span>
+                          <span className="chat-result-text">
+                            <span>{r.title}</span>
+                            {r.why && (
+                              <span className="chat-result-why">{r.why}</span>
+                            )}
+                          </span>
                         </a>
                       </li>
                     ))}
@@ -236,6 +272,12 @@ export function ChatWidget() {
             )}
             <div ref={messagesEnd} />
           </div>
+
+          {mode === "search" && aiRemaining !== null && (
+            <div className="chat-quota">
+              {aiRemaining} AI pick{aiRemaining !== 1 && "s"} left today
+            </div>
+          )}
 
           <form className="chat-input-bar" onSubmit={handleSubmit}>
             <input
