@@ -10,6 +10,7 @@ const THEME_OPTIONS: { name: ThemeName; label: string; swatch: string }[] = [
   { name: "dark", label: "Dark", swatch: "#C39267" },
   { name: "calico", label: "Calico", swatch: "#C96B5C" },
   { name: "espresso", label: "Espresso", swatch: "#6E4B3A" },
+  { name: "noir", label: "Black Cat", swatch: "#D3A24E" },
 ];
 
 interface TopbarProps {

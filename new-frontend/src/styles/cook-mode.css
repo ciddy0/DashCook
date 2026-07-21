@@ -87,7 +87,7 @@
   font-size: var(--fs-xl); font-weight: 700;
   min-width: var(--s-20); text-align: center;
 }
-.timer.running { background: var(--warning); color: white; }
+.timer.running { background: var(--warning); color: var(--on-primary); }
 
 .cook-footer {
   border-top: 2px solid var(--border);
@@ -102,7 +102,7 @@
   border-radius: 50%;
   display: inline-flex; align-items: center; justify-content: center;
   font-weight: 700; font-size: var(--fs-xl);
-  color: white;
+  color: var(--on-primary);
   background: var(--primary);
   box-shadow: var(--sh-bubble);
   flex-shrink: 0;

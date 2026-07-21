@@ -25,7 +25,7 @@ const ChatWidget = lazy(() =>
   import("./components/ChatWidget").then((m) => ({ default: m.ChatWidget }))
 );
 
-const THEMES: ThemeName[] = ["cream", "dark", "calico", "espresso"];
+const THEMES: ThemeName[] = ["cream", "dark", "calico", "espresso", "noir"];
 
 function App() {
   useClickSound();

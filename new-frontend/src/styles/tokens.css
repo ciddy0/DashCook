@@ -93,6 +93,12 @@
   --fs-3xl: 40px;  /* hero, clamp floor */
   --fs-4xl: 64px;  /* hero, clamp ceiling */
 
+  /* Foreground on filled primary/accent surfaces. Default white reads on the
+     warm mid-tone brand hues; themes with a bright fill (e.g. noir's Duolingo
+     green) override these to a dark ink so button/tag labels stay AA. */
+  --on-primary: #FFFFFF;
+  --on-accent:  #FFFFFF;
+
   /* Misc */
   --opacity-disabled: 0.6;
   --focus-ring: 2px solid var(--primary);
@@ -166,6 +172,61 @@ body.theme-calico {
   --text:          #2A201B;
   --text-2:        #6e5a4f;
   --text-3:        #a59487;
+}
+
+/* Dark — "Black Cat". Neutral deep-black fur (cooler than the warm "Midnight"
+   dark theme, so the two read as distinct) with muted golden eyes as primary
+   and a muted sage-green accent — the two classic black-cat eye colors, kept
+   desaturated to sit in the same earthy family as cream/calico/espresso. Gold
+   and sage are both mid-tone fills, so labels use --on-primary/--on-accent ink.
+   All values verified WCAG AA (text ≥4.5:1, UI boundaries ≥3:1). */
+body.theme-noir {
+  --primary:       #D3A24E;  /* muted golden cat eye */
+  --primary-hover: #E0B15E;
+  --primary-soft:  #2A2312;
+  --primary-dark:  #A67C33;  /* pushable-button drop shadow */
+  --on-primary:    #1E1708;  /* dark ink — mid-gold needs it for AA labels */
+
+  --accent:        #7FA986;  /* muted sage-green cat eye */
+  --accent-soft:   #1C2A1F;
+  --accent-dark:   #5E8666;
+  --on-accent:     #10180F;
+
+  --bg:            #101013;  /* neutral near-black fur */
+  --bg-rgb:        16, 16, 19;
+  --surface:       #1A1A1E;
+  --surface-alt:   #24242A;
+  --border:        #2E2E35;
+  --border-strong: #62626C;  /* 3.15:1 vs bg — clears the 3:1 UI-boundary rule */
+
+  --text:          #F2F0EC;
+  --text-2:        #B9B4AD;
+  --text-3:        #8A857D;
+
+  --success:       #6FB489;
+  --success-soft:  #16281D;
+  --success-dark:  #7FC79A;
+
+  --warning:       #D8AE4A;
+  --warning-soft:  #2A2410;
+  --warning-dark:  #E0BC5E;
+
+  --error:         #DE7B7B;
+  --error-soft:    #2C1717;
+  --error-dark:    #E8A0A0;
+
+  --info:          #6FA3D6;
+  --info-dark:     #93BEE4;
+
+  /* Pantry shelf swatches — muted and lifted to read on the black surface */
+  --cat-1: #CD8A5C;
+  --cat-2: #7FA976;
+  --cat-3: #D3AD54;
+  --cat-4: #CF7A6E;
+  --cat-5: #6F97C4;
+  --cat-6: #B389AA;
+  --cat-7: #5FA9A4;
+  --cat-8: #C0966B;
 }
 
 /* Seasonal — "Black Cat Espresso" */

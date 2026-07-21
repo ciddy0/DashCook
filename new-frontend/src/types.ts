@@ -51,7 +51,7 @@ export interface RecipeListResponse {
   next_cursor: string | null;
 }
 
-export type ThemeName = "cream" | "dark" | "calico" | "espresso";
+export type ThemeName = "cream" | "dark" | "calico" | "espresso" | "noir";
 
 export type TicketCategory =
   | "parser"
