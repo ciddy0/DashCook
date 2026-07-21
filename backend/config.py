@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     rate_limit_expensive: str = "30/hour"
     rate_limit_read: str = "60/minute"
     rate_limit_ticket: str = "2/minute;5/hour"
-    rate_limit_qa: str = "5/day"
+    rate_limit_ai: str = "5/day"
     admin_token: str = ""  # empty => GET /tickets returns 503 (fail closed)
     ip_hash_salt: str = ""  # empty => submitter IP hash stored as NULL
     max_request_body_bytes: int = 16384  # 16 KB cap on request bodies
@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     category_model: str = "gpt-4o-mini"
     anthropic_api_key: str = ""
     qa_model: str = "claude-haiku-4-5"
+    discover_model: str = "claude-haiku-4-5"
 
     model_config = {"env_file": ".env", "extra": "ignore"}
 

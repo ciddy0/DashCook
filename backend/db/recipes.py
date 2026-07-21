@@ -179,3 +179,71 @@ async def search_recipes(
         }
         for r in rows
     ]
+
+
+def _ingredient_names(raw, limit: int = 10) -> list[str]:
+    """Pull the parsed ingredient names out of the stored JSON blob.
+
+    Best-effort: a row with malformed or unexpected ingredient JSON just
+    contributes no names rather than failing the whole search.
+    """
+    try:
+        parsed = json.loads(raw) if isinstance(raw, str) else raw
+    except (TypeError, ValueError):
+        return []
+    if not isinstance(parsed, list):
+        return []
+
+    names: list[str] = []
+    for ing in parsed:
+        name = (ing.get("name") or "").strip() if isinstance(ing, dict) else ""
+        if name:
+            names.append(name)
+        if len(names) == limit:
+            break
+    return names
+
+
+async def search_recipes_detailed(
+    pool,
+    query_embedding: list[float],
+    limit: int = 20,
+):
+    """Nearest recipes with enough context for an LLM to rank and describe them.
+
+    search_recipes() returns only what a result card renders; this adds the
+    times, servings, category and ingredient names the discovery prompt reasons
+    over when picking which recipes actually fit the query.
+    """
+    sql = """
+        SELECT r.title,
+               r.url        AS source_url,
+               r.image_url,
+               r.total_time,
+               r.servings,
+               r.ingredients,
+               c.name       AS category,
+               r.embedding <=> $1 AS distance
+        FROM recipes r
+        LEFT JOIN categories c ON c.id = r.section_id
+        WHERE r.embedding IS NOT NULL
+        ORDER BY r.embedding <=> $1
+        LIMIT $2
+    """
+
+    async with pool.acquire() as conn:
+        rows = await conn.fetch(sql, query_embedding, limit)
+
+    return [
+        {
+            "title": r["title"],
+            "source_url": r["source_url"],
+            "image_url": r["image_url"],
+            "total_time": r["total_time"],
+            "servings": r["servings"],
+            "category": r["category"],
+            "ingredients": _ingredient_names(r["ingredients"]),
+            "distance": r["distance"],
+        }
+        for r in rows
+    ]
