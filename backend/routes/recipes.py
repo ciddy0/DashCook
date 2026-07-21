@@ -46,6 +46,7 @@ async def ask_recipe(request: Request, response: Response, body: RecipeQuestion)
             total_time=body.total_time,
             ingredients=body.ingredients,
             instructions=body.instructions,
+            history=body.history,
         )
     except Exception:
         raise HTTPException(
