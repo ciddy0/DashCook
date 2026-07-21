@@ -79,7 +79,7 @@ export function ChatWidget() {
 
     const note =
       result.mode === "search" && result.remaining === 0
-        ? "You've used today's AI picks — here are the closest matches."
+        ? "You've used today's AI picks. Here are the closest matches."
         : undefined;
 
     setMessages((prev) => [
