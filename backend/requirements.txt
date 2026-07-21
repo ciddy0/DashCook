@@ -6,6 +6,7 @@ beautifulsoup4
 asyncpg
 pydantic-settings
 openai
+anthropic
 pgvector
 cloudscraper
 pytest

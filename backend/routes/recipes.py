@@ -7,7 +7,9 @@ from models.requests import ExtractRequest
 from models.recipes import Recipe
 from models.recipes import SimilarRecipe
 from models.recipes import RecipeCard, RecipeListResponse, Category
+from models.qa import RecipeQuestion, RecipeAnswer
 from services.recipe_service import extract_recipe
+from services.recipe_qa import answer_question
 from db.recipes import get_similar_recipes, search_recipes, list_recipes
 from db.categories import list_categories
 from services.embedder import embed_query
@@ -21,6 +23,41 @@ settings = get_settings()
 @limiter.limit(settings.rate_limit_expensive)
 async def get_recipe(request: Request, response: Response, body: ExtractRequest, pool: DbPool):
     return await extract_recipe(pool, str(body.url))
+
+
+@router.post("/ask", response_model=RecipeAnswer)
+@limiter.limit(settings.rate_limit_qa)
+async def ask_recipe(request: Request, response: Response, body: RecipeQuestion):
+    """Answer a cooking question about a recipe using Claude.
+
+    Public and unauthenticated, so it's rate limited to 5/day per client IP
+    (settings.rate_limit_qa) and fails closed when no API key is configured.
+    """
+    if not settings.anthropic_api_key:
+        raise HTTPException(
+            status_code=503,
+            detail="The recipe assistant isn't available right now.",
+        )
+    try:
+        answer = await answer_question(
+            question=body.question,
+            title=body.title,
+            servings=body.servings,
+            total_time=body.total_time,
+            ingredients=body.ingredients,
+            instructions=body.instructions,
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=503,
+            detail="The recipe assistant is unavailable right now. Please try again later.",
+        )
+    if not answer:
+        raise HTTPException(
+            status_code=502,
+            detail="Couldn't come up with an answer. Please try rephrasing.",
+        )
+    return RecipeAnswer(answer=answer)
 
 
 @router.get("/categories", response_model=list[Category])
