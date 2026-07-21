@@ -7,6 +7,10 @@ import type {
   TicketListResponse,
 } from "./types";
 
+// Thrown by askRecipeQuestion when the daily question limit (HTTP 429) is hit,
+// so the UI can show a distinct "come back tomorrow" message.
+export const QA_RATE_LIMITED = "QA_RATE_LIMITED";
+
 const API_BASE =
   "https://dashcook-api.happygrass-bd874e33.westus3.azurecontainerapps.io";
 const API_URL = `${API_BASE}/url`;
@@ -115,6 +119,44 @@ export async function listTickets(opts: {
   }
   if (!res.ok) throw new Error("Couldn't load tickets. Please try again.");
   return res.json();
+}
+
+export interface QATurn {
+  question: string;
+  answer: string;
+}
+
+export async function askRecipeQuestion(
+  question: string,
+  recipe: Recipe,
+  history: QATurn[] = [],
+): Promise<string> {
+  const res = await fetch(`${API_BASE}/ask`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      question,
+      title: recipe.title,
+      servings: recipe.servings,
+      total_time: recipe.total_time,
+      // Send the original parsed lines; the model reads them as-is.
+      ingredients: recipe.ingredients.map((ing) => ing.raw || ing.name),
+      instructions: recipe.instructions,
+      // Prior exchanges so follow-ups have context (backend caps this).
+      history: history.slice(-8),
+    }),
+  });
+
+  if (!res.ok) {
+    if (res.status === 429) throw new Error(QA_RATE_LIMITED);
+    if (res.status === 422) {
+      throw new Error("That question was a bit too long. Try a shorter one.");
+    }
+    throw new Error("The assistant is unavailable right now. Please try again later.");
+  }
+
+  const data = await res.json();
+  return (data.answer ?? "").trim();
 }
 
 export async function searchRecipes(
