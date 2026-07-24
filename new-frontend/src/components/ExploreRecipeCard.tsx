@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Icon } from "./Icon";
 import type { ExploreRecipe } from "../types";
-import { extractRecipe } from "../api";
+import { extractRecipe } from "../services";
 import { addRecipe } from "../store";
-import { onActivateKey } from "../helpers";
+import { onActivateKey } from "../utils";
 
 export function ExploreRecipeCard({ recipe }: { recipe: ExploreRecipe }) {
   const navigate = useNavigate();

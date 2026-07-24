@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 import { Icon } from "./Icon";
 import { ExploreRecipeCard } from "./ExploreRecipeCard";
 import { RecipeGridSkeleton } from "./RecipeGridSkeleton";
-import { listCategories, listRecipes } from "../api";
+import { listCategories, listRecipes } from "../services";
 import {
   shelfColor,
   onActivateKey,
   readSessionCache,
   writeSessionCache,
-} from "../helpers";
+} from "../utils";
 import type { Category, ExploreRecipe } from "../types";
 
 const PREVIEW_LIMIT = 4;

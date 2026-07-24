@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Icon } from "../components/Icon";
 import { RecipeCard } from "../components/RecipeCard";
 import { ExplorePantry } from "../components/ExplorePantry";
-import { extractRecipe } from "../api";
+import { extractRecipe } from "../services";
 import { getRecipes, addRecipe } from "../store";
 import { EXAMPLE_RECIPE_URL } from "../data/browseRecipes";
 import type { Recipe } from "../types";

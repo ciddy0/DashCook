@@ -3,7 +3,7 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Icon } from "../components/Icon";
 import { SouschatLogoIcon } from "../components/SouschatLogoIcon";
 import { getRecipe } from "../store";
-import { ingredientLine } from "../helpers";
+import { ingredientLine } from "../utils";
 import { useFocusTrap } from "../hooks/useFocusTrap";
 
 function parseServings(s: string | null): number {

@@ -1,0 +1,49 @@
+import type { Ingredient } from "../types";
+
+const fractions: Record<string, string> = {
+  "0.125": "⅛",
+  "0.25": "¼",
+  "0.333": "⅓",
+  "0.375": "⅜",
+  "0.5": "½",
+  "0.625": "⅝",
+  "0.667": "⅔",
+  "0.75": "¾",
+  "0.875": "⅞",
+};
+
+export function fmtQty(qty: number, unit?: string): string {
+  if (!qty && qty !== 0) return "";
+  const whole = Math.floor(qty);
+  const frac = qty - whole;
+  let nearest: string | null = null;
+  let dist = 1;
+  for (const k of Object.keys(fractions)) {
+    const v = parseFloat(k);
+    if (Math.abs(v - frac) < dist) {
+      dist = Math.abs(v - frac);
+      nearest = k;
+    }
+  }
+  let str: string;
+  if (frac < 0.04) str = `${whole}`;
+  else if (dist < 0.04 && nearest)
+    str = whole > 0 ? `${whole}${fractions[nearest]}` : fractions[nearest];
+  else str = (Math.round(qty * 100) / 100).toString();
+  return unit ? `${str} ${unit}` : str;
+}
+
+export function fmtTime(s: number): string {
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return `${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+}
+
+export function ingredientLine(
+  ing: Ingredient,
+  scale: number,
+): { qty: string; item: string } {
+  const q = ing.quantity ? ing.quantity * scale : 0;
+  const qtyStr = q ? fmtQty(q, ing.unit ?? undefined) : "";
+  return { qty: qtyStr, item: ing.name };
+}

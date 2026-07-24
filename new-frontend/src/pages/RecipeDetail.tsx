@@ -5,8 +5,8 @@ import { ReportIssueModal } from "../components/ReportIssueModal";
 import { SimilarRecipeCard } from "../components/SimilarRecipeCard";
 import { RecipeGridSkeleton } from "../components/RecipeGridSkeleton";
 import { getRecipe } from "../store";
-import { fetchSimilarRecipes } from "../api";
-import { ingredientLine } from "../helpers";
+import { fetchSimilarRecipes } from "../services";
+import { ingredientLine } from "../utils";
 import type { SimilarRecipe } from "../types";
 
 function parseServings(s: string | null): number {

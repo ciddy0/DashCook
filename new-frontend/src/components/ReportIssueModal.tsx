@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FooterOverlay } from "./FooterOverlay";
-import { submitTicket } from "../api";
-import { useToast } from "./toast-context";
+import { submitTicket } from "../services";
+import { useToast } from "../context/toast-context";
 
 const SUBJECT_MAX = 200;
 const DESCRIPTION_MAX = 5000;

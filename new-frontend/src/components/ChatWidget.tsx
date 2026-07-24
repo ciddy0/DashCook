@@ -5,7 +5,7 @@ import {
   askRecipeQuestion,
   QA_RATE_LIMITED,
   type QATurn,
-} from "../api";
+} from "../services";
 import { getRecipe } from "../store";
 import type { DiscoveredRecipe } from "../types";
 import { MochiChatIcon } from "./MochiChatIcon";

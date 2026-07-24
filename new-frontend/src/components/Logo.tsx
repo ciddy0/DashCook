@@ -1,5 +1,5 @@
 import { SouschatLogoIcon } from "./SouschatLogoIcon";
-import { onActivateKey } from "../helpers";
+import { onActivateKey } from "../utils";
 
 export function Logo({ onClick }: { onClick?: () => void }) {
   return (

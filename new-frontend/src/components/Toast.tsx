@@ -4,7 +4,7 @@ import {
   ToastContext,
   type ToastContextValue,
   type ToastVariant,
-} from "./toast-context";
+} from "../context/toast-context";
 
 interface ToastState {
   id: number;

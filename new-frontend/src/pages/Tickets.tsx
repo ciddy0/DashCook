@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Icon } from "../components/Icon";
-import { listTickets, UNAUTHORIZED } from "../api";
-import { shelfColor } from "../helpers";
+import { listTickets, UNAUTHORIZED } from "../services";
+import { shelfColor } from "../utils";
 import type { TicketDetail, TicketCategory, TicketStatus } from "../types";
 
 const PAGE_LIMIT = 20;

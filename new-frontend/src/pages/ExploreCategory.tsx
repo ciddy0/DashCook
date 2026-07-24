@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { Icon } from "../components/Icon";
 import { ExploreRecipeCard } from "../components/ExploreRecipeCard";
 import { RecipeGridSkeleton } from "../components/RecipeGridSkeleton";
-import { listCategories, listRecipes } from "../api";
+import { listCategories, listRecipes } from "../services";
 import type { ExploreRecipe } from "../types";
 
 const PAGE_LIMIT = 20;

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { SimilarRecipe } from "../types";
-import { extractRecipe } from "../api";
+import { extractRecipe } from "../services";
 import { addRecipe } from "../store";
-import { onActivateKey } from "../helpers";
+import { onActivateKey } from "../utils";
 
 export function SimilarRecipeCard({ recipe }: { recipe: SimilarRecipe }) {
   const navigate = useNavigate();

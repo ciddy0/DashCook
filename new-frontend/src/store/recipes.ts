@@ -1,17 +1,14 @@
-import type { Recipe } from "./types";
+import type { Recipe } from "../types";
+import { readJson, writeJson } from "../utils/storage";
 
 const STORAGE_KEY = "souschat.recipes";
 
 function readAll(): Recipe[] {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-  } catch {
-    return [];
-  }
+  return readJson<Recipe[]>(localStorage, STORAGE_KEY, []);
 }
 
 function writeAll(recipes: Recipe[]): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(recipes));
+  writeJson(localStorage, STORAGE_KEY, recipes);
 }
 
 export function getRecipes(): Recipe[] {
