@@ -36,7 +36,7 @@
   align-items: center;
   max-width: 420px;
   width: 100%;
-  box-shadow: var(--sh-card);
+  box-shadow: var(--sh-card) var(--border);
   animation: toast-in var(--t-slow) cubic-bezier(.4, 0, .2, 1);
 }
 .toast-msg { flex: 1; font-weight: 600; font-size: var(--fs-md); line-height: 1.4; }

@@ -3,7 +3,7 @@
   border: 2px solid var(--border);
   border-radius: var(--r-lg);
   padding: var(--s-5);
-  box-shadow: var(--sh-card);
+  box-shadow: var(--sh-card) var(--border);
   transition: transform var(--t), border-color var(--t);
 }
 .card-hover { cursor: pointer; }
@@ -31,7 +31,7 @@
   background: var(--surface);
   border: 2px solid var(--border);
   border-radius: var(--r-lg);
-  box-shadow: var(--sh-card);
+  box-shadow: var(--sh-card) var(--border);
   overflow: hidden;
   cursor: pointer;
   transition: transform var(--t), border-color var(--t), box-shadow var(--t);

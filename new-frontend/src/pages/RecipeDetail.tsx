@@ -299,7 +299,7 @@ export function RecipeDetail({
                 disabled={servings <= 1}
                 aria-label="Fewer"
               >
-                &minus;
+                <Icon name="minus" size={20} />
               </button>
               <span className="val">{servings}</span>
               <button
@@ -307,7 +307,7 @@ export function RecipeDetail({
                 disabled={servings >= 24}
                 aria-label="More"
               >
-                +
+                <Icon name="plus" size={20} />
               </button>
             </div>
           </div>

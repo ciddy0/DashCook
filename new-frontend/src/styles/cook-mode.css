@@ -32,7 +32,7 @@
   border: 2px solid var(--border);
   border-radius: var(--r-xl);
   padding: clamp(var(--s-6), 5vw, var(--s-12));
-  box-shadow: var(--sh-card);
+  box-shadow: var(--sh-card) var(--border);
   display: flex; flex-direction: column; gap: var(--s-6);
 }
 .cook-step-num {
@@ -104,7 +104,7 @@
   font-weight: 700; font-size: var(--fs-xl);
   color: var(--on-primary);
   background: var(--primary);
-  box-shadow: var(--sh-bubble);
+  box-shadow: var(--sh-bubble) var(--primary-dark);
   flex-shrink: 0;
 }
 .bubble-success { background: var(--success); box-shadow: 0 6px 0 var(--success-dark); }

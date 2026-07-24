@@ -1,4 +1,4 @@
-const svgPaths: Record<string, { path: string; fill?: boolean }> = {
+const svgPaths: Record<string, { path: string; fill?: boolean; stroke?: number }> = {
   clock: {
     path: "M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24Zm0 192a88 88 0 1 1 88-88 88.1 88.1 0 0 1-88 88Zm64-88a8 8 0 0 1-8 8h-56a8 8 0 0 1-8-8V72a8 8 0 0 1 16 0v48h48a8 8 0 0 1 8 8Z",
   },
@@ -59,18 +59,33 @@ const svgPaths: Record<string, { path: string; fill?: boolean }> = {
   flag: {
     path: "M42.76,50A8,8,0,0,0,40,56V224a8,8,0,0,0,16,0V179.77c26.79-21.16,49.87-9.75,76.45,3.41,16.4,8.11,34.06,16.85,53,16.85,13.93,0,28.54-4.75,43.82-18a8,8,0,0,0,2.76-6V56A8,8,0,0,0,218.76,50c-28,24.23-51.72,12.49-79.21-1.12C111.07,34.76,78.78,18.79,42.76,50ZM216,172.25c-26.79,21.16-49.87,9.74-76.45-3.41-25-12.35-52.81-26.13-83.55-8.4V59.79c26.79-21.16,49.87-9.75,76.45,3.4,25,12.35,52.82,26.13,83.55,8.4Z",
   },
+  // Drawn as thick round-capped strokes so they read as "bubbly" next to the
+  // rounded Fredoka type, rather than as thin filled glyphs.
+  minus: {
+    path: "M60 128 H196",
+    stroke: 38,
+  },
+  plus: {
+    path: "M128 60 V196 M60 128 H196",
+    stroke: 38,
+  },
 };
 
 export function Icon({ name, size = 18 }: { name: string; size?: number }) {
   const icon = svgPaths[name];
   if (!icon) return null;
+  const stroked = icon.stroke != null;
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width={size}
       height={size}
       viewBox="0 0 256 256"
-      fill="currentColor"
+      fill={stroked ? "none" : "currentColor"}
+      stroke={stroked ? "currentColor" : undefined}
+      strokeWidth={stroked ? icon.stroke : undefined}
+      strokeLinecap={stroked ? "round" : undefined}
+      strokeLinejoin={stroked ? "round" : undefined}
       aria-hidden="true"
       focusable="false"
       style={{ display: "inline-block", verticalAlign: "middle", flexShrink: 0 }}

@@ -17,7 +17,7 @@
   min-width: 120px;
   transition: filter var(--t), transform var(--t), box-shadow var(--t), background var(--t);
   background: var(--primary);
-  box-shadow: var(--sh-primary);
+  box-shadow: var(--sh-raise) var(--primary-dark);
   text-decoration: none;
 }
 .btn:active {
@@ -26,23 +26,23 @@
 }
 .btn[disabled] { opacity: .55; cursor: not-allowed; }
 
-.btn-accent { background: var(--accent); color: var(--on-accent); box-shadow: var(--sh-accent); }
+.btn-accent { background: var(--accent); color: var(--on-accent); box-shadow: var(--sh-raise) var(--accent-dark); }
 .btn-accent:active { box-shadow: 0 0 0 var(--accent-dark); }
 
-.btn-success { background: var(--success); box-shadow: var(--sh-success); }
+.btn-success { background: var(--success); box-shadow: var(--sh-raise) var(--success-dark); }
 .btn-success:active { box-shadow: 0 0 0 var(--success-dark); }
 
-.btn-warning { background: var(--warning); box-shadow: var(--sh-warning); }
+.btn-warning { background: var(--warning); box-shadow: var(--sh-raise) var(--warning-dark); }
 .btn-warning:active { box-shadow: 0 0 0 var(--warning-dark); }
 
-.btn-danger  { background: var(--error); box-shadow: var(--sh-error); }
+.btn-danger  { background: var(--error); box-shadow: var(--sh-raise) var(--error-dark); }
 .btn-danger:active { box-shadow: 0 0 0 var(--error-dark); }
 
 .btn-secondary {
   background: var(--surface);
   color: var(--primary);
   border: 2px solid var(--border);
-  box-shadow: var(--sh-gray);
+  box-shadow: var(--sh-raise) var(--border-strong);
 }
 .btn-secondary:active { box-shadow: 0 0 0 var(--border-strong); }
 
@@ -63,7 +63,7 @@
   background: var(--surface);
   color: var(--text-2);
   border: 2px solid var(--border);
-  box-shadow: var(--sh-gray);
+  box-shadow: var(--sh-raise) var(--border-strong);
   display: inline-flex; align-items: center; justify-content: center;
   cursor: pointer;
   transition: all var(--t);

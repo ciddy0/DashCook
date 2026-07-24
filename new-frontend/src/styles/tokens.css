@@ -55,14 +55,18 @@
   --r-xl:   24px;
   --r-pill: 999px;
 
-  --sh-primary: 0 4px 0 var(--primary-dark);
-  --sh-accent:  0 4px 0 var(--accent-dark);
-  --sh-success: 0 4px 0 var(--success-dark);
-  --sh-warning: 0 4px 0 var(--warning-dark);
-  --sh-error:   0 4px 0 var(--error-dark);
-  --sh-gray:    0 4px 0 var(--border-strong);
-  --sh-card:    0 2px 0 var(--border);
-  --sh-bubble:  0 6px 0 var(--primary-dark);
+  /* Pushable "Duolingo" shadows — a solid colored bottom edge, so the color
+     must be a themed *-dark token. These hold ONLY the offset geometry; the
+     color is supplied at the point of use:
+         box-shadow: var(--sh-raise) var(--primary-dark);
+     Do NOT bake the color in here. A var() inside a custom property is
+     substituted where the token is DECLARED (this :root block), then inherited
+     as a fixed string — so a color baked in here resolves against :root's
+     colors and never picks up a theme override. (The :active pressed states
+     already follow this at-use-site pattern.) */
+  --sh-raise:   0 4px 0;   /* raised buttons */
+  --sh-bubble:  0 6px 0;   /* step numbers / cook bubbles */
+  --sh-card:    0 2px 0;   /* resting cards */
 
   --t: 150ms cubic-bezier(.4, 0, .2, 1);
   --t-med:  200ms cubic-bezier(.4, 0, .2, 1);
@@ -172,14 +176,23 @@ body.theme-calico {
   --text:          #2A201B;
   --text-2:        #6e5a4f;
   --text-3:        #a59487;
+
+  --success:       #3E7D58;
+  --success-soft:  #E4F0E7;
+  --success-dark:  #2C5B40;
+
+  --warning:       #B57F1C;
+  --warning-soft:  #FBEBCE;
+  --warning-dark:  #855C10;
+
+  --error:         #C0504A;
+  --error-soft:    #F7DEDB;
+  --error-dark:    #8C3A34;
+
+  --info:          #3F6FA8;
+  --info-dark:     #2E578A;
 }
 
-/* Dark — "Black Cat". Neutral deep-black fur (cooler than the warm "Midnight"
-   dark theme, so the two read as distinct) with muted golden eyes as primary
-   and a muted sage-green accent — the two classic black-cat eye colors, kept
-   desaturated to sit in the same earthy family as cream/calico/espresso. Gold
-   and sage are both mid-tone fills, so labels use --on-primary/--on-accent ink.
-   All values verified WCAG AA (text ≥4.5:1, UI boundaries ≥3:1). */
 body.theme-noir {
   --primary:       #D3A24E;  /* muted golden cat eye */
   --primary-hover: #E0B15E;
@@ -218,7 +231,6 @@ body.theme-noir {
   --info:          #6FA3D6;
   --info-dark:     #93BEE4;
 
-  /* Pantry shelf swatches — muted and lifted to read on the black surface */
   --cat-1: #CD8A5C;
   --cat-2: #7FA976;
   --cat-3: #D3AD54;
@@ -250,4 +262,19 @@ body.theme-espresso {
   --text:          #201A16;
   --text-2:        #57463b;
   --text-3:        #998877;
+
+  --success:       #40765A;
+  --success-soft:  #E3EDE2;
+  --success-dark:  #2B563E;
+
+  --warning:       #A9761E;
+  --warning-soft:  #F4E4C9;
+  --warning-dark:  #7C5610;
+
+  --error:         #B04A40;
+  --error-soft:    #F2DAD3;
+  --error-dark:    #83352C;
+
+  --info:          #3F6FA8;
+  --info-dark:     #2E578A;
 }

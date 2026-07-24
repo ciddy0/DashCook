@@ -16,7 +16,7 @@
   color: var(--primary);
   border: 2px solid var(--primary);
   border-radius: var(--r-sm);
-  box-shadow: var(--sh-gray);
+  box-shadow: var(--sh-raise) var(--border-strong);
   font-weight: 700;
   font-size: var(--fs-sm);
   text-decoration: none;

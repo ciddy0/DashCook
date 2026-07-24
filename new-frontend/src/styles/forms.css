@@ -48,7 +48,7 @@
   background: var(--surface);
   border: 2px solid var(--border);
   border-radius: var(--r-pill);
-  box-shadow: var(--sh-card);
+  box-shadow: var(--sh-card) var(--border);
   font-weight: 600;
   font-size: var(--fs-sm);
   color: var(--text-2);
@@ -163,7 +163,7 @@
   border: 2px solid var(--border);
   border-radius: var(--r-pill);
   padding: var(--s-1);
-  box-shadow: var(--sh-card);
+  box-shadow: var(--sh-card) var(--border);
 }
 .stepper button {
   width: var(--touch); height: var(--touch);
