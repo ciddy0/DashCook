@@ -29,13 +29,17 @@
 .btn-accent { background: var(--accent); color: var(--on-accent); box-shadow: var(--sh-raise) var(--accent-dark); }
 .btn-accent:active { box-shadow: 0 0 0 var(--accent-dark); }
 
-.btn-success { background: var(--success); box-shadow: var(--sh-raise) var(--success-dark); }
+/* Edge derived from the fill (always a darker shade) rather than the *-dark
+   token: on dark themes those tokens are tuned LIGHTER for tag/banner text on
+   soft backgrounds, which would make the raised "lip" lighter than the button
+   and kill the 3D read. color-mix resolves at the use site, so no freeze. */
+.btn-success { background: var(--success); box-shadow: var(--sh-raise) color-mix(in srgb, var(--success), #000 30%); }
 .btn-success:active { box-shadow: 0 0 0 var(--success-dark); }
 
-.btn-warning { background: var(--warning); box-shadow: var(--sh-raise) var(--warning-dark); }
+.btn-warning { background: var(--warning); box-shadow: var(--sh-raise) color-mix(in srgb, var(--warning), #000 30%); }
 .btn-warning:active { box-shadow: 0 0 0 var(--warning-dark); }
 
-.btn-danger  { background: var(--error); box-shadow: var(--sh-raise) var(--error-dark); }
+.btn-danger  { background: var(--error); box-shadow: var(--sh-raise) color-mix(in srgb, var(--error), #000 30%); }
 .btn-danger:active { box-shadow: 0 0 0 var(--error-dark); }
 
 .btn-secondary {

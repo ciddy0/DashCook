@@ -107,7 +107,7 @@
   box-shadow: var(--sh-bubble) var(--primary-dark);
   flex-shrink: 0;
 }
-.bubble-success { background: var(--success); box-shadow: 0 6px 0 var(--success-dark); }
+.bubble-success { background: var(--success); box-shadow: 0 6px 0 color-mix(in srgb, var(--success), #000 30%); }
 .bubble-locked { background: var(--border); color: var(--text-3); box-shadow: 0 6px 0 var(--border-strong); }
 .bubble-active { animation: bob 2.2s infinite ease-in-out; }
 @keyframes bob {
