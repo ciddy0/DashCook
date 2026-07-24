@@ -55,10 +55,6 @@
   cursor: pointer;
   transition: all var(--t);
 }
-.chip:hover {
-  border-color: var(--border-strong);
-  background: var(--surface-alt);
-}
 .chip:active {
   transform: translateY(2px);
   box-shadow: 0 0 0 var(--border);
@@ -129,7 +125,6 @@
   transition: all var(--t);
   user-select: none;
 }
-.checkbox-row:hover { border-color: var(--border-strong); background: var(--surface-alt); }
 .checkbox-row.checked {
   background: var(--success-soft);
   border-color: var(--success);
@@ -182,7 +177,6 @@
   transition: all var(--t);
   box-shadow: 0 2px 0 var(--primary-dark);
 }
-.stepper button:hover { background: var(--primary-hover); }
 .stepper button:active { transform: translateY(1px); box-shadow: 0 0 0 var(--primary-dark); }
 .stepper button:disabled { background: var(--border); box-shadow: 0 2px 0 var(--border-strong); cursor: not-allowed; }
 .stepper .val {
@@ -191,4 +185,14 @@
   font-weight: 700; font-size: var(--fs-lg);
   color: var(--text);
   padding: 0 var(--s-3);
+}
+
+/* Hover only where a real pointer exists, so tap states don't stick on touch. */
+@media (hover: hover) {
+  .chip:hover {
+    border-color: var(--border-strong);
+    background: var(--surface-alt);
+  }
+  .checkbox-row:hover { border-color: var(--border-strong); background: var(--surface-alt); }
+  .stepper button:hover { background: var(--primary-hover); }
 }

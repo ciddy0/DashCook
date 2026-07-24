@@ -11,8 +11,10 @@
   cursor: pointer;
   transition: transform var(--t);
 }
-.chat-fab:hover {
-  transform: translateY(-2px);
+@media (hover: hover) {
+  .chat-fab:hover {
+    transform: translateY(-2px);
+  }
 }
 .chat-fab:active {
   transform: translateY(1px);
@@ -61,7 +63,7 @@
   padding: 0 var(--s-1);
   transition: color var(--t);
 }
-.chat-header-close:hover { color: var(--text); }
+@media (hover: hover) { .chat-header-close:hover { color: var(--text); } }
 
 .chat-messages {
   flex: 1;
@@ -135,9 +137,11 @@
   font-size: var(--fs-sm);
   transition: border-color var(--t), background var(--t), transform var(--t);
 }
-.chat-result-link:hover {
-  border-color: var(--primary);
-  background: var(--primary-soft);
+@media (hover: hover) {
+  .chat-result-link:hover {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+  }
 }
 .chat-result-link:active { transform: translateY(1px); }
 

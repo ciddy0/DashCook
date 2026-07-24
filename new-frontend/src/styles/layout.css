@@ -54,12 +54,17 @@
   cursor: pointer;
   transition: background var(--t);
 }
-.theme-option:hover { background: var(--border); }
 .theme-option:active { opacity: .75; }
+/* Selected theme. Uses --primary-soft (a real token) rather than color-mix(),
+   which older iOS Safari (< 16.2) doesn't support — there it dropped the
+   background entirely and the label went unreadable. */
 .theme-option.is-active {
-  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  background: var(--primary-soft);
   color: var(--primary);
   font-weight: 600;
+}
+@media (hover: hover) {
+  .theme-option:hover { background: var(--border); }
 }
 .theme-swatch {
   width: 16px;

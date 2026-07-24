@@ -51,7 +51,7 @@
   opacity: 0.7;
   transition: opacity var(--t);
 }
-.toast-close:hover { opacity: 1; }
+@media (hover: hover) { .toast-close:hover { opacity: 1; } }
 .toast-close:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 @keyframes toast-in {
   from { opacity: 0; transform: translateY(12px); }

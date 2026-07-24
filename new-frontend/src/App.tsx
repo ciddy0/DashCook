@@ -27,6 +27,17 @@ const ChatWidget = lazy(() =>
 
 const THEMES: ThemeName[] = ["cream", "dark", "calico", "espresso", "noir"];
 
+// Each theme's --bg, mirrored here so the iOS Safari status-bar / safe-area
+// tint (driven by <meta name="theme-color">) matches the active theme instead
+// of staying stuck on the default cream brown.
+const THEME_COLOR: Record<ThemeName, string> = {
+  cream: "#FAF7F2",
+  dark: "#141312",
+  calico: "#FFF7F2",
+  espresso: "#F4EFE9",
+  noir: "#101013",
+};
+
 function App() {
   useClickSound();
   const location = useLocation();
@@ -48,6 +59,9 @@ function App() {
     if (theme !== "cream") {
       document.body.classList.add(`theme-${theme}`);
     }
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute("content", THEME_COLOR[theme]);
   }, [theme]);
 
   const [saved, setSaved] = useState<Record<string, boolean>>(() => {

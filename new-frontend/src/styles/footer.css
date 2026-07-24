@@ -23,7 +23,7 @@
   color: var(--text-2);
   transition: color var(--t);
 }
-.footer-link:hover { color: var(--primary); }
+@media (hover: hover) { .footer-link:hover { color: var(--primary); } }
 
 .kofi-btn {
   display: inline-flex; align-items: center; gap: var(--s-3);
@@ -38,7 +38,7 @@
   box-shadow: 0 4px 0 var(--accent-dark);
   transition: transform var(--t), box-shadow var(--t), filter var(--t);
 }
-.kofi-btn:hover { filter: brightness(1.05); }
+@media (hover: hover) { .kofi-btn:hover { filter: brightness(1.05); } }
 .kofi-btn:active {
   transform: translateY(2px);
   box-shadow: 0 0 0 var(--accent-dark);

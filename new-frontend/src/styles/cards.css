@@ -6,11 +6,7 @@
   box-shadow: var(--sh-card);
   transition: transform var(--t), border-color var(--t);
 }
-.card-hover:hover {
-  border-color: var(--border-strong);
-  transform: translateY(-2px);
-  cursor: pointer;
-}
+.card-hover { cursor: pointer; }
 
 .empty-state {
   text-align: center;
@@ -40,10 +36,6 @@
   cursor: pointer;
   transition: transform var(--t), border-color var(--t), box-shadow var(--t);
   display: flex; flex-direction: column;
-}
-.recipe-card:hover {
-  border-color: var(--border-strong);
-  transform: translateY(-3px);
 }
 /* Stretched click target — covers the card below the save button. */
 .recipe-card-open {
@@ -121,7 +113,6 @@ body.theme-espresso .recipe-thumb-fallback {
   box-shadow: 0 2px 0 rgba(0,0,0,.08);
   transition: all var(--t);
 }
-.recipe-thumb .save:hover { transform: scale(1.06); color: var(--accent); }
 .recipe-thumb .save:active { transform: scale(0.96); box-shadow: 0 0 0 rgba(0,0,0,.08); }
 .recipe-thumb .save.saved {
   color: var(--accent);
@@ -207,6 +198,7 @@ button.explore-shelf {
 .tk-tone-success { background: var(--success-soft); color: var(--success-dark); }
 .tk-tone-warning { background: var(--warning-soft); color: var(--warning-dark); }
 .tk-tone-info {
+  background: var(--surface-alt); /* fallback for iOS Safari < 16.2 (no color-mix) */
   background: color-mix(in srgb, var(--info) 16%, var(--surface));
   color: var(--info-dark);
 }
@@ -239,7 +231,6 @@ button.explore-shelf {
   color: var(--primary); font-weight: 600; font-size: var(--fs-sm);
   text-decoration: none;
 }
-.tk-link:hover { text-decoration: underline; }
 .tk-date {
   color: var(--text-3); font-size: var(--fs-sm); font-weight: 500;
   margin-left: auto;
@@ -251,4 +242,18 @@ button.explore-shelf {
   border-radius: var(--r-pill);
   background: var(--primary-soft);
   color: var(--primary);
+}
+
+/* Hover only with a real pointer, so lift/tint states don't stick after a tap. */
+@media (hover: hover) {
+  .card-hover:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-2px);
+  }
+  .recipe-card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-3px);
+  }
+  .recipe-thumb .save:hover { transform: scale(1.06); color: var(--accent); }
+  .tk-link:hover { text-decoration: underline; }
 }

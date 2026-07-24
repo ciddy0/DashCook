@@ -20,7 +20,6 @@
   box-shadow: var(--sh-primary);
   text-decoration: none;
 }
-.btn:hover { background: var(--primary-hover); }
 .btn:active {
   transform: translateY(2px);
   box-shadow: 0 0 0 var(--primary-dark);
@@ -28,19 +27,15 @@
 .btn[disabled] { opacity: .55; cursor: not-allowed; }
 
 .btn-accent { background: var(--accent); color: var(--on-accent); box-shadow: var(--sh-accent); }
-.btn-accent:hover { filter: brightness(1.05); background: var(--accent); }
 .btn-accent:active { box-shadow: 0 0 0 var(--accent-dark); }
 
 .btn-success { background: var(--success); box-shadow: var(--sh-success); }
-.btn-success:hover { filter: brightness(1.08); background: var(--success); }
 .btn-success:active { box-shadow: 0 0 0 var(--success-dark); }
 
 .btn-warning { background: var(--warning); box-shadow: var(--sh-warning); }
-.btn-warning:hover { filter: brightness(1.05); background: var(--warning); }
 .btn-warning:active { box-shadow: 0 0 0 var(--warning-dark); }
 
 .btn-danger  { background: var(--error); box-shadow: var(--sh-error); }
-.btn-danger:hover { filter: brightness(1.05); background: var(--error); }
 .btn-danger:active { box-shadow: 0 0 0 var(--error-dark); }
 
 .btn-secondary {
@@ -49,7 +44,6 @@
   border: 2px solid var(--border);
   box-shadow: var(--sh-gray);
 }
-.btn-secondary:hover { background: var(--surface-alt); border-color: var(--border-strong); }
 .btn-secondary:active { box-shadow: 0 0 0 var(--border-strong); }
 
 .btn-ghost {
@@ -58,7 +52,6 @@
   border: 2px solid var(--border);
   box-shadow: none;
 }
-.btn-ghost:hover { border-color: var(--border-strong); color: var(--text); }
 .btn-ghost:active { transform: translateY(1px); }
 
 .btn-sm { padding: var(--s-2) var(--s-3); font-size: var(--fs-sm); min-width: 0; }
@@ -75,13 +68,25 @@
   cursor: pointer;
   transition: all var(--t);
 }
-.icon-btn:hover {
-  background: var(--surface-alt);
-  border-color: var(--border-strong);
-  color: var(--text);
-}
 .icon-btn:active { transform: translateY(2px); box-shadow: 0 0 0 var(--border-strong); }
 .icon-btn.is-active {
   background: var(--accent-soft); color: var(--accent-dark);
   border-color: var(--accent);
+}
+
+/* Hover styling only on devices with a real pointer — prevents the state from
+   sticking after a tap on iOS/Android touchscreens. */
+@media (hover: hover) {
+  .btn:hover { background: var(--primary-hover); }
+  .btn-accent:hover { filter: brightness(1.05); background: var(--accent); }
+  .btn-success:hover { filter: brightness(1.08); background: var(--success); }
+  .btn-warning:hover { filter: brightness(1.05); background: var(--warning); }
+  .btn-danger:hover { filter: brightness(1.05); background: var(--error); }
+  .btn-secondary:hover { background: var(--surface-alt); border-color: var(--border-strong); }
+  .btn-ghost:hover { border-color: var(--border-strong); color: var(--text); }
+  .icon-btn:hover {
+    background: var(--surface-alt);
+    border-color: var(--border-strong);
+    color: var(--text);
+  }
 }
