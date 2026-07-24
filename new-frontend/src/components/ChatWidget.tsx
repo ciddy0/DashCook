@@ -9,6 +9,7 @@ import {
 import { getRecipe } from "../store";
 import type { DiscoveredRecipe } from "../types";
 import { MochiChatIcon } from "./MochiChatIcon";
+import { useFocusTrap } from "../hooks/useFocusTrap";
 
 interface Message {
   role: "user" | "bot";
@@ -37,6 +38,15 @@ export function ChatWidget() {
   const [rateLimited, setRateLimited] = useState(false);
   const [aiRemaining, setAiRemaining] = useState<number | null>(null);
   const messagesEnd = useRef<HTMLDivElement>(null);
+  const fabRef = useRef<HTMLButtonElement>(null);
+  const wasOpen = useRef(false);
+  const trapRef = useFocusTrap<HTMLDivElement>(open, { restoreFocus: false });
+
+  // Return focus to the launcher when the panel closes (it re-mounts on close).
+  useEffect(() => {
+    if (wasOpen.current && !open) fabRef.current?.focus();
+    wasOpen.current = open;
+  }, [open]);
 
   const match = useMatch("/recipe/:id");
   const recipe = match?.params.id ? getRecipe(match.params.id) : undefined;
@@ -154,6 +164,7 @@ export function ChatWidget() {
     <>
       {!open && (
         <button
+          ref={fabRef}
           className="chat-fab"
           onClick={() => setOpen(true)}
           aria-label="Open chat"
@@ -168,6 +179,8 @@ export function ChatWidget() {
           role="dialog"
           aria-modal="true"
           aria-label="Ask sous chef mochi"
+          ref={trapRef}
+          tabIndex={-1}
         >
           <div className="chat-header">
             <span className="chat-header-title">Ask sous chef mochi</span>

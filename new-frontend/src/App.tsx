@@ -72,11 +72,14 @@ function App() {
 
   return (
     <ToastProvider>
+      <a className="skip-link" href="#main">
+        Skip to content
+      </a>
       {!isCookMode && (
         <Topbar theme={theme} onSetTheme={setTheme} />
       )}
 
-      <main role="main">
+      <main id="main" role="main">
         <Suspense fallback={<div className="page" />}>
           <Routes>
             <Route

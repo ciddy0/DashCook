@@ -62,15 +62,18 @@ export function Topbar({ theme, onSetTheme }: TopbarProps) {
             onClick={() => setOpen((v) => !v)}
             title={`Theme: ${theme}`}
             aria-label="Change theme"
+            aria-haspopup="menu"
             aria-expanded={open}
           >
             <Icon name="palette" size={20} />
           </button>
           {open && (
-            <div className="theme-dropdown-menu">
+            <div className="theme-dropdown-menu" role="menu" aria-label="Theme">
               {THEME_OPTIONS.map((t) => (
                 <button
                   key={t.name}
+                  role="menuitemradio"
+                  aria-checked={t.name === theme}
                   className={`theme-option${t.name === theme ? " is-active" : ""}`}
                   onClick={() => {
                     onSetTheme(t.name);

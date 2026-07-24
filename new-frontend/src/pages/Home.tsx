@@ -54,7 +54,7 @@ export function Home({
   return (
     <div className="page">
       {/* Hero */}
-      <section className="hero" style={{ marginBottom: 56 }}>
+      <section className="hero" style={{ marginBottom: "var(--s-14)" }}>
         <h1>
           Paste a recipe. Get the <span className="hl">recipe</span>.
         </h1>
@@ -69,7 +69,7 @@ export function Home({
             style={{
               display: "inline-flex",
               alignItems: "center",
-              paddingLeft: 10,
+              paddingLeft: "var(--s-3)",
               color: "var(--text-3)",
             }}
           >
@@ -85,6 +85,8 @@ export function Home({
             }}
             disabled={pasting}
             aria-label="Recipe URL"
+            aria-invalid={!!error}
+            aria-describedby={error ? "paster-error" : undefined}
           />
           <button className="btn" type="submit" disabled={pasting}>
             {pasting ? "Stripping the fluff..." : "Extract"}
@@ -93,11 +95,13 @@ export function Home({
 
         {error && (
           <div
+            id="paster-error"
+            role="alert"
             style={{
-              marginTop: 14,
+              marginTop: "var(--s-4)",
               color: "var(--error)",
               fontWeight: 600,
-              fontSize: 14,
+              fontSize: "var(--fs-sm)",
             }}
           >
             {error}
@@ -106,17 +110,18 @@ export function Home({
 
         <div
           style={{
-            marginTop: 24,
+            marginTop: "var(--s-6)",
             textAlign: "center",
           }}
         >
-          <span
-            className="tag tag-soft"
-            style={{ fontSize: 11, letterSpacing: 1 }}
+          <span className="tag tag-soft">Works with most recipe sites</span>
+          <p
+            style={{
+              marginTop: "var(--s-3)",
+              fontSize: "var(--fs-sm)",
+              fontWeight: 500,
+            }}
           >
-            Works with most recipe sites
-          </span>
-          <p style={{ marginTop: 10, fontSize: 13, fontWeight: 500 }}>
             Not sure? Just hit Extract to try the example above.
           </p>
         </div>
@@ -127,7 +132,7 @@ export function Home({
 
       {/* Recently extracted */}
       {recent.length > 0 && (
-        <section style={{ marginBottom: 56 }}>
+        <section style={{ marginBottom: "var(--s-14)" }}>
           <div className="section-header">
             <h2>Recently extracted</h2>
             <span className="eyebrow">{recent.length} recipes</span>

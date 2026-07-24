@@ -52,7 +52,7 @@ export function RecipeDetail({
 
   if (!recipe) {
     return (
-      <div className="page" style={{ textAlign: "center", paddingTop: 80 }}>
+      <div className="page" style={{ textAlign: "center", paddingTop: "var(--s-20)" }}>
         <h2>Recipe not found</h2>
         <button className="btn" onClick={() => navigate("/")}>
           Go Home
@@ -80,7 +80,7 @@ export function RecipeDetail({
 
   return (
     <div className="page">
-      <div className="row print-hide" style={{ marginBottom: 18 }}>
+      <div className="row print-hide" style={{ marginBottom: "var(--s-5)" }}>
         <button
           className="btn btn-secondary"
           onClick={() => navigate("/")}
@@ -129,7 +129,7 @@ export function RecipeDetail({
           gridTemplateColumns: "1.05fr 1fr",
           gap: "clamp(16px, 4vw, 32px)",
           alignItems: "stretch",
-          marginBottom: 40,
+          marginBottom: "var(--s-10)",
         }}
       >
         {recipe.image_url && !imgFailed ? (
@@ -171,7 +171,7 @@ export function RecipeDetail({
             <span className="source">{sourceDomain}</span>
           </div>
         )}
-        <div className="col" style={{ justifyContent: "center", gap: 16 }}>
+        <div className="col" style={{ justifyContent: "center", gap: "var(--s-4)" }}>
           <h1
             style={{
               fontSize: "clamp(28px, 5vw, 40px)",
@@ -186,7 +186,7 @@ export function RecipeDetail({
           </h1>
           <div
             className="row"
-            style={{ flexWrap: "wrap", gap: 10, marginTop: 6 }}
+            style={{ flexWrap: "wrap", gap: "var(--s-3)", marginTop: "var(--s-2)" }}
           >
             {timeDisplay && (
               <span className="stat">
@@ -201,7 +201,7 @@ export function RecipeDetail({
           </div>
           <div
             style={{
-              fontSize: 13,
+              fontSize: "var(--fs-sm)",
               color: "var(--text-3)",
               fontWeight: 500,
             }}
@@ -222,7 +222,7 @@ export function RecipeDetail({
           </div>
           <div
             className="row print-hide"
-            style={{ gap: 12, marginTop: 12 }}
+            style={{ gap: "var(--s-3)", marginTop: "var(--s-3)" }}
           >
             <button
               className="btn btn-xl btn-success"
@@ -261,29 +261,29 @@ export function RecipeDetail({
           <div
             className="card print-hide"
             style={{
-              padding: 16,
-              marginBottom: 16,
+              padding: "var(--s-4)",
+              marginBottom: "var(--s-4)",
               display: "flex",
               alignItems: "center",
-              gap: 14,
+              gap: "var(--s-4)",
             }}
           >
             <div style={{ flex: 1 }}>
               <div
                 style={{
-                  fontSize: 12,
+                  fontSize: "var(--fs-xs)",
                   fontWeight: 700,
                   letterSpacing: 1.2,
                   textTransform: "uppercase",
                   color: "var(--text-3)",
-                  marginBottom: 4,
+                  marginBottom: "var(--s-1)",
                 }}
               >
                 Servings
               </div>
               <div
                 style={{
-                  fontSize: 14,
+                  fontSize: "var(--fs-sm)",
                   color: "var(--text-2)",
                   fontWeight: 500,
                 }}
@@ -315,15 +315,15 @@ export function RecipeDetail({
           {adjusted && (
             <div
               className="banner banner-info"
-              style={{ marginBottom: 16, padding: "10px 14px" }}
+              style={{ marginBottom: "var(--s-4)", padding: "var(--s-3) var(--s-4)" }}
             >
-              <div style={{ fontSize: 13, fontWeight: 600 }}>
+              <div style={{ fontSize: "var(--fs-sm)", fontWeight: 600 }}>
                 Scaled to {servings} — ingredient amounts updated below.
               </div>
             </div>
           )}
 
-          <div className="col" style={{ gap: 8 }}>
+          <div className="col" style={{ gap: "var(--s-2)" }}>
             {recipe.ingredients.map((ing, i) => {
               const line = ingredientLine(ing, scale);
               return (
@@ -360,11 +360,11 @@ export function RecipeDetail({
           {allChecked && (
             <div
               className="banner banner-success"
-              style={{ marginTop: 16 }}
+              style={{ marginTop: "var(--s-4)" }}
             >
               <div>
                 <b>Nicely done!</b>
-                <div style={{ fontSize: 14, fontWeight: 500 }}>
+                <div style={{ fontSize: "var(--fs-sm)", fontWeight: 500 }}>
                   Everything's prepped. Tap Cook Now whenever you're ready.
                 </div>
               </div>
@@ -378,28 +378,28 @@ export function RecipeDetail({
             <h2>Steps</h2>
             <span className="eyebrow">{recipe.instructions.length} steps</span>
           </div>
-          <div className="col" style={{ gap: 14 }}>
+          <div className="col" style={{ gap: "var(--s-4)" }}>
             {recipe.instructions.map((step, i) => (
               <div
                 key={i}
                 className="card"
                 style={{
                   display: "flex",
-                  gap: 18,
+                  gap: "var(--s-5)",
                   alignItems: "flex-start",
-                  padding: 20,
+                  padding: "var(--s-5)",
                 }}
               >
                 <span
                   className="bubble"
-                  style={{ width: 44, height: 44, fontSize: 18 }}
+                  style={{ width: "var(--touch)", height: "var(--touch)", fontSize: "var(--fs-lg)" }}
                 >
                   {i + 1}
                 </span>
                 <div
                   style={{
-                    paddingTop: 6,
-                    fontSize: 16,
+                    paddingTop: "var(--s-2)",
+                    fontSize: "var(--fs-md)",
                     lineHeight: 1.55,
                     color: "var(--text)",
                     fontWeight: 500,
@@ -415,7 +415,7 @@ export function RecipeDetail({
       </div>
 
       {similarLoading && (
-        <section className="print-hide" style={{ marginTop: 48 }}>
+        <section className="print-hide" style={{ marginTop: "var(--s-12)" }}>
           <div className="section-header">
             <h2>Similar Recipes</h2>
           </div>
@@ -424,7 +424,7 @@ export function RecipeDetail({
       )}
 
       {!similarLoading && similarRecipes.length > 0 && (
-        <section className="print-hide" style={{ marginTop: 48 }}>
+        <section className="print-hide" style={{ marginTop: "var(--s-12)" }}>
           <div className="section-header">
             <h2>Similar Recipes</h2>
           </div>

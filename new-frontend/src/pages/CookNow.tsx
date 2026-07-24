@@ -4,6 +4,7 @@ import { Icon } from "../components/Icon";
 import { SouschatLogoIcon } from "../components/SouschatLogoIcon";
 import { getRecipe } from "../store";
 import { ingredientLine } from "../helpers";
+import { useFocusTrap } from "../hooks/useFocusTrap";
 
 function parseServings(s: string | null): number {
   if (!s) return 4;
@@ -20,6 +21,9 @@ export function CookNow() {
   const servings = Number(searchParams.get("servings")) || baseServings;
 
   const [idx, setIdx] = useState(0);
+  // Full-screen dialog: trap Tab within it, but don't restore focus on unmount
+  // since exiting navigates away from the page that opened it.
+  const trapRef = useFocusTrap<HTMLDivElement>(true, { restoreFocus: false });
 
   const recipeId = recipe?.id;
   const instructionCount = recipe?.instructions.length ?? 0;
@@ -38,7 +42,7 @@ export function CookNow() {
 
   if (!recipe) {
     return (
-      <div className="page" style={{ textAlign: "center", paddingTop: 80 }}>
+      <div className="page" style={{ textAlign: "center", paddingTop: "var(--s-20)" }}>
         <h2>Recipe not found</h2>
         <button className="btn" onClick={() => navigate("/")}>
           Go Home
@@ -64,7 +68,14 @@ export function CookNow() {
       : [];
 
   return (
-    <div className="cook-overlay" role="dialog" aria-modal="true" aria-label="Cook Now">
+    <div
+      className="cook-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Cook Now"
+      ref={trapRef}
+      tabIndex={-1}
+    >
       {/* Header */}
       <header className="cook-header">
         <SouschatLogoIcon className="logo-mark" style={{ width: 36, height: 36 }} />
@@ -91,7 +102,7 @@ export function CookNow() {
             <span>
               Step {idx + 1} of {recipe.instructions.length}
             </span>
-            <div style={{ display: "flex", gap: 6 }}>
+            <div style={{ display: "flex", gap: "var(--s-2)" }}>
               {recipe.instructions.map((_, i) => (
                 <span
                   key={i}
@@ -124,10 +135,10 @@ export function CookNow() {
               {recipe.ingredients.length > stepIngredients.length && (
                 <div
                   style={{
-                    fontSize: 13,
+                    fontSize: "var(--fs-sm)",
                     color: "var(--text-3)",
                     fontWeight: 500,
-                    marginTop: 4,
+                    marginTop: "var(--s-1)",
                   }}
                 >
                   + {recipe.ingredients.length - stepIngredients.length}{" "}
@@ -141,7 +152,7 @@ export function CookNow() {
             <div className="banner banner-success">
               <div>
                 <b>Last step — you've got this!</b>
-                <div style={{ fontSize: 15, fontWeight: 500 }}>
+                <div style={{ fontSize: "var(--fs-md)", fontWeight: 500 }}>
                   Tap "Finish" when you're done plating.
                 </div>
               </div>

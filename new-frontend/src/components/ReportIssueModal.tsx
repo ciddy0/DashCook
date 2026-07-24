@@ -18,36 +18,13 @@ export function ReportIssueModal({
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const formRef = useRef<HTMLFormElement>(null);
   const subjectRef = useRef<HTMLInputElement>(null);
 
   const isValid = subject.trim().length > 0 && description.trim().length > 0;
 
-  // Focus the first field on open and trap Tab within the dialog.
+  // Focus the first field on open. Tab is trapped by the FooterOverlay wrapper.
   useEffect(() => {
     subjectRef.current?.focus();
-
-    const overlay = formRef.current?.closest<HTMLElement>(".footer-overlay");
-    if (!overlay) return;
-
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "Tab") return;
-      const focusable = overlay.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-      );
-      if (focusable.length === 0) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    };
-    overlay.addEventListener("keydown", onKey);
-    return () => overlay.removeEventListener("keydown", onKey);
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -85,7 +62,7 @@ export function ReportIssueModal({
         look.
       </p>
 
-      <form ref={formRef} onSubmit={handleSubmit} noValidate>
+      <form onSubmit={handleSubmit} noValidate>
         <div style={{ marginBottom: 18 }}>
           <label
             htmlFor="report-subject"

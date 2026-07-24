@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Icon } from "./Icon";
+import { useFocusTrap } from "../hooks/useFocusTrap";
 
 interface FooterOverlayProps {
   title: string;
@@ -8,6 +9,8 @@ interface FooterOverlayProps {
 }
 
 export function FooterOverlay({ title, onClose, children }: FooterOverlayProps) {
+  const trapRef = useFocusTrap<HTMLDivElement>();
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -28,7 +31,14 @@ export function FooterOverlay({ title, onClose, children }: FooterOverlayProps) 
   }, [onClose]);
 
   return (
-    <div className="footer-overlay" role="dialog" aria-modal="true" aria-label={title}>
+    <div
+      className="footer-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
+      ref={trapRef}
+      tabIndex={-1}
+    >
       <button className="footer-overlay-close icon-btn" onClick={onClose} aria-label="Close">
         <Icon name="x" size={18} />
       </button>

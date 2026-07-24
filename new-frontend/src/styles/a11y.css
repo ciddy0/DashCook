@@ -5,6 +5,28 @@
   }
 }
 
+/* Skip link — visually hidden until focused, then pinned to the top-left */
+.skip-link {
+  position: fixed;
+  top: var(--s-2);
+  left: var(--s-2);
+  z-index: 200;
+  padding: var(--s-2) var(--s-4);
+  background: var(--surface);
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  border-radius: var(--r-sm);
+  box-shadow: var(--sh-gray);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  text-decoration: none;
+  transform: translateY(-150%);
+  transition: transform var(--t);
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
+
 /* Visible keyboard focus for all interactive elements */
 :where(button, a, [role="button"], [role="checkbox"], input, .chip, .theme-option):focus-visible {
   outline: var(--focus-ring);
