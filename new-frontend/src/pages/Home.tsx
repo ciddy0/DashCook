@@ -59,9 +59,8 @@ export function Home({
           Paste a recipe. Get the <span className="hl">recipe</span>.
         </h1>
         <p className="sub">
-          souschat strips the ads, the life stories, and the SEO fluff, and
-          gives you a calm, cookable recipe you can actually use in the
-          kitchen.
+          No ads. No 2,000 words about someone's story. Just the
+          ingredients and the steps.
         </p>
 
         <form className="paster" onSubmit={submit}>
