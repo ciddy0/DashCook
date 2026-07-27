@@ -1,6 +1,7 @@
 @media print {
   @page { margin: 1.5cm 1.2cm; }
 
+  .skip-link,
   .topbar, .print-hide, .site-footer,
   .btn, .icon-btn, .stepper,
   .banner, .banner-info, .banner-success,
@@ -50,6 +51,8 @@
   }
   .recipe-header-grid .row { margin-top: 0 !important; }
   .stat { border: none !important; padding: 2px 0 !important; }
+  /* servings stat — drop the people icon, keep the text */
+  .stat:last-child > svg { display: none !important; }
 
   .check-box { display: none !important; }
   .checkbox-row {
@@ -78,14 +81,33 @@
     margin-bottom: 0.25em !important;
     page-break-inside: avoid;
   }
+  /* ---- Numbered steps: hanging indent, number on the text baseline ---- */
+  .col:has(> .card > .bubble) { gap: 0 !important; }
+
+  .card:has(> .bubble) {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 0 0.3em !important;
+  }
   .bubble {
-    width: auto !important;
+    float: left !important;
+    display: block !important;
+    width: 1.7em !important;
     height: auto !important;
     border-radius: 0 !important;
     font-size: 12pt !important;
+    line-height: 1.35 !important;
+    font-weight: bold !important;
+    text-align: left !important;
     box-shadow: none !important;
   }
   .bubble::after { content: "." !important; }
+  .bubble + div {
+    padding-top: 0 !important;
+    margin-left: 1.7em !important;
+    font-size: 12pt !important;
+    line-height: 1.35 !important;
+  }
 
   .source {
     position: static !important;
