@@ -1,11 +1,11 @@
 import json
 import logging
-from uuid import uuid4
+from uuid import UUID, uuid4
 
-from fastapi import APIRouter, Depends, Query, Request, Response
+from fastapi import APIRouter, Depends, HTTPException, Path, Query, Request, Response
 
 from config import get_settings
-from db.tickets import create_ticket, list_tickets
+from db.tickets import create_ticket, get_ticket, list_tickets, update_ticket
 from dependencies import DbPool, require_admin
 from middleware.rate_limiter import get_client_ip, limiter
 from models.tickets import (
@@ -15,6 +15,7 @@ from models.tickets import (
     TicketDetail,
     TicketListResponse,
     TicketStatus,
+    TicketUpdate,
 )
 from utils.security import hash_ip
 
@@ -24,6 +25,27 @@ router = APIRouter()
 settings = get_settings()
 
 _MAX_USER_AGENT_LEN = 512
+
+
+def _to_detail(row) -> TicketDetail:
+    """Map a tickets row onto the admin-facing model.
+
+    `metadata` comes back from asyncpg as raw JSON text, so it is decoded here
+    rather than in each endpoint.
+    """
+    return TicketDetail(
+        id=row["id"],
+        category=row["category"],
+        status=row["status"],
+        subject=row["subject"],
+        description=row["description"],
+        recipe_url=row["recipe_url"],
+        metadata=json.loads(row["metadata"]) if row["metadata"] else {},
+        submitter_ip_hash=row["submitter_ip_hash"],
+        user_agent=row["user_agent"],
+        created_at=row["created_at"],
+        updated_at=row["updated_at"],
+    )
 
 
 @router.post("/tickets", response_model=TicketCreatedResponse, status_code=201)
@@ -87,20 +109,58 @@ async def get_tickets(
         search=search,
     )
 
-    items = [
-        TicketDetail(
-            id=r["id"],
-            category=r["category"],
-            status=r["status"],
-            subject=r["subject"],
-            description=r["description"],
-            recipe_url=r["recipe_url"],
-            metadata=json.loads(r["metadata"]) if r["metadata"] else {},
-            submitter_ip_hash=r["submitter_ip_hash"],
-            user_agent=r["user_agent"],
-            created_at=r["created_at"],
-            updated_at=r["updated_at"],
-        )
-        for r in rows
-    ]
+    items = [_to_detail(r) for r in rows]
     return TicketListResponse(items=items, total=total, limit=limit, offset=offset)
+
+
+@router.get(
+    "/tickets/{ticket_id}",
+    response_model=TicketDetail,
+    dependencies=[Depends(require_admin)],
+)
+@limiter.limit(settings.rate_limit_read)
+async def get_ticket_detail(
+    request: Request,
+    response: Response,
+    pool: DbPool,
+    ticket_id: UUID = Path(description="Ticket id"),
+):
+    row = await get_ticket(pool, ticket_id)
+    if row is None:
+        raise HTTPException(status_code=404, detail="Ticket not found")
+    return _to_detail(row)
+
+
+@router.patch(
+    "/tickets/{ticket_id}",
+    response_model=TicketDetail,
+    dependencies=[Depends(require_admin)],
+)
+@limiter.limit(settings.rate_limit_read)
+async def patch_ticket(
+    request: Request,
+    response: Response,
+    body: TicketUpdate,
+    pool: DbPool,
+    ticket_id: UUID = Path(description="Ticket id"),
+):
+    """Update a ticket's triage fields. Admin only; see models.TicketUpdate for
+    what is mutable."""
+    row = await update_ticket(
+        pool,
+        ticket_id,
+        status=body.status.value if body.status else None,
+        category=body.category.value if body.category else None,
+    )
+    if row is None:
+        raise HTTPException(status_code=404, detail="Ticket not found")
+
+    # Server-generated, enum-constrained values only — same rule as the create
+    # path: no user free text and no IP in the logs.
+    logger.info(
+        "ticket updated id=%s status=%s category=%s",
+        row["id"],
+        row["status"],
+        row["category"],
+    )
+    return _to_detail(row)

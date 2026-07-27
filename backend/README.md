@@ -1,4 +1,4 @@
-# DashCook API — SousChat
+# DashCook API — souschat
 
 > Extract clean, structured recipes from bloated, ad-heavy recipe websites.
 
@@ -7,7 +7,7 @@
 ![Postgres](https://img.shields.io/badge/PostgreSQL-pgvector-4169E1?logo=postgresql&logoColor=white)
 ![Deploy](https://img.shields.io/badge/Deploy-Azure%20Container%20Apps-0078D4?logo=microsoftazure&logoColor=white)
 
-DashCook is the FastAPI backend behind **SousChat**. Give it a URL to a recipe page and it
+DashCook is the FastAPI backend behind **souschat**. Give it a URL to a recipe page and it
 scrapes the page, strips away the life story and ads, and returns clean structured JSON —
 parsed ingredients, ordered instructions, times, servings, and an image. Results are cached
 in Postgres, embedded for semantic search, and automatically organized into an LLM-named

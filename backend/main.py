@@ -24,7 +24,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="SousChat",
+    title="souschat",
     description="extract clean recipes from bloated websites",
     version="1.1.0",
     lifespan=lifespan,
@@ -34,7 +34,7 @@ settings = get_settings()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[o.strip() for o in settings.cors_origins.split(",")],
-    allow_methods=["GET", "POST"],
+    allow_methods=["GET", "POST", "PATCH"],
     allow_headers=["Content-Type", "Accept", "X-Admin-Token"],
 )
 

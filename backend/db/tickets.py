@@ -37,6 +37,51 @@ async def create_ticket(
         )
 
 
+# Every column the admin ticket views render. Kept in one place so the list,
+# fetch and update queries can never drift apart.
+_DETAIL_COLUMNS = """
+    id, category, status, subject, description, recipe_url,
+    metadata, submitter_ip_hash, user_agent, created_at, updated_at
+"""
+
+
+async def get_ticket(pool: asyncpg.Pool, ticket_id: UUID) -> asyncpg.Record | None:
+    """Fetch one ticket, or None when no row has that id."""
+    async with pool.acquire() as conn:
+        return await conn.fetchrow(
+            f"SELECT {_DETAIL_COLUMNS} FROM tickets WHERE id = $1", ticket_id
+        )
+
+
+async def update_ticket(
+    pool: asyncpg.Pool,
+    ticket_id: UUID,
+    *,
+    status: str | None = None,
+    category: str | None = None,
+) -> asyncpg.Record | None:
+    """Patch the admin-curated fields of a ticket. Returns None if it's gone.
+
+    A NULL argument leaves its column untouched (COALESCE), so this is a true
+    partial update. The casts are required: without them asyncpg can't infer a
+    type for a NULL parameter inside COALESCE.
+    """
+    async with pool.acquire() as conn:
+        return await conn.fetchrow(
+            f"""
+            UPDATE tickets
+               SET status     = COALESCE($2::text, status),
+                   category   = COALESCE($3::text, category),
+                   updated_at = NOW()
+             WHERE id = $1
+            RETURNING {_DETAIL_COLUMNS}
+            """,
+            ticket_id,
+            status,
+            category,
+        )
+
+
 async def list_tickets(
     pool: asyncpg.Pool,
     *,
@@ -71,9 +116,7 @@ async def list_tickets(
         )
         rows = await conn.fetch(
             f"""
-            SELECT id, category, status, subject, description, recipe_url,
-                   metadata, submitter_ip_hash, user_agent,
-                   created_at, updated_at
+            SELECT {_DETAIL_COLUMNS}
             FROM tickets
             {where}
             ORDER BY created_at DESC, id DESC

@@ -4,7 +4,14 @@ from enum import Enum
 from typing import Any
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    HttpUrl,
+    field_validator,
+    model_validator,
+)
 
 # Cap the serialized size of the free-form metadata object so a caller can't
 # smuggle a huge payload past the per-field length limits.
@@ -53,6 +60,26 @@ class TicketCreate(BaseModel):
                 f"metadata may not exceed {_MAX_METADATA_BYTES} bytes when serialized"
             )
         return value
+
+
+class TicketUpdate(BaseModel):
+    """Admin triage patch. Only the fields owners curate are mutable — the
+    submitted content (subject, description, recipe_url, metadata) and the
+    provenance columns stay exactly as the reporter left them.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    status: TicketStatus | None = None
+    category: TicketCategory | None = None
+
+    @model_validator(mode="after")
+    def _require_one_field(self) -> "TicketUpdate":
+        # An all-null patch would otherwise be an authenticated no-op write that
+        # still bumps updated_at; reject it instead.
+        if self.status is None and self.category is None:
+            raise ValueError("provide at least one of: status, category")
+        return self
 
 
 class TicketCreatedResponse(BaseModel):
