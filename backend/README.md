@@ -297,11 +297,11 @@ defaults except the OpenAI key, which is required for embeddings, search, and ca
 | `DISCOVER_MODEL`       | `claude-haiku-4-5`                                         | No       | Model behind `POST /discover`                       |
 | `RATE_LIMIT_AI`        | `5/day`                                                    | No       | Shared daily budget across `/ask` and `/discover`   |
 | `RATE_LIMIT_TICKET`    | `2/minute;5/hour`                                          | No       | Aggressive per-IP limit for `POST /tickets`         |
-| `ADMIN_TOKEN`          | `""`                                                       | No*      | Secret for `GET /tickets`; unset ⇒ that endpoint returns 503 |
+| `ADMIN_TOKEN`          | `""`                                                       | No*      | Secret for the owner-only `/tickets` endpoints; unset ⇒ they return 503 |
 | `IP_HASH_SALT`         | `""`                                                       | No       | Salt for hashing submitter IPs; unset ⇒ hash stored as NULL |
 | `MAX_REQUEST_BODY_BYTES` | `16384`                                                 | No       | Reject request bodies larger than this with 413     |
 
-\* `ADMIN_TOKEN` is only required to use the owner-only `GET /tickets` endpoint. Generate one with
+\* `ADMIN_TOKEN` is only required to use the owner-only `/tickets` endpoints. Generate one with
 `python -c "import secrets; print(secrets.token_urlsafe(32))"`.
 
 \* `ANTHROPIC_API_KEY` is only required for the Claude endpoints. Without it both fail closed:
@@ -322,6 +322,8 @@ defaults except the OpenAI key, which is required for embeddings, search, and ca
 | `GET`  | `/similar`    | Recipes similar to a given URL   | `url`, `limit` (1–20)           | read        |
 | `POST` | `/tickets`    | Submit a support ticket (public) | body: see below                 | ticket      |
 | `GET`  | `/tickets`    | List tickets (**owner only**)    | `limit`, `offset`, `category`, `status`, `search` | read |
+| `GET`  | `/tickets/{id}` | Fetch one ticket (**owner only**) | path: ticket UUID             | read        |
+| `PATCH`| `/tickets/{id}` | Update a ticket's triage fields (**owner only**) | body: `{ "status"?, "category"? }` | read |
 | `GET`  | `/`           | Health check                     | —                               | unlimited   |
 | `GET`  | `/ping`       | Health check                     | —                               | unlimited   |
 
@@ -459,6 +461,30 @@ curl "http://localhost:8000/tickets?status=open&category=parser&search=fail&limi
 Newest first. Returns `{ "items": [...], "total", "limit", "offset" }`. Without a valid
 `X-Admin-Token` the endpoint returns **401**; if `ADMIN_TOKEN` is unset it returns **503**.
 
+**Fetch one ticket (owner only):**
+
+```bash
+curl "http://localhost:8000/tickets/$TICKET_ID" \
+  -H "X-Admin-Token: $ADMIN_TOKEN"
+```
+
+Returns the same shape as one item of the list response, or **404** if no ticket has that id.
+
+**Update a ticket (owner only):**
+
+```bash
+curl -X PATCH "http://localhost:8000/tickets/$TICKET_ID" \
+  -H "Content-Type: application/json" \
+  -H "X-Admin-Token: $ADMIN_TOKEN" \
+  -d '{ "status": "in_progress" }'
+```
+
+Only the triage fields are mutable: `status` (`open`, `in_progress`, `resolved`, `closed`) and
+`category`. Both are optional but at least one is required — an empty patch is **422**, as is any
+attempt to edit submitted content (`subject`, `description`, `recipe_url`, `metadata`), which stays
+exactly as the reporter left it. Omitted fields keep their stored values. The response is the full
+updated ticket; an unknown id is **404**.
+
 ---
 
 ## Rate limiting
@@ -469,7 +495,8 @@ Rate limiting is enforced per client IP via [slowapi](https://github.com/laurent
 - **Expensive** (`RATE_LIMIT_EXPENSIVE`, default `30/hour`) — `POST /url`, `GET /search`,
   `POST /discover`, `POST /ask`. These call OpenAI or Anthropic, so they're kept strict.
 - **Read** (`RATE_LIMIT_READ`, default `60/minute`) — `/recipes`, `/categories`, `/similar`,
-  `GET /tickets`. Cheap DB reads; generous for browsing, tight enough to stop bulk scraping.
+  and the owner-only `/tickets` reads and updates. Cheap DB work; generous for browsing, tight
+  enough to stop bulk scraping.
 - **Ticket** (`RATE_LIMIT_TICKET`, default `2/minute;5/hour`) — `POST /tickets`. Deliberately
   aggressive: the `2/minute` burst cap stops rapid spam, the `5/hour` cap stops sustained abuse.
 - Health endpoints (`/`, `/ping`) are unlimited.
