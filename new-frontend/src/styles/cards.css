@@ -165,15 +165,18 @@ body.theme-espresso .recipe-thumb-fallback {
 /* Clears the icon above: --s-4 inset + icon width + a gap. */
 .tk-search .input { padding-left: var(--s-12); }
 
-/* Filter groups reuse the pantry shelf cards, so <button> needs the usual reset. */
-.tk-filter-group { margin-bottom: var(--s-5); }
+/* Filter groups reuse the shared .chip, which is already pushable. */
+.tk-filter-group { margin-bottom: var(--s-4); }
 .tk-filter-group .eyebrow { display: block; margin-bottom: var(--s-2); }
-button.explore-shelf {
-  font-family: inherit;
-  text-align: left;
-  width: 100%;
-  cursor: pointer;
-  text-transform: capitalize;
+.tk-filter-group .chip-row { margin-bottom: 0; }
+.tk-chip { text-transform: capitalize; }
+/* Falls back to --tone for status chips, which carry a .tk-st-* class; category
+   chips pass their shelf swatch inline instead. */
+.tk-chip-dot {
+  width: 10px; height: 10px;
+  flex-shrink: 0;
+  border-radius: var(--r-pill);
+  background: var(--tone, var(--cat-neutral));
 }
 
 .tk-list { display: flex; flex-direction: column; gap: var(--s-3); }
@@ -195,17 +198,6 @@ button.explore-shelf {
   border-radius: var(--r-pill);
   white-space: nowrap;
 }
-.tk-tone-success { background: var(--success-soft); color: var(--success-dark); }
-.tk-tone-warning { background: var(--warning-soft); color: var(--warning-dark); }
-.tk-tone-info {
-  background: var(--surface-alt); /* fallback for iOS Safari < 16.2 (no color-mix) */
-  background: color-mix(in srgb, var(--info) 16%, var(--surface));
-  color: var(--info-dark);
-}
-.tk-tone-muted {
-  background: var(--surface-alt);
-  color: var(--text-3);
-}
 .tk-tone-neutral {
   background: var(--primary-soft);
   color: var(--primary);
@@ -221,6 +213,118 @@ button.explore-shelf {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+/* --- Status track --------------------------------------------------------
+   The four statuses as stops on a path. --tone/--tone-ink come from the single
+   .tk-st-* class the track (or a filter chip) carries, so one class name
+   recolors the whole control to the ticket's current status. */
+.tk-st-open        { --tone: var(--info);    --tone-ink: var(--info-dark); }
+.tk-st-in_progress { --tone: var(--warning); --tone-ink: var(--warning-dark); }
+.tk-st-resolved    { --tone: var(--success); --tone-ink: var(--success-dark); }
+.tk-st-closed      { --tone: var(--text-3);  --tone-ink: var(--text-2); }
+
+.tk-track {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: start;
+  padding: var(--s-3) var(--s-2) var(--s-2);
+  background: var(--surface-alt);
+  border: 2px solid var(--border);
+  border-radius: var(--r-md);
+  transition: opacity var(--t);
+}
+.tk-track.is-saving { opacity: var(--opacity-disabled); }
+
+.tk-node {
+  position: relative;
+  font-family: inherit;
+  display: grid; justify-items: center; gap: var(--s-1);
+  padding: 0;
+  background: none; border: none;
+  cursor: pointer;
+}
+.tk-node:disabled { cursor: progress; }
+.tk-node.is-current { cursor: default; }
+
+/* The rail arriving at this node. Every node is an equal-width grid column, so
+   a bar starting at -50% of the node's own width begins at the previous node's
+   center. Filled up to and including the current node. */
+.tk-node::before {
+  content: "";
+  position: absolute;
+  top: 16px;   /* 36px dot / 2, less half the 4px rail */
+  left: -50%; width: 100%; height: 4px;
+  border-radius: var(--r-pill);
+  background: var(--border);
+}
+.tk-node:first-child::before { content: none; }
+.tk-node.is-done::before,
+.tk-node.is-current::before { background: var(--tone); }
+
+.tk-node-dot {
+  /* Lifted above every rail, not just its own node's: the next node's ::before
+     reaches back over this dot and would otherwise paint on top of it, since
+     .tk-node is position:relative with z-index auto and so paints in DOM order
+     without trapping this z-index in a stacking context of its own. */
+  position: relative; z-index: 1;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px;
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  border: 2px solid var(--border);
+  color: var(--text-3);
+  box-shadow: var(--sh-card) var(--border);
+  transition: transform var(--t), background var(--t), color var(--t),
+              border-color var(--t), box-shadow var(--t);
+}
+/* Reached nodes fill with the tone. The glyph and the pushable lip are both
+   derived from the fill so they hold up on every theme — the *-dark tokens run
+   lighter than the fill on dark themes and would wash out here. Each is
+   preceded by a flat fallback for iOS Safari < 16.2 (no color-mix). */
+.tk-node.is-done .tk-node-dot,
+.tk-node.is-current .tk-node-dot {
+  background: var(--tone);
+  border-color: var(--tone);
+  color: var(--surface);
+  color: color-mix(in srgb, var(--tone), #000 62%);
+  box-shadow: var(--sh-card) var(--border-strong);
+  box-shadow: var(--sh-card) color-mix(in srgb, var(--tone), #000 30%);
+}
+/* Current stop: larger, with a halo ring. Kept off box-shadow so it doesn't
+   fight the pushable lip above. */
+.tk-node.is-current .tk-node-dot {
+  transform: scale(1.15);
+  animation: tk-pop var(--t-slow) cubic-bezier(.34, 1.56, .64, 1);
+}
+/* Asymmetric on purpose. The dot's visual mass is the circle PLUS the 2px lip
+   under it, so a ring centered on the circle alone sits a pixel high and its
+   underside lands flush against the lip. The extra 2px of bottom inset (and 1px
+   less on top) recenters it on circle+lip, keeping a 2px gap all the way round.
+   Stays a true circle: 6+8 vertical == 7+7 horizontal. */
+.tk-node.is-current .tk-node-dot::after {
+  content: "";
+  position: absolute; inset: -6px -7px -8px;
+  border-radius: var(--r-pill);
+  border: 2px solid var(--tone);
+  opacity: 0.45;
+}
+@keyframes tk-pop {
+  0%   { transform: scale(1); }
+  55%  { transform: scale(1.28); }
+  100% { transform: scale(1.15); }
+}
+
+.tk-node-label {
+  font-size: var(--fs-xs); font-weight: 700; line-height: 1.25;
+  text-align: center; text-transform: capitalize;
+  color: var(--text-3);
+  padding: 0 var(--s-1);
+  /* "in progress" wraps where the other three don't; reserve both lines so
+     every card's track is the same height. */
+  min-height: calc(var(--fs-xs) * 1.25 * 2);
+}
+.tk-node.is-done .tk-node-label { color: var(--text-2); }
+.tk-node.is-current .tk-node-label { color: var(--tone-ink); }
+
 .tk-card-foot {
   display: flex; align-items: center; justify-content: space-between; gap: var(--s-3);
   flex-wrap: wrap;
@@ -256,4 +360,19 @@ button.explore-shelf {
   }
   .recipe-thumb .save:hover { transform: scale(1.06); color: var(--accent); }
   .tk-link:hover { text-decoration: underline; }
+  .tk-node:not(:disabled):not(.is-current):hover .tk-node-dot {
+    transform: translateY(-2px);
+  }
+  .tk-node.is-todo:not(:disabled):hover .tk-node-dot {
+    border-color: var(--border-strong);
+    color: var(--text);
+  }
+  .tk-node:not(:disabled):hover .tk-node-label { color: var(--text); }
+}
+
+/* After the hover block on purpose: the pressed transform ties with the hover
+   lift on specificity, so it has to come later to win on a hovered press. */
+.tk-node:not(:disabled):not(.is-current):active .tk-node-dot {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 var(--border);
 }

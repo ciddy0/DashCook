@@ -12,13 +12,13 @@ export function TermsPage({ onClose }: PageProps) {
 
       <h3>1. Acceptance of Terms</h3>
       <p>
-        By accessing and using SousChat ("the Service"), you agree to be bound by
+        By accessing and using souschat ("the Service"), you agree to be bound by
         these Terms of Service. If you do not agree, please do not use the Service.
       </p>
 
       <h3>2. Description of Service</h3>
       <p>
-        SousChat is a recipe aggregation tool that helps you cook recipes from
+        souschat is a recipe aggregation tool that helps you cook recipes from
         around the web. We do not host original recipe content. We parse and
         present recipes from their original sources for personal, non-commercial
         use.
@@ -33,8 +33,8 @@ export function TermsPage({ onClose }: PageProps) {
 
       <h3>4. Intellectual Property</h3>
       <p>
-        Recipe content belongs to its original authors and publishers. SousChat
-        claims no ownership over third-party recipe content. The SousChat brand,
+        Recipe content belongs to its original authors and publishers. souschat
+        claims no ownership over third-party recipe content. The souschat brand,
         design, and code are proprietary.
       </p>
 
@@ -62,7 +62,7 @@ export function PrivacyPage({ onClose }: PageProps) {
 
       <h3>What We Collect</h3>
       <p>
-        SousChat collects minimal data. We store your saved recipes and preferences
+        souschat collects minimal data. We store your saved recipes and preferences
         locally in your browser. We do not require an account or collect personal
         information.
       </p>
@@ -89,7 +89,7 @@ export function PrivacyPage({ onClose }: PageProps) {
       <h3>Your Rights</h3>
       <p>
         Since all data is stored locally in your browser, you have full control.
-        Clear your browser data at any time to remove all SousChat data.
+        Clear your browser data at any time to remove all souschat data.
       </p>
     </FooterOverlay>
   );
@@ -103,7 +103,7 @@ export function SecurityPage({ onClose }: PageProps) {
 
       <h3>Our Approach</h3>
       <p>
-        SousChat is designed with a security-first mindset. We minimize data
+        souschat is designed with a security-first mindset. We minimize data
         collection, avoid storing sensitive information, and keep the attack
         surface small.
       </p>
@@ -125,7 +125,7 @@ export function SecurityPage({ onClose }: PageProps) {
       <h3>Reporting Vulnerabilities</h3>
       <p>
         If you discover a security issue, please reach out responsibly. We
-        appreciate the community's help keeping SousChat safe for everyone.
+        appreciate the community's help keeping souschat safe for everyone.
       </p>
     </FooterOverlay>
   );
@@ -276,7 +276,7 @@ export function CreditsPage({ onClose }: PageProps) {
 
       <h3>Inspiration</h3>
       <p>
-        SousChat was inspired by the desire to make cooking from the web less
+        souschat was inspired by the desire to make cooking from the web less
         cluttered. No ads, no life stories, just the recipe. Named after a very
         opinionated cat.
       </p>
@@ -293,10 +293,10 @@ export function CreditsPage({ onClose }: PageProps) {
 export function AboutPage({ onClose }: PageProps) {
   return (
     <FooterOverlay title="About" onClose={onClose}>
-      <h2>About SousChat</h2>
+      <h2>About souschat</h2>
 
       <p>
-        SousChat is a recipe tool that strips away the clutter. Paste a recipe URL
+        souschat is a recipe tool that strips away the clutter. Paste a recipe URL
         and get a clean, readable version with adjustable servings and a
         distraction-free Cook Mode.
       </p>
@@ -304,13 +304,13 @@ export function AboutPage({ onClose }: PageProps) {
       <h3>Why?</h3>
       <p>
         Recipe websites are full of ads, pop-ups, and multi-paragraph backstories.
-        SousChat extracts just the recipe, ingredients, steps, times, and
+        souschat extracts just the recipe, ingredients, steps, times, and
         presents it in a clean interface designed for actually cooking.
       </p>
 
       <h3>How It Works</h3>
       <p>
-        Paste a URL, and SousChat fetches the page, extracts structured recipe data
+        Paste a URL, and souschat fetches the page, extracts structured recipe data
         (using schema.org markup and heuristic parsing), runs an embedding model in order to recommend similar recipes and renders it in a
         consistent, readable format. Everything runs locally in your browser after
         the initial parse.
@@ -318,7 +318,7 @@ export function AboutPage({ onClose }: PageProps) {
 
       <h3>How Categories Get Their Names</h3>
       <p>
-        The shelves in "Explore the pantry" aren't hand-labeled. SousChat takes the
+        The shelves in "Explore the pantry" aren't hand-labeled. souschat takes the
         embedding of every stored recipe and groups them with a clustering algorithm
         (K-Means), automatically choosing the number of shelves that separates the
         recipes most cleanly. Each cluster is then handed to a language model along
@@ -344,7 +344,7 @@ export function AboutPage({ onClose }: PageProps) {
 
       <h3>Not Affiliated</h3>
       <p>
-        SousChat is an independent project and is not affiliated with any of the
+        souschat is an independent project and is not affiliated with any of the
         recipe sites it can parse. All recipe content belongs to its original
         authors.
       </p>

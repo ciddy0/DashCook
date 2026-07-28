@@ -1,4 +1,9 @@
-import type { TicketListResponse } from "../types";
+import type {
+  TicketCategory,
+  TicketDetail,
+  TicketListResponse,
+  TicketStatus,
+} from "../types";
 import { apiUrl, postJson } from "./client";
 
 export const UNAUTHORIZED = "UNAUTHORIZED";
@@ -54,5 +59,30 @@ export async function listTickets(opts: {
     throw new Error("The tickets endpoint is not enabled on the server.");
   }
   if (!res.ok) throw new Error("Couldn't load tickets. Please try again.");
+  return res.json();
+}
+
+/** Patch a ticket's triage fields (admin only). Returns the updated ticket. */
+export async function updateTicket(opts: {
+  token: string;
+  id: string;
+  status?: TicketStatus;
+  category?: TicketCategory;
+}): Promise<TicketDetail> {
+  const { token, id, ...patch } = opts;
+  const res = await fetch(apiUrl(`/tickets/${encodeURIComponent(id)}`), {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", "X-Admin-Token": token },
+    body: JSON.stringify(patch),
+  });
+
+  if (res.status === 401) throw new Error(UNAUTHORIZED);
+  if (res.status === 404) {
+    throw new Error("That ticket no longer exists.");
+  }
+  if (res.status === 503) {
+    throw new Error("The tickets endpoint is not enabled on the server.");
+  }
+  if (!res.ok) throw new Error("Couldn't save that change. Please try again.");
   return res.json();
 }

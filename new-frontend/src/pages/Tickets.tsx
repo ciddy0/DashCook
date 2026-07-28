@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Icon } from "../components/Icon";
-import { listTickets, UNAUTHORIZED } from "../services";
+import { listTickets, updateTicket, UNAUTHORIZED } from "../services";
+import { useToast } from "../context/toast-context";
 import { shelfColor } from "../utils";
 import type { TicketDetail, TicketCategory, TicketStatus } from "../types";
 
@@ -22,11 +23,13 @@ const CATEGORIES: TicketCategory[] = [
   "other",
 ];
 
-const STATUS_TONE: Record<TicketStatus, string> = {
-  open: "tk-tone-info",
-  in_progress: "tk-tone-warning",
-  resolved: "tk-tone-success",
-  closed: "tk-tone-muted",
+// One icon per stop on the status path, so a node reads as a state before its
+// label does.
+const STATUS_ICON: Record<TicketStatus, string> = {
+  open: "flag",
+  in_progress: "play",
+  resolved: "check",
+  closed: "minus",
 };
 
 function label(v: string): string {
@@ -38,52 +41,57 @@ function formatDate(iso: string): string {
   return Number.isNaN(d.getTime()) ? iso : d.toLocaleString();
 }
 
-// Same shelf cards the pantry uses to pick a recipe category, with an "all"
-// shelf up front to clear the filter.
-function ShelfFilter<T extends string>({
+// Compact chip row with an "all" chip up front to clear the filter. These used
+// to be pantry shelf cards, which reserve two text lines each and pushed the
+// list itself below the fold for the sake of eleven one-word options.
+function ChipFilter<T extends string>({
   heading,
   options,
   selected,
   allLabel,
+  dotClass,
+  dotColor,
   onSelect,
 }: {
   heading: string;
   options: readonly T[];
   selected: T | "";
   allLabel: string;
+  // A chip's dot takes its color from --tone (set by a class) or from an
+  // explicit swatch; status uses the former so it matches the track below.
+  dotClass?: (o: T) => string;
+  dotColor?: (o: T, idx: number) => string;
   onSelect: (v: T | "") => void;
 }) {
   return (
     <div className="tk-filter-group">
       <span className="eyebrow">{heading}</span>
-      <div className="explore-shelves">
+      <div className="chip-row" role="group" aria-label={heading}>
         <button
-          className={
-            "card card-hover explore-shelf" + (selected === "" ? " is-active" : "")
-          }
+          type="button"
+          className={"chip tk-chip" + (selected === "" ? " is-active" : "")}
           aria-pressed={selected === ""}
           onClick={() => onSelect("")}
         >
-          <span
-            className="explore-shelf-swatch"
-            style={{ background: "var(--cat-neutral)" }}
-          />
-          <span className="explore-shelf-name">{allLabel}</span>
+          {allLabel}
         </button>
         {options.map((o, idx) => (
           <button
             key={o}
+            type="button"
             className={
-              "card card-hover explore-shelf" + (selected === o ? " is-active" : "")
+              "chip tk-chip " +
+              (dotClass?.(o) ?? "") +
+              (selected === o ? " is-active" : "")
             }
             aria-pressed={selected === o}
             onClick={() => onSelect(selected === o ? "" : o)}
           >
             <span
-              className="explore-shelf-swatch"
-              style={{ background: shelfColor(idx, o) }}
+              className="tk-chip-dot"
+              style={dotColor ? { background: dotColor(o, idx) } : undefined}
             />
-            <span className="explore-shelf-name">{label(o)}</span>
+            {label(o)}
           </button>
         ))}
       </div>
@@ -91,7 +99,57 @@ function ShelfFilter<T extends string>({
   );
 }
 
+// Inline status editor, shaped like a lesson path: the four statuses are stops
+// on a track, every node up to the current one is filled in that status's tone,
+// and the rest sit hollow ahead of it. So the card's state is legible from the
+// fill alone, and any node is still one tap away — forward or back.
+function StatusTrack({
+  ticket,
+  saving,
+  busy,
+  onChange,
+}: {
+  ticket: TicketDetail;
+  saving: boolean;
+  // Some other ticket is mid-write. Only one save runs at a time, so the nodes
+  // are inert until it lands rather than silently swallowing the tap.
+  busy: boolean;
+  onChange: (next: TicketStatus) => void;
+}) {
+  const current = STATUSES.indexOf(ticket.status);
+  return (
+    <div
+      className={
+        `tk-track tk-st-${ticket.status}` + (saving ? " is-saving" : "")
+      }
+      role="group"
+      aria-label={`Status for “${ticket.subject}”`}
+      aria-busy={saving}
+    >
+      {STATUSES.map((s, i) => (
+        <button
+          key={s}
+          type="button"
+          className={
+            "tk-node " +
+            (i < current ? "is-done" : i === current ? "is-current" : "is-todo")
+          }
+          aria-pressed={i === current}
+          disabled={saving || busy}
+          onClick={() => onChange(s)}
+        >
+          <span className="tk-node-dot">
+            <Icon name={STATUS_ICON[s]} size={18} />
+          </span>
+          <span className="tk-node-label">{label(s)}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function Tickets() {
+  const toast = useToast();
   const [token, setToken] = useState<string>(
     () => sessionStorage.getItem(TOKEN_KEY) ?? "",
   );
@@ -102,6 +160,9 @@ export function Tickets() {
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Ticket currently being written to the server; its picker is locked so a
+  // second tap can't race the first.
+  const [savingId, setSavingId] = useState<string | null>(null);
 
   const [status, setStatus] = useState<TicketStatus | "">("");
   const [category, setCategory] = useState<TicketCategory | "">("");
@@ -129,6 +190,14 @@ export function Tickets() {
     setTotal(0);
     setOffset(0);
     setError(null);
+  }, []);
+
+  // A rejected token drops us back to the gate with everything cleared.
+  const rejectToken = useCallback(() => {
+    sessionStorage.removeItem(TOKEN_KEY);
+    resultCache.clear();
+    setToken("");
+    setError("That token was rejected. Try again.");
   }, []);
 
   const load = useCallback(
@@ -163,10 +232,7 @@ export function Tickets() {
         const msg = e instanceof Error ? e.message : "Something went wrong.";
         if (msg === UNAUTHORIZED) {
           // Bad/expired token — kick back to the gate with a hint.
-          sessionStorage.removeItem(TOKEN_KEY);
-          resultCache.clear();
-          setToken("");
-          setError("That token was rejected. Try again.");
+          rejectToken();
         } else if (reqId.current === id) {
           setError(msg);
         }
@@ -174,8 +240,55 @@ export function Tickets() {
         if (reqId.current === id) setLoading(false);
       }
     },
-    [token, status, category, debouncedSearch, cacheKey],
+    [token, status, category, debouncedSearch, cacheKey, rejectToken],
   );
+
+  // Writes the new status through, painting it immediately and rolling back if
+  // the server refuses.
+  async function changeStatus(ticket: TicketDetail, next: TicketStatus) {
+    if (savingId || ticket.status === next) return;
+
+    const before = items;
+    setSavingId(ticket.id);
+    setError(null);
+    setItems(items.map((t) => (t.id === ticket.id ? { ...t, status: next } : t)));
+
+    try {
+      const saved = await updateTicket({ token, id: ticket.id, status: next });
+
+      // Every other filter's cached page may now hold this ticket under its old
+      // status, so drop them; the current view is rewritten in place below.
+      for (const key of resultCache.keys()) {
+        if (key !== cacheKey) resultCache.delete(key);
+      }
+
+      // Under an active status filter the ticket has just filtered itself out.
+      const drops = status !== "" && saved.status !== status;
+      const nextItems = drops
+        ? before.filter((t) => t.id !== saved.id)
+        : before.map((t) => (t.id === saved.id ? saved : t));
+      const nextTotal = drops ? Math.max(0, total - 1) : total;
+
+      setItems(nextItems);
+      setTotal(nextTotal);
+      resultCache.set(cacheKey, {
+        items: nextItems,
+        total: nextTotal,
+        offset,
+      });
+      toast.success(`Marked “${ticket.subject}” as ${label(next)}.`);
+    } catch (e) {
+      setItems(before);
+      const msg = e instanceof Error ? e.message : "Something went wrong.";
+      if (msg === UNAUTHORIZED) {
+        rejectToken();
+      } else {
+        toast.warning(msg);
+      }
+    } finally {
+      setSavingId(null);
+    }
+  }
 
   // Switching filters replays the cached page when we've already fetched it;
   // otherwise it's a fresh query from the top.
@@ -290,19 +403,21 @@ export function Tickets() {
         </button>
       </div>
 
-      <ShelfFilter
+      <ChipFilter
         heading="Status"
         options={STATUSES}
         selected={status}
         allLabel="All status"
+        dotClass={(s) => `tk-st-${s}`}
         onSelect={setStatus}
       />
 
-      <ShelfFilter
+      <ChipFilter
         heading="Category"
         options={CATEGORIES}
         selected={category}
         allLabel="All categories"
+        dotColor={(o, idx) => shelfColor(idx, o)}
         onSelect={setCategory}
       />
 
@@ -324,9 +439,6 @@ export function Tickets() {
               <div className="tk-card-head">
                 <h3 className="tk-subject">{t.subject}</h3>
                 <div className="tk-badges">
-                  <span className={"tk-badge " + STATUS_TONE[t.status]}>
-                    {label(t.status)}
-                  </span>
                   <span className="tk-badge tk-tone-neutral">
                     {label(t.category)}
                   </span>
@@ -334,6 +446,13 @@ export function Tickets() {
               </div>
 
               <p className="tk-desc">{t.description}</p>
+
+              <StatusTrack
+                ticket={t}
+                saving={savingId === t.id}
+                busy={savingId !== null && savingId !== t.id}
+                onChange={(next) => changeStatus(t, next)}
+              />
 
               <div className="tk-card-foot">
                 {t.recipe_url && (

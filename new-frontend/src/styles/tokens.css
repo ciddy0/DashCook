@@ -144,6 +144,12 @@ body.theme-dark {
   --error-soft:    #361e1e;
   --error-dark:    #a85454;
 
+  /* Lightened like every other hue here. Without these the theme inherited
+     :root's navy, and --info-dark — which is text on a dark surface once the
+     theme flips — came through near-black. */
+  --info:          #6F9BD1;
+  --info-dark:     #9BC2E6;
+
   /* Pantry shelf swatches — lightened to read on the dark surface */
   --cat-1: #E0996A;
   --cat-2: #7FB87A;
