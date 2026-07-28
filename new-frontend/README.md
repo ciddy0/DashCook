@@ -1,4 +1,4 @@
-# SousChat Frontend
+# souschat Frontend
 
 The React client for [souschat.com](https://souschat.com). Paste a recipe URL, get back just the ingredients and steps.
 

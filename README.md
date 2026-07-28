@@ -1,8 +1,8 @@
-# SousChat
+# souschat
 
 Extract clean, structured recipes from bloated recipe websites.
 
-Paste a URL, get the recipe — no ads, no life stories, no popups. SousChat scrapes recipe pages, parses ingredients into structured data with scaling support, and uses vector embeddings for semantic search and similar recipe discovery.
+Paste a URL, get the recipe — no ads, no life stories, no popups. souschat scrapes recipe pages, parses ingredients into structured data with scaling support, and uses vector embeddings for semantic search and similar recipe discovery.
 
 **Live at [souschat.com](https://souschat.com)**
 
