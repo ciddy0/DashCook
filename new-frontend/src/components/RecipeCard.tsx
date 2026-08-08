@@ -66,7 +66,6 @@ export function RecipeCard({
   onOpen: (id: string) => void;
 }) {
   const timeDisplay = recipe.total_time || recipe.cook_time || recipe.prep_time;
-  const servings = recipe.servings ? parseInt(recipe.servings, 10) : null;
 
   return (
     <div className="recipe-card">
@@ -84,18 +83,13 @@ export function RecipeCard({
       />
       <div className="recipe-body">
         <div className="recipe-title">{recipe.title}</div>
-        <div className="recipe-meta">
-          {timeDisplay && (
+        {timeDisplay && (
+          <div className="recipe-meta">
             <span>
               <Icon name="clock" size={14} /> {timeDisplay}
             </span>
-          )}
-          {servings && (
-            <span>
-              <Icon name="users" size={14} /> Serves {servings}
-            </span>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
