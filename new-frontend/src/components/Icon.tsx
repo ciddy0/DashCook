@@ -71,6 +71,11 @@ const svgPaths: Record<string, { path: string; fill?: boolean; stroke?: number }
   },
 };
 
+// Most icons are filled paths from the regular-weight set. A subtle outline
+// gives them the stronger, friendlier weight used throughout the UI without
+// changing their silhouettes or requiring separate assets for every icon.
+const FILLED_ICON_WEIGHT = 12;
+
 export function Icon({ name, size = 18 }: { name: string; size?: number }) {
   const icon = svgPaths[name];
   if (!icon) return null;
@@ -82,10 +87,11 @@ export function Icon({ name, size = 18 }: { name: string; size?: number }) {
       height={size}
       viewBox="0 0 256 256"
       fill={stroked ? "none" : "currentColor"}
-      stroke={stroked ? "currentColor" : undefined}
-      strokeWidth={stroked ? icon.stroke : undefined}
-      strokeLinecap={stroked ? "round" : undefined}
-      strokeLinejoin={stroked ? "round" : undefined}
+      stroke="currentColor"
+      strokeWidth={stroked ? icon.stroke : FILLED_ICON_WEIGHT}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      paintOrder="stroke fill"
       aria-hidden="true"
       focusable="false"
       style={{ display: "inline-block", verticalAlign: "middle", flexShrink: 0 }}
