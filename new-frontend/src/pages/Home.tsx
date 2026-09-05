@@ -56,7 +56,7 @@ export function Home({
       {/* Hero */}
       <section className="hero" style={{ marginBottom: "var(--s-14)" }}>
         <h1>
-          Paste a recipe. Get the <span className="hl">recipe</span>.
+          The recipe. Without the <span className="hl">fluff</span>.
         </h1>
         <p className="sub">
           No ads. No 2,000 words about someone's story. Just the
