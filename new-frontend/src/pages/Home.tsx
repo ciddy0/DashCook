@@ -56,7 +56,7 @@ export function Home({
       {/* Hero */}
       <section className="hero" style={{ marginBottom: "var(--s-14)" }}>
         <h1>
-          The recipe. Without the <span className="hl">fluff</span>.
+          Drop the <span className="hl">link</span>. Let chef mochi fetch the <span className="hl">dish</span>.
         </h1>
         <p className="sub">
           No ads. No 2,000 words about someone's story. Just the
