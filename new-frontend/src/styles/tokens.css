@@ -111,7 +111,7 @@
 }
 
 /* Dark — "Midnight Cat Café" */
-body.theme-dark {
+html.theme-dark {
   --primary:       #C39267;
   --primary-hover: #D6A77F;
   --primary-soft:  #32251C;
@@ -162,7 +162,7 @@ body.theme-dark {
 }
 
 /* Seasonal — "Calico" */
-body.theme-calico {
+html.theme-calico {
   --primary:       #C96B5C;
   --primary-hover: #b25344;
   --primary-soft:  #FCE6E1;
@@ -199,7 +199,7 @@ body.theme-calico {
   --info-dark:     #2E578A;
 }
 
-body.theme-noir {
+html.theme-noir {
   --primary:       #D3A24E;  /* muted golden cat eye */
   --primary-hover: #E0B15E;
   --primary-soft:  #2A2312;
@@ -248,7 +248,7 @@ body.theme-noir {
 }
 
 /* Seasonal — "Black Cat Espresso" */
-body.theme-espresso {
+html.theme-espresso {
   --primary:       #6E4B3A;
   --primary-hover: #58392b;
   --primary-soft:  #EFE2D6;

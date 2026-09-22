@@ -10,7 +10,7 @@ html, body {
   min-height: 100vh;
 }
 
-html, body { color-scheme: light; }
-html:has(.theme-dark), body.theme-dark { color-scheme: dark; }
+html { color-scheme: light; }
+html.theme-dark, html.theme-noir { color-scheme: dark; }
 
 button { font-family: inherit; }

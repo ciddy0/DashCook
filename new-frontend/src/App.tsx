@@ -27,9 +27,12 @@ const ChatWidget = lazy(() =>
 
 const THEMES: ThemeName[] = ["cream", "dark", "calico", "espresso", "noir"];
 
-// Each theme's --bg, mirrored here so the iOS Safari status-bar / safe-area
-// tint (driven by <meta name="theme-color">) matches the active theme instead
-// of staying stuck on the default cream brown.
+// Each theme's --bg, mirrored here so the browser UI tint (driven by
+// <meta name="theme-color">) matches the active theme instead of staying stuck
+// on the default cream. The theme class itself goes on <html>, not <body>, so
+// the token overrides reach the root element: the canvas that paints the
+// status-bar safe area comes from <html>, and a body-only class leaves that
+// strip on the :root cream while the page underneath goes dark.
 const THEME_COLOR: Record<ThemeName, string> = {
   cream: "#FAF7F2",
   dark: "#141312",
@@ -53,11 +56,12 @@ function App() {
 
   useEffect(() => {
     localStorage.setItem("souschat.theme", theme);
+    const root = document.documentElement;
     for (const t of THEMES) {
-      document.body.classList.remove(`theme-${t}`);
+      root.classList.remove(`theme-${t}`);
     }
     if (theme !== "cream") {
-      document.body.classList.add(`theme-${theme}`);
+      root.classList.add(`theme-${theme}`);
     }
     document
       .querySelector('meta[name="theme-color"]')

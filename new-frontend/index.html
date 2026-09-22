@@ -26,7 +26,33 @@
       content="Paste any recipe URL and get just the ingredients and steps."
     />
 
-    <meta name="theme-color" content="#8B5E3C" />
+    <!-- Default (cream) theme background. Kept in sync with --bg. -->
+    <meta name="theme-color" content="#FAF7F2" />
+    <script>
+      // Apply the stored theme to <html> before first paint. The theme tokens
+      // are scoped to html.theme-*, and the canvas that paints the mobile
+      // status-bar safe area comes from the root element, so doing this in
+      // React instead would flash the cream background on a dark theme.
+      (function () {
+        try {
+          var bg = {
+            cream: "#FAF7F2",
+            dark: "#141312",
+            calico: "#FFF7F2",
+            espresso: "#F4EFE9",
+            noir: "#101013",
+          };
+          var t = localStorage.getItem("souschat.theme");
+          if (!t || !bg[t]) return;
+          if (t !== "cream") document.documentElement.classList.add("theme-" + t);
+          document
+            .querySelector('meta[name="theme-color"]')
+            .setAttribute("content", bg[t]);
+        } catch (e) {
+          /* private mode / storage disabled: fall back to the cream default */
+        }
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
