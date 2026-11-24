@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import { Topbar } from "./components/Topbar";
 import { Footer } from "./components/Footer";
 import { ToastProvider } from "./components/Toast";
+import { OutageBanner } from "./components/OutageBanner";
 import { useClickSound } from "./hooks/useClickSound";
 import type { ThemeName } from "./types";
 
@@ -93,6 +94,7 @@ function App() {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
+      <OutageBanner />
       {!isCookMode && (
         <Topbar theme={theme} onSetTheme={setTheme} />
       )}

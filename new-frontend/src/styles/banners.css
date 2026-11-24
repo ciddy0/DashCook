@@ -57,3 +57,16 @@
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Outage notice: a full-width strip above the top bar */
+.outage-banner {
+  display: flex; gap: var(--s-3); align-items: center; justify-content: center;
+  padding: var(--s-3) var(--s-4);
+  background: var(--warning-soft);
+  color: var(--warning-dark);
+  border-bottom: 2px solid var(--warning);
+  font-size: var(--fs-md);
+  line-height: 1.4;
+}
+.outage-banner p { margin: 0; max-width: 720px; }
+.outage-banner b { font-weight: 700; margin-right: 4px; }
